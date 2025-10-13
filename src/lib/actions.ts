@@ -17,6 +17,11 @@ export type EventSummary = {
   featured: boolean;
 };
 
+export type EventDetail = EventSummary & {
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type TeamMemberSummary = {
   _id: string;
   name: string;
@@ -44,6 +49,58 @@ export type GalleryItemSummary = {
 export async function getEvents(): Promise<EventSummary[]> {
   await connectToDatabase();
   const events = await EventModel.find().sort({ eventDate: -1 }).limit(6).exec();
+  return events.map((event): EventSummary => ({
+    _id: event._id.toString(),
+    title: event.title,
+    slug: event.slug,
+    description: event.description,
+    eventDate: event.eventDate instanceof Date ? event.eventDate.toISOString() : String(event.eventDate),
+    location: event.location,
+    coverImage: event.coverImage,
+    tags: event.tags ?? [],
+    featured: Boolean(event.featured)
+  }));
+}
+
+export async function getEventBySlug(slug: string): Promise<EventDetail | null> {
+  await connectToDatabase();
+  const event = await EventModel.findOne({ slug }).lean();
+  if (!event) {
+    return null;
+  }
+
+  const normalizeDate = (value: unknown): string => {
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+    if (typeof value === "string" || typeof value === "number") {
+      const date = new Date(value);
+      if (!Number.isNaN(date.getTime())) {
+        return date.toISOString();
+      }
+    }
+    return new Date().toISOString();
+  };
+
+  return {
+    _id: event._id.toString(),
+    title: event.title,
+    slug: event.slug,
+    description: event.description,
+    eventDate: normalizeDate(event.eventDate),
+    location: event.location,
+    coverImage: event.coverImage,
+    tags: event.tags ?? [],
+    featured: Boolean(event.featured),
+    createdAt: normalizeDate(event.createdAt),
+    updatedAt: normalizeDate(event.updatedAt)
+  };
+}
+
+export async function getRecentEvents(limit = 3, excludeSlug?: string): Promise<EventSummary[]> {
+  await connectToDatabase();
+  const query = excludeSlug ? { slug: { $ne: excludeSlug } } : {};
+  const events = await EventModel.find(query).sort({ eventDate: -1 }).limit(limit).exec();
   return events.map((event): EventSummary => ({
     _id: event._id.toString(),
     title: event.title,

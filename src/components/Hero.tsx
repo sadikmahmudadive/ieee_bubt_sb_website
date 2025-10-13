@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import type { EventSummary } from "@/lib/actions";
@@ -50,6 +51,8 @@ export function Hero({ eventCovers = [], spotlight }: HeroProps) {
 
   const highlight = spotlight ?? fallbackSpotlight;
   const eventDate = spotlight ? new Date(spotlight.eventDate) : new Date(fallbackSpotlight.eventDate);
+  const primaryCtaHref = spotlight ? `/events/${spotlight.slug}` : "#events";
+  const primaryCtaLabel = spotlight ? "View Spotlight Event" : "Our Achievements";
 
   const headlineWords = highlight.title.trim().split(/\s+/);
   const emphasized = headlineWords.pop() ?? highlight.title;
@@ -83,15 +86,15 @@ export function Hero({ eventCovers = [], spotlight }: HeroProps) {
               "The outstanding student branch where leadership, innovation, and community impact thrive together."}
           </p>
           <div className="flex flex-col gap-4 sm:flex-row">
-            <a
-              href="#events"
+            <Link
+              href={primaryCtaHref}
               className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-accent/90 to-amber-400 px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] text-slate-900 shadow-[0_20px_60px_-20px_rgba(250,204,21,0.7)] transition hover:-translate-y-0.5"
             >
               <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-slate-900">
                 <ArrowRightIcon className="h-4 w-4" />
               </span>
-              Our Achievements
-            </a>
+              {primaryCtaLabel}
+            </Link>
             <a
               href="#contact"
               className="inline-flex items-center gap-3 rounded-full border border-white/30 px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] text-white transition hover:border-white hover:bg-white/10"

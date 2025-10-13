@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SectionHeading } from "@/components/SectionHeading";
 import type { EventSummary } from "@/lib/actions";
 
@@ -26,6 +27,7 @@ export function EventList({ events }: EventListProps) {
                 key={event.slug}
                 className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-950/70 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.85)] backdrop-blur transition duration-500 hover:-translate-y-1 hover:border-white/30"
               >
+                <Link href={`/events/${event.slug}`} className="absolute inset-0 z-10" aria-label={`Read more about ${event.title}`} />
                 <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-primary/40 via-transparent to-transparent opacity-70 transition duration-500 group-hover:opacity-100" aria-hidden />
                 <div className="h-56 w-full overflow-hidden">
                   <div
@@ -34,7 +36,7 @@ export function EventList({ events }: EventListProps) {
                     aria-label={event.title}
                   />
                 </div>
-                <div className="flex flex-1 flex-col gap-5 p-8">
+                <div className="relative z-20 flex flex-1 flex-col gap-5 p-8">
                   <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.35em] text-slate-200">
                     <span>{new Date(event.eventDate).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}</span>
                     <span className="truncate text-right text-primary-light">{event.location}</span>
@@ -51,13 +53,22 @@ export function EventList({ events }: EventListProps) {
                       </span>
                     ))}
                   </div>
-                  <a
-                    href="#contact"
-                    className="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.35em] text-primary-light transition hover:text-white"
-                  >
-                    RSVP Today
-                    <span aria-hidden>→</span>
-                  </a>
+                  <div className="flex flex-wrap items-center gap-4 pt-2">
+                    <Link
+                      href={`/events/${event.slug}`}
+                      className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:text-primary-light"
+                    >
+                      View Details
+                      <span aria-hidden>→</span>
+                    </Link>
+                    <a
+                      href="#contact"
+                      className="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.35em] text-primary-light transition hover:text-white"
+                    >
+                      RSVP Today
+                      <span aria-hidden>→</span>
+                    </a>
+                  </div>
                 </div>
               </article>
             ))

@@ -1,0 +1,15 @@
+node_modules/
+.next/
+.env*
+.DS_Store
+dist/
+out/
+coverage/
+*.log
+*.lock
+
+# Local development artifacts
+/.vercel
+/.turbo
+/.idea
+/.vscode/

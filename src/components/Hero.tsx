@@ -117,6 +117,9 @@ export function Hero({ events = [], spotlight }: HeroProps) {
 
   const highlight = heroSlides[activeIndex] ?? heroSlides[0];
   const eventDate = highlight?.eventDate ? new Date(highlight.eventDate) : new Date(fallbackSpotlight.eventDate);
+  const formattedEventDate = highlight?.eventDate
+    ? new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(eventDate)
+    : null;
   const primaryCtaHref = highlight?.slug ? `/events/${highlight.slug}` : "#events";
   const primaryCtaLabel = highlight?.slug ? "Explore Event" : "Discover IEEE BUBT SB";
 
@@ -153,7 +156,7 @@ export function Hero({ events = [], spotlight }: HeroProps) {
           </p>
           {highlight?.eventDate || highlight?.location ? (
             <div className="flex flex-wrap items-center gap-4 text-xs uppercase tracking-[0.3em] text-white/70">
-              {highlight?.eventDate ? <span>{eventDate.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}</span> : null}
+              {highlight?.eventDate && formattedEventDate ? <span>{formattedEventDate}</span> : null}
               {highlight?.location ? (
                 <span className="inline-flex items-center gap-2">
                   <span aria-hidden className="h-1 w-1 rounded-full bg-white/40" />

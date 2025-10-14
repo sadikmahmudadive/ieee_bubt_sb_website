@@ -133,7 +133,7 @@ export default async function EventPage({ params }: EventPageProps) {
 
             <aside className="space-y-6 rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-slate-200">
               <div className="space-y-4">
-                <h2 className="heading-font text-lg font-semibold text-white">Event Snapshot</h2>
+                <h2 className="heading-font text-lg font-semibold text-white">Event Overview</h2>
                 <div className="flex items-start gap-3">
                   <CalendarDaysIcon className="mt-0.5 h-5 w-5 text-primary-light" />
                   <div>

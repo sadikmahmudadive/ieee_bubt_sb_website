@@ -19,53 +19,119 @@ const fallbackSpotlight = {
 };
 
 const defaultSlides = [
-  "https://res.cloudinary.com/dqmqc0uaa/image/upload/v1728383200/ieee-bubt/events/hackathon.jpg",
-  "https://res.cloudinary.com/dqmqc0uaa/image/upload/v1728383200/ieee-bubt/events/robotics-showcase.jpg",
-  "https://res.cloudinary.com/dqmqc0uaa/image/upload/v1728383200/ieee-bubt/events/hum-tech-lab.jpg"
+  {
+    title: fallbackSpotlight.title,
+    subtitle: fallbackSpotlight.description,
+    coverImage: "https://res.cloudinary.com/dqmqc0uaa/image/upload/v1728383200/ieee-bubt/events/hackathon.jpg",
+    slug: undefined,
+    eventDate: fallbackSpotlight.eventDate,
+    location: fallbackSpotlight.location
+  },
+  {
+    title: "Robotics Innovation Week",
+    subtitle: "Prototype, code, and iterate on automation ideas with faculty mentors and IEEE tools.",
+    coverImage: "https://res.cloudinary.com/dqmqc0uaa/image/upload/v1728383200/ieee-bubt/events/robotics-showcase.jpg",
+    slug: undefined,
+    eventDate: fallbackSpotlight.eventDate,
+    location: "Labs & Innovation Zone"
+  },
+  {
+    title: "Humanitarian Tech Lab",
+    subtitle: "Build resilient solutions tackling real challenges across Bangladesh communities.",
+    coverImage: "https://res.cloudinary.com/dqmqc0uaa/image/upload/v1728383200/ieee-bubt/events/hum-tech-lab.jpg",
+    slug: undefined,
+    eventDate: fallbackSpotlight.eventDate,
+    location: "IEEE Makerspace"
+  }
 ];
 
+type HeroSlide = {
+  key: string;
+  title: string;
+  subtitle: string;
+  coverImage: string;
+  slug?: string;
+  eventDate?: string;
+  location?: string;
+};
+
 type HeroProps = {
-  eventCovers?: string[];
+  events?: EventSummary[];
   spotlight?: EventSummary | null;
 };
 
-export function Hero({ eventCovers = [], spotlight }: HeroProps) {
-  const slides = useMemo(() => {
-    const sanitized = eventCovers.filter(Boolean);
-    return sanitized.length > 0 ? sanitized : defaultSlides;
-  }, [eventCovers]);
+export function Hero({ events = [], spotlight }: HeroProps) {
+  const heroSlides = useMemo<HeroSlide[]>(() => {
+    const bySlug = new Set<string>();
+    const ordered: EventSummary[] = [];
+
+    const register = (event?: EventSummary | null) => {
+      if (!event) return;
+      const key = event.slug ?? event._id;
+      if (bySlug.has(key)) return;
+      bySlug.add(key);
+      ordered.push(event);
+    };
+
+    register(spotlight ?? null);
+    events.forEach((event) => register(event));
+
+    if (ordered.length === 0) {
+      return defaultSlides.map((slide, index) => ({
+        key: `fallback-${index}`,
+        ...slide
+      }));
+    }
+
+    const fallbackImages = defaultSlides.map((slide) => slide.coverImage);
+
+    return ordered.slice(0, 6).map((event, index) => {
+      const rawSubtitle = event.heroSubtitle?.trim() || event.description;
+      const subtitle = rawSubtitle.length > 220 ? `${rawSubtitle.slice(0, 217)}...` : rawSubtitle;
+
+      return {
+        key: event.slug ?? event._id,
+        title: event.heroTitle?.trim() || event.title,
+        subtitle,
+        coverImage: event.coverImage || fallbackImages[index % fallbackImages.length],
+        slug: event.slug,
+        eventDate: event.eventDate,
+        location: event.location
+      } satisfies HeroSlide;
+    });
+  }, [events, spotlight]);
 
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     setActiveIndex(0);
-  }, [slides]);
+  }, [heroSlides]);
 
   useEffect(() => {
-    if (slides.length <= 1) return;
+    if (heroSlides.length <= 1) return;
     const timer = window.setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % slides.length);
+      setActiveIndex((prev) => (prev + 1) % heroSlides.length);
     }, 6500);
     return () => window.clearInterval(timer);
-  }, [slides]);
+  }, [heroSlides]);
 
-  const highlight = spotlight ?? fallbackSpotlight;
-  const eventDate = spotlight ? new Date(spotlight.eventDate) : new Date(fallbackSpotlight.eventDate);
-  const primaryCtaHref = spotlight ? `/events/${spotlight.slug}` : "#events";
-  const primaryCtaLabel = spotlight ? "View Spotlight Event" : "Our Achievements";
+  const highlight = heroSlides[activeIndex] ?? heroSlides[0];
+  const eventDate = highlight?.eventDate ? new Date(highlight.eventDate) : new Date(fallbackSpotlight.eventDate);
+  const primaryCtaHref = highlight?.slug ? `/events/${highlight.slug}` : "#events";
+  const primaryCtaLabel = highlight?.slug ? "Explore Event" : "Discover IEEE BUBT SB";
 
-  const headlineWords = highlight.title.trim().split(/\s+/);
-  const emphasized = headlineWords.pop() ?? highlight.title;
+  const headlineWords = (highlight?.title ?? fallbackSpotlight.title).trim().split(/\s+/);
+  const emphasized = headlineWords.pop() ?? fallbackSpotlight.title;
   const baseHeadline = headlineWords.join(" ");
 
   return (
     <section className="relative isolate min-h-[80vh] overflow-hidden">
       <div className="absolute inset-0" aria-hidden>
-        {slides.map((slide, index) => (
+        {heroSlides.map((slide, index) => (
           <div
-            key={`${slide}-${index}`}
+            key={slide.key}
             className={`absolute inset-0 bg-cover bg-center transition-opacity duration-[1200ms] ease-out ${index === activeIndex ? "opacity-100" : "opacity-0"}`}
-            style={{ backgroundImage: `url(${slide})` }}
+            style={{ backgroundImage: `url(${slide.coverImage})` }}
           />
         ))}
         <div className="absolute inset-0 bg-slate-900/70" />
@@ -82,9 +148,20 @@ export function Hero({ eventCovers = [], spotlight }: HeroProps) {
             <span className="text-accent/80">{emphasized}</span>
           </h1>
           <p className="max-w-2xl text-base text-white/80 sm:text-lg">
-            {highlight.description ||
+            {highlight?.subtitle ||
               "The outstanding student branch where leadership, innovation, and community impact thrive together."}
           </p>
+          {highlight?.eventDate || highlight?.location ? (
+            <div className="flex flex-wrap items-center gap-4 text-xs uppercase tracking-[0.3em] text-white/70">
+              {highlight?.eventDate ? <span>{eventDate.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}</span> : null}
+              {highlight?.location ? (
+                <span className="inline-flex items-center gap-2">
+                  <span aria-hidden className="h-1 w-1 rounded-full bg-white/40" />
+                  {highlight.location}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
           <div className="flex flex-col gap-4 sm:flex-row">
             <Link
               href={primaryCtaHref}
@@ -116,11 +193,11 @@ export function Hero({ eventCovers = [], spotlight }: HeroProps) {
         </div>
       </div>
 
-      {slides.length > 1 ? (
+      {heroSlides.length > 1 ? (
         <div className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between px-4 sm:px-8">
           <button
             type="button"
-            onClick={() => setActiveIndex((prev) => (prev - 1 + slides.length) % slides.length)}
+            onClick={() => setActiveIndex((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
             className="pointer-events-auto hidden h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-slate-950/50 text-white transition hover:border-white hover:bg-slate-950/70 lg:flex"
             aria-label="Previous slide"
           >
@@ -128,7 +205,7 @@ export function Hero({ eventCovers = [], spotlight }: HeroProps) {
           </button>
           <button
             type="button"
-            onClick={() => setActiveIndex((prev) => (prev + 1) % slides.length)}
+            onClick={() => setActiveIndex((prev) => (prev + 1) % heroSlides.length)}
             className="pointer-events-auto hidden h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-slate-950/50 text-white transition hover:border-white hover:bg-slate-950/70 lg:flex"
             aria-label="Next slide"
           >
@@ -138,9 +215,9 @@ export function Hero({ eventCovers = [], spotlight }: HeroProps) {
       ) : null}
 
       <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 gap-2">
-        {slides.map((_, index) => (
+        {heroSlides.map((slide, index) => (
           <button
-            key={`dot-${index}`}
+            key={`dot-${slide.key}`}
             type="button"
             onClick={() => setActiveIndex(index)}
             className={`h-2 w-8 rounded-full transition ${index === activeIndex ? "bg-amber-400" : "bg-white/30 hover:bg-white/50"}`}

@@ -20,6 +20,8 @@ export type EventSummary = {
   coverImage: string;
   tags: string[];
   featured: boolean;
+  heroTitle?: string;
+  heroSubtitle?: string;
 };
 
 export type EventDetail = EventSummary & {
@@ -84,7 +86,9 @@ const mapEventSummary = (event: EventLean): EventSummary => ({
   location: event.location,
   coverImage: event.coverImage,
   tags: Array.isArray(event.tags) ? event.tags : [],
-  featured: Boolean(event.featured)
+  featured: Boolean(event.featured),
+  heroTitle: typeof event.heroTitle === "string" && event.heroTitle.trim() ? event.heroTitle : undefined,
+  heroSubtitle: typeof event.heroSubtitle === "string" && event.heroSubtitle.trim() ? event.heroSubtitle : undefined
 });
 
 const mapEventDetail = (event: EventLean): EventDetail => ({

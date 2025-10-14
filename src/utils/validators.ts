@@ -8,7 +8,9 @@ export const eventSchema = z.object({
   location: z.string().min(3),
   coverImage: z.string().url(),
   tags: z.array(z.string()).default([]),
-  featured: z.boolean().optional()
+  featured: z.boolean().optional(),
+  heroTitle: z.string().min(3).optional(),
+  heroSubtitle: z.string().min(10).optional()
 });
 
 export const teamMemberSchema = z.object({

@@ -9,6 +9,8 @@ export interface Event {
   coverImage: string;
   tags: string[];
   featured: boolean;
+  heroTitle?: string;
+  heroSubtitle?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,7 +24,9 @@ const eventSchema = new Schema<Event>(
     location: { type: String, required: true },
     coverImage: { type: String, required: true },
     tags: [{ type: String }],
-    featured: { type: Boolean, default: false }
+    featured: { type: Boolean, default: false },
+    heroTitle: { type: String },
+    heroSubtitle: { type: String }
   },
   { timestamps: true }
 );

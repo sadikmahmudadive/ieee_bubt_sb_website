@@ -27,13 +27,11 @@ export default async function HomePage() {
     ]);
   }
 
-  const eventCovers = events.map((event) => event.coverImage).filter(Boolean);
-
   return (
     <div id="top" className="min-h-screen">
       <Navbar />
       <main>
-        <Hero eventCovers={eventCovers} spotlight={featuredEvent ?? events[0] ?? null} />
+        <Hero events={events} spotlight={featuredEvent ?? events[0] ?? null} />
         <AboutSection />
         <EventList events={events} />
         <TeamGrid team={team} />

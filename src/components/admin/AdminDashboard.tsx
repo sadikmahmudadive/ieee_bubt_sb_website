@@ -19,6 +19,8 @@ type EventRecord = {
   coverImage: string;
   tags?: string[];
   featured?: boolean;
+  heroTitle?: string;
+  heroSubtitle?: string;
 };
 
 type EventFormState = {
@@ -30,6 +32,8 @@ type EventFormState = {
   coverImage: string;
   tags: string;
   featured: boolean;
+  heroTitle: string;
+  heroSubtitle: string;
 };
 
 type TeamRecord = {
@@ -156,7 +160,9 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       location: "",
       coverImage: "",
       tags: "",
-      featured: false
+      featured: false,
+      heroTitle: "",
+      heroSubtitle: ""
     };
   }
 
@@ -289,6 +295,9 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       return;
     }
 
+    const heroTitle = eventForm.heroTitle.trim();
+    const heroSubtitle = eventForm.heroSubtitle.trim();
+
     const payload = {
       title: eventForm.title,
       slug: eventForm.slug,
@@ -300,7 +309,9 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
         .split(",")
         .map((value) => value.trim())
         .filter(Boolean),
-      featured: eventForm.featured
+      featured: eventForm.featured,
+      heroTitle: heroTitle || undefined,
+      heroSubtitle: heroSubtitle || undefined
     };
 
     const isEdit = Boolean(editingEventId);
@@ -348,7 +359,9 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       location: record.location,
       coverImage: record.coverImage,
       tags: record.tags?.join(", ") ?? "",
-      featured: Boolean(record.featured)
+      featured: Boolean(record.featured),
+      heroTitle: record.heroTitle ?? "",
+      heroSubtitle: record.heroSubtitle ?? ""
     });
     setEventFeedback(null);
     setEventError(null);
@@ -621,6 +634,25 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   onChange={(e) => setEventForm((prev) => ({ ...prev, description: e.target.value }))}
                   required
                   rows={4}
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                />
+              </label>
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+                Hero Headline (optional)
+                <input
+                  value={eventForm.heroTitle}
+                  onChange={(e) => setEventForm((prev) => ({ ...prev, heroTitle: e.target.value }))}
+                  placeholder="Shown on homepage hero when this event is featured"
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                />
+              </label>
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+                Hero Summary (optional)
+                <textarea
+                  value={eventForm.heroSubtitle}
+                  onChange={(e) => setEventForm((prev) => ({ ...prev, heroSubtitle: e.target.value }))}
+                  rows={3}
+                  placeholder="Provide a short teaser that appears in the hero carousel"
                   className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                 />
               </label>

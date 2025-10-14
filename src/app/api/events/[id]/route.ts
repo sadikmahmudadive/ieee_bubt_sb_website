@@ -3,6 +3,7 @@ import { connectToDatabase } from "@/lib/db";
 import { EventModel } from "@/models/Event";
 import { eventSchema } from "@/utils/validators";
 import { requireAdminSession } from "@/lib/auth";
+import { slugify } from "@/utils/slugify";
 
 export async function GET(
   _request: Request,
@@ -29,6 +30,19 @@ export async function PATCH(
     await connectToDatabase();
     const payload = await request.json();
     const data = eventSchema.partial().parse(payload);
+
+    if (data.slug) {
+      const sanitized = slugify(data.slug);
+      if (!sanitized) {
+        return NextResponse.json({ error: "Provide a valid slug for the event." }, { status: 400 });
+      }
+      data.slug = sanitized;
+
+      const existing = await EventModel.findOne({ slug: sanitized, _id: { $ne: params.id } });
+      if (existing) {
+        return NextResponse.json({ error: "Another event already uses this slug." }, { status: 409 });
+      }
+    }
 
     const updated = await EventModel.findByIdAndUpdate(params.id, data, {
       new: true

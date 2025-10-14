@@ -3,6 +3,7 @@ import { connectToDatabase } from "@/lib/db";
 import { EventModel } from "@/models/Event";
 import { eventSchema } from "@/utils/validators";
 import { requireAdminSession } from "@/lib/auth";
+import { slugify } from "@/utils/slugify";
 
 export async function GET() {
   await connectToDatabase();
@@ -19,7 +20,13 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
     const payload = await request.json();
-    const data = eventSchema.parse(payload);
+    const parsed = eventSchema.parse(payload);
+    const sanitizedSlug = slugify(parsed.slug);
+    if (!sanitizedSlug) {
+      return NextResponse.json({ error: "Provide a valid slug for the event." }, { status: 400 });
+    }
+
+    const data = { ...parsed, slug: sanitizedSlug };
 
     const existing = await EventModel.findOne({ slug: data.slug });
     if (existing) {

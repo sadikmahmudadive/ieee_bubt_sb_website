@@ -10,6 +10,8 @@ import { TeamGrid } from "@/components/TeamGrid";
 import { getEvents, getFeaturedEvent, getGalleryItems, getTeamMembers } from "@/lib/actions";
 import type { EventSummary, GalleryItemSummary, TeamMemberSummary } from "@/lib/actions";
 
+export const revalidate = 0;
+
 export default async function HomePage() {
   let events: EventSummary[] = [];
   let team: TeamMemberSummary[] = [];

@@ -28,6 +28,8 @@ type EventPageProps = {
   params: { slug: string };
 };
 
+export const revalidate = 0;
+
 export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
   const event = await getEventBySlug(params.slug);
 

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { Types } from "mongoose";
+import { unstable_noStore as noStore } from "next/cache";
 
 import { connectToDatabase } from "@/lib/db";
 import { EventModel } from "@/models/Event";
@@ -93,12 +94,14 @@ const mapEventDetail = (event: EventLean): EventDetail => ({
 });
 
 export async function getEvents(): Promise<EventSummary[]> {
+  noStore();
   await connectToDatabase();
   const events = await EventModel.find().sort({ eventDate: -1 }).limit(6).lean<EventLean[]>();
   return events.map(mapEventSummary);
 }
 
 export async function getEventBySlug(slug: string): Promise<EventDetail | null> {
+  noStore();
   await connectToDatabase();
   const event = await EventModel.findOne({ slug }).lean<EventLean | null>();
   if (!event) {
@@ -109,6 +112,7 @@ export async function getEventBySlug(slug: string): Promise<EventDetail | null> 
 }
 
 export async function getRecentEvents(limit = 3, excludeSlug?: string): Promise<EventSummary[]> {
+  noStore();
   await connectToDatabase();
   const query = excludeSlug ? { slug: { $ne: excludeSlug } } : {};
   const events = await EventModel.find(query).sort({ eventDate: -1 }).limit(limit).lean<EventLean[]>();
@@ -116,6 +120,7 @@ export async function getRecentEvents(limit = 3, excludeSlug?: string): Promise<
 }
 
 export async function getFeaturedEvent(): Promise<EventSummary | null> {
+  noStore();
   await connectToDatabase();
   const event = await EventModel.findOne({ featured: true }).sort({ eventDate: -1 }).lean<EventLean | null>();
   if (!event) {
@@ -125,6 +130,7 @@ export async function getFeaturedEvent(): Promise<EventSummary | null> {
 }
 
 export async function getTeamMembers(): Promise<TeamMemberSummary[]> {
+  noStore();
   await connectToDatabase();
   const members = await TeamMemberModel.find().sort({ priority: -1 }).exec();
   return members.map((member): TeamMemberSummary => ({
@@ -139,6 +145,7 @@ export async function getTeamMembers(): Promise<TeamMemberSummary[]> {
 }
 
 export async function getGalleryItems(limit = 12): Promise<GalleryItemSummary[]> {
+  noStore();
   await connectToDatabase();
   const items = await GalleryItemModel.find().sort({ uploadedAt: -1 }).limit(limit).exec();
   return items.map((item): GalleryItemSummary => ({

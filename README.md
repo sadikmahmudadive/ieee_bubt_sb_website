@@ -44,6 +44,7 @@ CLOUDINARY_CLOUD_NAME="your cloudinary cloud name"
 CLOUDINARY_API_KEY="your api key"
 CLOUDINARY_API_SECRET="your api secret"
 NEXT_PUBLIC_BASE_URL="https://your-domain.example"
+NEXT_PUBLIC_SITE_URL="https://your-domain.example"
 ```
 
 ### 4. Run the development server
@@ -111,7 +112,7 @@ Prettier is configured via `.prettierrc`. Tailwind takes care of most utility-cl
 ## Next Steps
 
 - Replace placeholder imagery and copy with real IEEE BUBT assets.
-- Build an authenticated admin dashboard (NextAuth, Clerk, etc.) for managing content.
+- Configure `NEXT_PUBLIC_SITE_URL` in production for accurate social sharing links.
 - Set up ISR or On-Demand Revalidation when content changes.
 - Integrate analytics (e.g., Vercel Analytics or Google Analytics 4).
 

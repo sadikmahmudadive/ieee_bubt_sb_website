@@ -21,6 +21,17 @@ type EventRecord = {
   featured?: boolean;
 };
 
+type EventFormState = {
+  title: string;
+  slug: string;
+  description: string;
+  eventDate: string;
+  location: string;
+  coverImage: string;
+  tags: string;
+  featured: boolean;
+};
+
 type TeamRecord = {
   _id: string;
   name: string;
@@ -136,16 +147,22 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
     mutate: mutateGallery
   } = useSWR<GalleryRecord[]>("/api/gallery", fetcher, { revalidateOnFocus: false });
 
-  const [eventForm, setEventForm] = useState({
-    title: "",
-    slug: "",
-    description: "",
-    eventDate: "",
-    location: "",
-    coverImage: "",
-    tags: "",
-    featured: false
-  });
+  function createInitialEventForm(): EventFormState {
+    return {
+      title: "",
+      slug: "",
+      description: "",
+      eventDate: "",
+      location: "",
+      coverImage: "",
+      tags: "",
+      featured: false
+    };
+  }
+
+  const [eventForm, setEventForm] = useState<EventFormState>(createInitialEventForm);
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
+  const isEditingEvent = Boolean(editingEventId);
   const [eventFeedback, setEventFeedback] = useState<string | null>(null);
   const [eventError, setEventError] = useState<string | null>(null);
   const [eventSubmitting, setEventSubmitting] = useState(false);
@@ -188,6 +205,17 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
   const [teamUploadError, setTeamUploadError] = useState<string | null>(null);
   const [galleryUploadLoading, setGalleryUploadLoading] = useState(false);
   const [galleryUploadError, setGalleryUploadError] = useState<string | null>(null);
+
+  const toInputDate = (value: string): string => {
+    if (!value) {
+      return "";
+    }
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return "";
+    }
+    return parsed.toISOString().slice(0, 10);
+  };
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -249,14 +277,14 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
     }
   }
 
-  async function handleCreateEvent(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleSubmitEvent(formEvent: FormEvent<HTMLFormElement>) {
+    formEvent.preventDefault();
     setEventSubmitting(true);
     setEventFeedback(null);
     setEventError(null);
 
     if (!eventForm.coverImage) {
-      setEventError("Upload a cover image before creating an event.");
+      setEventError("Upload a cover image before saving the event.");
       setEventSubmitting(false);
       return;
     }
@@ -275,39 +303,65 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       featured: eventForm.featured
     };
 
-    if (!payload.featured) {
-      delete (payload as Partial<EventRecord>).featured;
-    }
+    const isEdit = Boolean(editingEventId);
+    const endpoint = isEdit ? `/api/events/${editingEventId}` : "/api/events";
+    const method = isEdit ? "PATCH" : "POST";
 
     try {
-      const response = await fetch("/api/events", {
-        method: "POST",
+      const response = await fetch(endpoint, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
-        const body = await response.json().catch(() => ({ error: "Failed to create event." }));
-        throw new Error(body.error ?? "Failed to create event.");
+        const body = await response.json().catch(() => ({ error: isEdit ? "Failed to update event." : "Failed to create event." }));
+        throw new Error(body.error ?? (isEdit ? "Failed to update event." : "Failed to create event."));
       }
 
-      setEventFeedback("Event created successfully.");
-      setEventForm({
-        title: "",
-        slug: "",
-        description: "",
-        eventDate: "",
-        location: "",
-        coverImage: "",
-        tags: "",
-        featured: false
-      });
+      setEventFeedback(isEdit ? "Event updated successfully." : "Event created successfully.");
+      setEventForm(createInitialEventForm());
+      setEditingEventId(null);
+      setEventUploadError(null);
+      setEventUploadLoading(false);
       await mutateEvents();
     } catch (error) {
-      setEventError(error instanceof Error ? error.message : "Unable to create event.");
+      setEventError(
+        error instanceof Error
+          ? error.message
+          : isEdit
+            ? "Unable to update event."
+            : "Unable to create event."
+      );
     } finally {
       setEventSubmitting(false);
     }
+  }
+
+  function startEventEdit(record: EventRecord) {
+    setEditingEventId(record._id);
+    setEventForm({
+      title: record.title,
+      slug: record.slug,
+      description: record.description,
+      eventDate: toInputDate(record.eventDate),
+      location: record.location,
+      coverImage: record.coverImage,
+      tags: record.tags?.join(", ") ?? "",
+      featured: Boolean(record.featured)
+    });
+    setEventFeedback(null);
+    setEventError(null);
+    setEventUploadError(null);
+  }
+
+  function cancelEventEdit() {
+    setEditingEventId(null);
+    setEventForm(createInitialEventForm());
+    setEventFeedback(null);
+    setEventError(null);
+    setEventUploadError(null);
+    setEventUploadLoading(false);
   }
 
   async function handleDeleteEvent(id: string) {
@@ -317,6 +371,10 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
         const body = await response.json().catch(() => ({ error: "Failed to delete event." }));
         throw new Error(body.error ?? "Failed to delete event.");
       }
+      if (editingEventId === id) {
+        cancelEventEdit();
+      }
+      setEventFeedback("Event deleted.");
       await mutateEvents();
     } catch (error) {
       setEventError(error instanceof Error ? error.message : "Unable to delete event.");
@@ -333,6 +391,9 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       if (!response.ok) {
         const body = await response.json().catch(() => ({ error: "Failed to update event." }));
         throw new Error(body.error ?? "Failed to update event.");
+      }
+      if (editingEventId === id) {
+        setEventForm((prev) => ({ ...prev, featured: !current }));
       }
       await mutateEvents();
     } catch (error) {
@@ -528,9 +589,13 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       {activeTab === "events" ? (
         <section className="space-y-8">
           <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
-            <h2 className="heading-font text-xl font-semibold text-white">Create Event</h2>
-            <p className="mt-2 text-sm text-slate-300">Titles, dates, and descriptions power the homepage hero and event listings.</p>
-            <form onSubmit={handleCreateEvent} className="mt-6 grid gap-5 md:grid-cols-2">
+            <h2 className="heading-font text-xl font-semibold text-white">{isEditingEvent ? "Edit Event" : "Create Event"}</h2>
+            <p className="mt-2 text-sm text-slate-300">
+              {isEditingEvent
+                ? "Update event details to refresh the public event page and hero section. Uploading a new cover image replaces the existing asset."
+                : "Titles, dates, and descriptions power the homepage hero and event listings."}
+            </p>
+            <form onSubmit={handleSubmitEvent} className="mt-6 grid gap-5 md:grid-cols-2">
               <label className="flex flex-col gap-2 text-sm text-slate-200">
                 Title
                 <input
@@ -616,14 +681,23 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 />
                 Mark as featured (showcase in hero slider)
               </label>
-              <div className="md:col-span-2 flex items-center gap-4">
+              <div className="md:col-span-2 flex flex-wrap items-center gap-4">
                 <button
                   type="submit"
                   disabled={eventSubmitting}
                   className="rounded-full bg-primary-light px-6 py-2 text-sm font-semibold uppercase tracking-[0.3em] text-slate-900 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {eventSubmitting ? "Saving..." : "Create Event"}
+                  {eventSubmitting ? "Saving..." : isEditingEvent ? "Save Changes" : "Create Event"}
                 </button>
+                {isEditingEvent ? (
+                  <button
+                    type="button"
+                    onClick={cancelEventEdit}
+                    className="rounded-full border border-white/30 px-6 py-2 text-sm font-semibold uppercase tracking-[0.3em] text-white transition hover:-translate-y-0.5 hover:border-white/60"
+                  >
+                    Cancel
+                  </button>
+                ) : null}
                 {eventFeedback ? <span className="text-sm text-emerald-300">{eventFeedback}</span> : null}
                 {eventError ? <span className="text-sm text-amber-300">{eventError}</span> : null}
               </div>
@@ -643,9 +717,23 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                       <p className="text-xs uppercase tracking-[0.3em] text-slate-300">
                         {new Date(event.eventDate).toLocaleDateString()} • {event.location}
                       </p>
-                      {event.featured ? <span className="mt-1 inline-block rounded-full bg-amber-400/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-amber-200">Featured</span> : null}
+                      <div className="mt-1 flex flex-wrap gap-2">
+                        {event.featured ? (
+                          <span className="inline-block rounded-full bg-amber-400/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-200">Featured</span>
+                        ) : null}
+                        {editingEventId === event._id ? (
+                          <span className="inline-block rounded-full bg-primary-light/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-primary-light">Editing</span>
+                        ) : null}
+                      </div>
                     </div>
                     <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => startEventEdit(event)}
+                        className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-primary-light hover:text-primary-light"
+                      >
+                        Edit
+                      </button>
                       <button
                         type="button"
                         onClick={() => handleToggleFeatured(event._id, Boolean(event.featured))}

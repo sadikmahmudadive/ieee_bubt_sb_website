@@ -36,6 +36,11 @@ export function Footer() {
                 </li>
               ))}
             <li>
+              <a href="/research-journals" className="transition hover:text-white">
+                Research & Journals
+              </a>
+            </li>
+            <li>
               <a href="/admin/login" className="transition hover:text-white">
                 Admin Login
               </a>

@@ -1,9 +1,13 @@
 import "server-only";
 
+import { Types } from "mongoose";
+
 import { connectToDatabase } from "@/lib/db";
 import { EventModel } from "@/models/Event";
 import { GalleryItemModel } from "@/models/GalleryItem";
 import { TeamMemberModel } from "@/models/TeamMember";
+
+import type { Event } from "@/models/Event";
 
 export type EventSummary = {
   _id: string;
@@ -46,91 +50,78 @@ export type GalleryItemSummary = {
   uploadedAt: string;
 };
 
+type LeanDateLike = Date | string | number | undefined | null;
+
+type EventLean = Omit<Event, "eventDate" | "createdAt" | "updatedAt"> & {
+  _id: Types.ObjectId;
+  eventDate: LeanDateLike;
+  createdAt: LeanDateLike;
+  updatedAt: LeanDateLike;
+};
+
+const normalizeDate = (value: LeanDateLike): string => {
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+
+  if (typeof value === "string" || typeof value === "number") {
+    const parsed = new Date(value);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed.toISOString();
+    }
+  }
+
+  return new Date().toISOString();
+};
+
+const mapEventSummary = (event: EventLean): EventSummary => ({
+  _id: event._id.toString(),
+  title: event.title,
+  slug: event.slug,
+  description: event.description,
+  eventDate: normalizeDate(event.eventDate),
+  location: event.location,
+  coverImage: event.coverImage,
+  tags: Array.isArray(event.tags) ? event.tags : [],
+  featured: Boolean(event.featured)
+});
+
+const mapEventDetail = (event: EventLean): EventDetail => ({
+  ...mapEventSummary(event),
+  createdAt: normalizeDate(event.createdAt),
+  updatedAt: normalizeDate(event.updatedAt)
+});
+
 export async function getEvents(): Promise<EventSummary[]> {
   await connectToDatabase();
-  const events = await EventModel.find().sort({ eventDate: -1 }).limit(6).exec();
-  return events.map((event): EventSummary => ({
-    _id: event._id.toString(),
-    title: event.title,
-    slug: event.slug,
-    description: event.description,
-    eventDate: event.eventDate instanceof Date ? event.eventDate.toISOString() : String(event.eventDate),
-    location: event.location,
-    coverImage: event.coverImage,
-    tags: event.tags ?? [],
-    featured: Boolean(event.featured)
-  }));
+  const events = await EventModel.find().sort({ eventDate: -1 }).limit(6).lean<EventLean[]>();
+  return events.map(mapEventSummary);
 }
 
 export async function getEventBySlug(slug: string): Promise<EventDetail | null> {
   await connectToDatabase();
-  const event = await EventModel.findOne({ slug }).lean();
+  const event = await EventModel.findOne({ slug }).lean<EventLean | null>();
   if (!event) {
     return null;
   }
 
-  const normalizeDate = (value: unknown): string => {
-    if (value instanceof Date) {
-      return value.toISOString();
-    }
-    if (typeof value === "string" || typeof value === "number") {
-      const date = new Date(value);
-      if (!Number.isNaN(date.getTime())) {
-        return date.toISOString();
-      }
-    }
-    return new Date().toISOString();
-  };
-
-  return {
-    _id: event._id.toString(),
-    title: event.title,
-    slug: event.slug,
-    description: event.description,
-    eventDate: normalizeDate(event.eventDate),
-    location: event.location,
-    coverImage: event.coverImage,
-    tags: event.tags ?? [],
-    featured: Boolean(event.featured),
-    createdAt: normalizeDate(event.createdAt),
-    updatedAt: normalizeDate(event.updatedAt)
-  };
+  return mapEventDetail(event);
 }
 
 export async function getRecentEvents(limit = 3, excludeSlug?: string): Promise<EventSummary[]> {
   await connectToDatabase();
   const query = excludeSlug ? { slug: { $ne: excludeSlug } } : {};
-  const events = await EventModel.find(query).sort({ eventDate: -1 }).limit(limit).exec();
-  return events.map((event): EventSummary => ({
-    _id: event._id.toString(),
-    title: event.title,
-    slug: event.slug,
-    description: event.description,
-    eventDate: event.eventDate instanceof Date ? event.eventDate.toISOString() : String(event.eventDate),
-    location: event.location,
-    coverImage: event.coverImage,
-    tags: event.tags ?? [],
-    featured: Boolean(event.featured)
-  }));
+  const events = await EventModel.find(query).sort({ eventDate: -1 }).limit(limit).lean<EventLean[]>();
+  return events.map(mapEventSummary);
 }
 
 export async function getFeaturedEvent(): Promise<EventSummary | null> {
   await connectToDatabase();
-  const event = await EventModel.findOne({ featured: true }).sort({ eventDate: -1 }).exec();
+  const event = await EventModel.findOne({ featured: true }).sort({ eventDate: -1 }).lean<EventLean | null>();
   if (!event) {
     return null;
   }
-  return {
-    _id: event._id.toString(),
-    title: event.title,
-    slug: event.slug,
-    description: event.description,
-    eventDate: event.eventDate instanceof Date ? event.eventDate.toISOString() : String(event.eventDate),
-    location: event.location,
-    coverImage: event.coverImage,
-    tags: event.tags ?? [],
-    featured: Boolean(event.featured)
-  };
+  return mapEventSummary(event);
 }
 
 export async function getTeamMembers(): Promise<TeamMemberSummary[]> {

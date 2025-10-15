@@ -6,6 +6,9 @@ export interface TeamMember {
   bio?: string;
   photoUrl: string;
   priority: number;
+  affiliation: "main" | "chapter";
+  chapter?: string;
+  roleKey?: string;
   socials: {
     facebook?: string;
     instagram?: string;
@@ -23,6 +26,9 @@ const teamMemberSchema = new Schema<TeamMember>(
     bio: { type: String },
     photoUrl: { type: String, required: true },
     priority: { type: Number, default: 0 },
+    affiliation: { type: String, enum: ["main", "chapter"], default: "main" },
+    chapter: { type: String },
+    roleKey: { type: String },
     socials: {
       facebook: { type: String },
       instagram: { type: String },

@@ -1,9 +1,13 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
+
+import { chapterFallbackName, groupChapterMembers } from "@/utils/teamGrouping";
+import type { ChapterGroup } from "@/utils/teamGrouping";
 
 export type AdminDashboardProps = {
   adminUsername: string;
@@ -43,6 +47,9 @@ type TeamRecord = {
   bio?: string;
   photoUrl: string;
   priority?: number;
+  affiliation?: "main" | "chapter";
+  chapter?: string;
+  roleKey?: string;
   socials?: {
     facebook?: string;
     instagram?: string;
@@ -57,6 +64,9 @@ type TeamFormState = {
   bio: string;
   photoUrl: string;
   priority: string;
+  affiliation: "main" | "chapter";
+  chapter: string;
+  roleKey: string;
   facebook: string;
   instagram: string;
   linkedin: string;
@@ -71,6 +81,46 @@ type GalleryRecord = {
   event?: string;
   uploadedAt?: string;
 };
+
+type AdminTab = "events" | "team" | "chapters" | "gallery";
+
+const chapterNameOptions = [
+  "IEEE Computer Society Student Branch Chapter",
+  "IEEE Robotics and Automation Society Student Branch Chapter",
+  "IEEE Photonics Society Student Branch Chapter",
+  "IEEE Power and Energy Society Student Branch Chapter",
+  "IEEE Systems Council Student Branch Chapter",
+  "IEEE Power Electronics Society Student Branch Chapter",
+  "IEEE BUBT Women in Engineering Student Branch Affinity Group"
+];
+
+const roleKeyOptions = [
+  { value: "none", label: "Not spotlighted on homepage" },
+  { value: "chief-advisor", label: "Chief Advisor (Main Branch)" },
+  { value: "executive-advisor", label: "Executive Advisor (Main Branch)" },
+  { value: "advisor", label: "Advisor (Main Branch)" },
+  { value: "counselor", label: "Branch Counselor" },
+  { value: "chairperson", label: "Chairperson" },
+  { value: "vice-chairperson", label: "Vice Chairperson" },
+  { value: "general-secretary", label: "General Secretary" },
+  { value: "joint-general-secretary", label: "Joint General Secretary" },
+  { value: "treasurer", label: "Treasurer" },
+  { value: "webmaster", label: "Web Master" },
+  { value: "chapter-advisor", label: "Chapter Advisor" },
+  { value: "chapter-co-advisor", label: "Chapter Co-Advisor" },
+  { value: "chapter-chair", label: "Chapter Chair" },
+  { value: "chapter-vice-chair", label: "Chapter Vice Chair" },
+  { value: "chapter-secretary", label: "Chapter Secretary" },
+  { value: "chapter-joint-secretary", label: "Chapter Joint Secretary" },
+  { value: "chapter-treasurer", label: "Chapter Treasurer" },
+  { value: "chapter-webmaster", label: "Chapter Web Master" },
+  { value: "chapter-committee", label: "Chapter Committee Member" }
+];
+
+const roleKeyLabelMap = roleKeyOptions.reduce<Record<string, string>>((acc, option) => {
+  acc[option.value] = option.label;
+  return acc;
+}, {});
 
 const fetcher = async <T,>(url: string): Promise<T> => {
   const response = await fetch(url, { cache: "no-store" });
@@ -90,7 +140,7 @@ type UploadSignaturePayload = {
 
 export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"events" | "team" | "gallery">("events");
+  const [activeTab, setActiveTab] = useState<AdminTab>("events");
 
   const uploadImage = useCallback(
     async (file: File, target: "events" | "team" | "gallery") => {
@@ -145,6 +195,33 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
     mutate: mutateTeam
   } = useSWR<TeamRecord[]>("/api/team", fetcher, { revalidateOnFocus: false });
 
+  const chapterEntries = useMemo<ChapterGroup<TeamRecord>[]>(() => {
+    if (!team || team.length === 0) {
+      return [];
+    }
+    return groupChapterMembers<TeamRecord>(team);
+  }, [team]);
+
+  const [selectedChapter, setSelectedChapter] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (chapterEntries.length === 0) {
+      setSelectedChapter(null);
+      return;
+    }
+    setSelectedChapter((previous) => {
+      if (previous && chapterEntries.some((entry) => entry.name === previous)) {
+        return previous;
+      }
+      return chapterEntries[0].name;
+    });
+  }, [chapterEntries]);
+
+  const selectedChapterEntry = selectedChapter
+    ? chapterEntries.find((entry) => entry.name === selectedChapter) ?? null
+    : null;
+  const fallbackChapterEntry = chapterEntries.find((entry) => entry.name === chapterFallbackName) ?? null;
+
   const {
     data: gallery,
     isLoading: isGalleryLoading,
@@ -180,6 +257,9 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       bio: "",
       photoUrl: "",
       priority: "0",
+      affiliation: "main",
+      chapter: "",
+      roleKey: "none",
       facebook: "",
       instagram: "",
       linkedin: "",
@@ -187,7 +267,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
     };
   }
 
-  const [teamForm, setTeamForm] = useState<TeamFormState>(createInitialTeamForm);
+  const [teamForm, setTeamForm] = useState<TeamFormState>(createInitialTeamForm());
   const [editingTeamId, setEditingTeamId] = useState<string | null>(null);
   const isEditingTeam = Boolean(editingTeamId);
   const [teamFeedback, setTeamFeedback] = useState<string | null>(null);
@@ -432,6 +512,10 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       bio: teamForm.bio || undefined,
       photoUrl: teamForm.photoUrl,
       priority: Number(teamForm.priority) || 0,
+      affiliation: teamForm.affiliation,
+      chapter:
+        teamForm.affiliation === "chapter" ? teamForm.chapter.trim() || undefined : undefined,
+      roleKey: teamForm.roleKey !== "none" ? teamForm.roleKey : undefined,
       socials: {
         facebook: teamForm.facebook || undefined,
         instagram: teamForm.instagram || undefined,
@@ -476,6 +560,9 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       bio: member.bio ?? "",
       photoUrl: member.photoUrl,
       priority: String(member.priority ?? 0),
+      affiliation: member.affiliation ?? "main",
+      chapter: member.chapter ?? "",
+      roleKey: member.roleKey ?? "none",
       facebook: member.socials?.facebook ?? "",
       instagram: member.socials?.instagram ?? "",
       linkedin: member.socials?.linkedin ?? "",
@@ -851,6 +938,60 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 )}
               </div>
               <label className="flex flex-col gap-2 text-sm text-slate-200">
+                Branch Affiliation
+                <select
+                  value={teamForm.affiliation}
+                  onChange={(e) =>
+                    setTeamForm((prev) => ({
+                      ...prev,
+                      affiliation: e.target.value as TeamFormState["affiliation"],
+                      chapter: e.target.value === "chapter" ? prev.chapter : ""
+                    }))
+                  }
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                >
+                  <option value="main">IEEE BUBT SB (Main Branch)</option>
+                  <option value="chapter">Student Branch Chapter</option>
+                </select>
+              </label>
+              {teamForm.affiliation === "chapter" ? (
+                <label className="flex flex-col gap-2 text-sm text-slate-200">
+                  Chapter Name
+                  <>
+                    <input
+                      value={teamForm.chapter}
+                      onChange={(e) => setTeamForm((prev) => ({ ...prev, chapter: e.target.value }))}
+                      list="chapter-name-options"
+                      placeholder="Select or enter chapter name"
+                      className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                    />
+                    <datalist id="chapter-name-options">
+                      {chapterNameOptions.map((option) => (
+                        <option key={option} value={option} />
+                      ))}
+                    </datalist>
+                  </>
+                </label>
+              ) : null}
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+                Homepage Spotlight Role (optional)
+                <select
+                  value={teamForm.roleKey}
+                  onChange={(e) => setTeamForm((prev) => ({ ...prev, roleKey: e.target.value }))}
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                >
+                  {roleKeyOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-xs text-slate-400">
+                  Assign a role to surface this member on the homepage leadership spotlights. Leave the default option for committee or
+                  chapter-only members.
+                </span>
+              </label>
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
                 Display Priority (higher shows first)
                 <input
                   type="number"
@@ -915,17 +1056,44 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
               <p className="mt-4 text-sm text-slate-300">Loading team information...</p>
             ) : team && team.length > 0 ? (
               <ul className="mt-6 space-y-4">
-                {team.map((member) => (
-                  <li key={member._id} className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="heading-font text-base font-semibold text-white">{member.name}</p>
-                      <p className="text-xs uppercase tracking-[0.3em] text-slate-300">{member.role}</p>
-                      {editingTeamId === member._id ? (
-                        <span className="mt-1 inline-block rounded-full bg-primary-light/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-primary-light">
-                          Editing
-                        </span>
-                      ) : null}
-                    </div>
+                {team.map((member) => {
+                  const affiliation = member.affiliation ?? "main";
+                  const roleKey = member.roleKey ?? "none";
+                  const roleLabel = roleKeyLabelMap[roleKey] ?? roleKeyLabelMap.none;
+                  const isSpotlighted = roleKey !== "none";
+
+                  return (
+                    <li key={member._id} className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="space-y-2">
+                        <div>
+                          <p className="heading-font text-base font-semibold text-white">{member.name}</p>
+                          <p className="text-xs uppercase tracking-[0.3em] text-slate-300">{member.role}</p>
+                          {editingTeamId === member._id ? (
+                            <span className="mt-1 inline-block rounded-full bg-primary-light/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-primary-light">
+                              Editing
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-[11px] font-semibold uppercase tracking-[0.28em]">
+                          <span className="rounded-full border border-white/15 px-3 py-1 text-slate-200">
+                            {affiliation === "chapter"
+                              ? `Chapter${member.chapter ? `: ${member.chapter}` : " (add chapter name)"}`
+                              : "Main Branch"}
+                          </span>
+                          <span
+                            className={`rounded-full border px-3 py-1 ${
+                              isSpotlighted
+                                ? "border-primary-light/70 text-primary-light"
+                                : "border-white/15 text-slate-300"
+                            }`}
+                          >
+                            {isSpotlighted ? `Homepage Spotlight: ${roleLabel}` : roleLabel}
+                          </span>
+                          <span className="rounded-full border border-white/15 px-3 py-1 text-slate-200">
+                            Priority: {typeof member.priority === "number" ? member.priority : 0}
+                          </span>
+                        </div>
+                      </div>
                     <div className="flex flex-wrap gap-2">
                       <button
                         type="button"
@@ -942,13 +1110,151 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                         Delete
                       </button>
                     </div>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             ) : (
               <p className="mt-4 text-sm text-slate-300">No team members yet. Add one above.</p>
             )}
           </div>
+        </section>
+      ) : null}
+
+      {activeTab === "chapters" ? (
+        <section className="space-y-8">
+          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
+            <h2 className="heading-font text-xl font-semibold text-white">Chapters & Affinity Groups</h2>
+            <p className="mt-2 text-sm text-slate-300">
+              Review chapter rosters, confirm advisor assignments, and jump into the public pages that showcase each community.
+            </p>
+            {chapterEntries.length > 0 ? (
+              <>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  {chapterEntries.map((entry) => (
+                    <button
+                      key={entry.slug}
+                      type="button"
+                      onClick={() => setSelectedChapter(entry.name)}
+                      className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] transition ${
+                        selectedChapter === entry.name
+                          ? "bg-primary-light text-slate-900"
+                          : "border border-white/20 text-white hover:border-white hover:bg-white/10"
+                      }`}
+                    >
+                      {entry.name}
+                      <span className="ml-2 rounded-full border border-white/20 px-2 py-0.5 text-[10px] tracking-[0.25em]">
+                        {entry.members.length}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                {fallbackChapterEntry ? (
+                  <p className="mt-4 text-xs text-amber-300">
+                    {fallbackChapterEntry.members.length} member
+                    {fallbackChapterEntry.members.length === 1 ? "" : "s"} still use the default chapter name. Update their chapter titles for clearer listings.
+                  </p>
+                ) : null}
+              </>
+            ) : (
+              <p className="mt-4 text-sm text-slate-300">Add chapter or affinity group members in the Team tab to populate this view.</p>
+            )}
+          </div>
+
+          {selectedChapterEntry ? (
+            <div className="space-y-6 rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <h3 className="heading-font text-lg font-semibold text-white">{selectedChapterEntry.name}</h3>
+                  <p className="mt-1 text-xs uppercase tracking-[0.3em] text-slate-300">
+                    {selectedChapterEntry.advisors.length} advisor{selectedChapterEntry.advisors.length === 1 ? "" : "s"} ·
+                    {" "}
+                    {selectedChapterEntry.committee.length} committee member{selectedChapterEntry.committee.length === 1 ? "" : "s"}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href={`/chapters/${selectedChapterEntry.slug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-white hover:bg-white/10"
+                  >
+                    View Public Page
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("team")}
+                    className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-primary-light hover:text-primary-light"
+                  >
+                    Add or Edit Members
+                  </button>
+                </div>
+              </div>
+
+              {selectedChapterEntry.members.length > 0 ? (
+                <ul className="space-y-4">
+                  {selectedChapterEntry.members.map((member) => {
+                    const roleKey = member.roleKey ?? "none";
+                    const roleLabel = roleKeyLabelMap[roleKey] ?? roleKeyLabelMap.none;
+                    const isSpotlighted = roleKey !== "none";
+
+                    return (
+                      <li
+                        key={member._id}
+                        className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 lg:flex-row lg:items-center lg:justify-between"
+                      >
+                        <div className="space-y-2">
+                          <p className="heading-font text-base font-semibold text-white">{member.name}</p>
+                          <p className="text-xs uppercase tracking-[0.3em] text-slate-300">{member.role}</p>
+                          <div className="flex flex-wrap gap-2 text-[11px] font-semibold uppercase tracking-[0.28em]">
+                            <span className="rounded-full border border-white/15 px-3 py-1 text-slate-200">
+                              {member.chapter?.trim() || chapterFallbackName}
+                            </span>
+                            <span
+                              className={`rounded-full border px-3 py-1 ${
+                                isSpotlighted
+                                  ? "border-primary-light/70 text-primary-light"
+                                  : "border-white/15 text-slate-300"
+                              }`}
+                            >
+                              {isSpotlighted ? `Homepage Spotlight: ${roleLabel}` : roleLabel}
+                            </span>
+                            <span className="rounded-full border border-white/15 px-3 py-1 text-slate-200">
+                              Priority: {typeof member.priority === "number" ? member.priority : 0}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              startTeamEdit(member);
+                              setActiveTab("team");
+                            }}
+                            className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-primary-light hover:text-primary-light"
+                          >
+                            Edit in Team Tab
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteTeamMember(member._id)}
+                            className="rounded-full border border-red-400/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-red-200 transition hover:border-red-300 hover:text-red-100"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <p className="text-sm text-slate-300">
+                  No members are assigned to this chapter yet. Use the Team tab to add faculty or committee members with the appropriate
+                  chapter name.
+                </p>
+              )}
+            </div>
+          ) : null}
         </section>
       ) : null}
 

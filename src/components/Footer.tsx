@@ -41,6 +41,11 @@ export function Footer() {
               </a>
             </li>
             <li>
+              <a href="/chapters" className="transition hover:text-white">
+                Chapters & Affinity Groups
+              </a>
+            </li>
+            <li>
               <a href="/admin/login" className="transition hover:text-white">
                 Admin Login
               </a>

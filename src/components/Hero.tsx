@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import type { EventSummary } from "@/lib/actions";
+import { siteMetadata } from "@/utils/siteMetadata";
 
 const stats = [
   { label: "Workshops hosted", value: "40+" },
@@ -143,7 +145,17 @@ export function Hero({ events = [], spotlight }: HeroProps) {
 
       <div className="relative mx-auto flex min-h-[80vh] max-w-6xl flex-col justify-center gap-12 px-6 py-24">
         <div className="space-y-6 text-white">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.4em]">
+          <span className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em]">
+            <span className="relative h-8 w-8 overflow-hidden rounded-full border border-white/20 bg-white/10 p-1">
+              <Image
+                src={siteMetadata.brand?.logo.src ?? "/brand/ieee-bubt-sb-logo.svg"}
+                alt={siteMetadata.brand?.logo.alt ?? "IEEE BUBT Student Branch logo"}
+                fill
+                sizes="32px"
+                className="object-contain"
+                priority
+              />
+            </span>
             IEEE BUBT Student Branch
           </span>
           <h1 className="heading-font text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">

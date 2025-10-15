@@ -7,6 +7,7 @@ import { connectToDatabase } from "@/lib/db";
 import { EventModel } from "@/models/Event";
 import { GalleryItemModel } from "@/models/GalleryItem";
 import { TeamMemberModel } from "@/models/TeamMember";
+import { groupChapterMembers } from "@/utils/teamGrouping";
 
 import type { Event } from "@/models/Event";
 
@@ -36,6 +37,9 @@ export type TeamMemberSummary = {
   bio?: string;
   photoUrl: string;
   priority: number;
+  affiliation: "main" | "chapter";
+  chapter?: string;
+  roleKey?: string;
   socials: {
     facebook?: string;
     instagram?: string;
@@ -51,6 +55,12 @@ export type GalleryItemSummary = {
   imageUrl: string;
   event?: string;
   uploadedAt: string;
+};
+
+export type ChapterSummary = {
+  name: string;
+  slug: string;
+  memberCount: number;
 };
 
 type LeanDateLike = Date | string | number | undefined | null;
@@ -144,7 +154,20 @@ export async function getTeamMembers(): Promise<TeamMemberSummary[]> {
     bio: member.bio,
     photoUrl: member.photoUrl,
     priority: member.priority ?? 0,
+    affiliation: member.affiliation ?? "main",
+    chapter: member.chapter ?? undefined,
+    roleKey: member.roleKey ?? undefined,
     socials: member.socials ?? {}
+  }));
+}
+
+export async function getChapterSummaries(): Promise<ChapterSummary[]> {
+  const members = await getTeamMembers();
+  const groups = groupChapterMembers(members);
+  return groups.map((group) => ({
+    name: group.name,
+    slug: group.slug,
+    memberCount: group.members.length
   }));
 }
 

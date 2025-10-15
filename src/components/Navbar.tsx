@@ -1,69 +1,275 @@
 "use client";
 
-import { useState } from "react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Bars3Icon, ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
+
 import { siteMetadata } from "@/utils/siteMetadata";
 
-const navigation = [
-  { name: "Overview", href: "/" },
-  { name: "About IEEE BUBT", href: "/#about" },
-  { name: "Programs & Events", href: "/#events" },
-  { name: "Leadership", href: "/#team" },
-  { name: "Gallery", href: "/#gallery" },
-  { name: "Research & Journals", href: "/research-journals" },
-  { name: "Connect", href: "/#contact" }
+type NavItem = {
+  key: string;
+  label: string;
+  href?: string;
+  type?: "dropdown";
+};
+
+type ChapterSummary = {
+  name: string;
+  slug: string;
+  memberCount: number;
+};
+
+const navItems: NavItem[] = [
+  { key: "home", label: "Home", href: "/" },
+  { key: "activities", label: "Activities", href: "/#events" },
+  { key: "chapters", label: "Societies & AG", type: "dropdown" },
+  { key: "members", label: "Members", href: "/leadership" },
+  { key: "about", label: "About", href: "/#about" },
+  { key: "publications", label: "Publications", href: "/research-journals" },
+  { key: "contact", label: "Contact", href: "/#contact" },
+  { key: "get-involved", label: "Get Involved", href: "/#contact" }
 ];
 
+const portalLink = {
+  label: "IEEE BUBT SB Portal",
+  href: "/#contact"
+};
+
+const desktopLinkClasses =
+  "inline-flex items-center rounded-md px-2.5 py-2 text-[9px] font-semibold uppercase tracking-[0.24em] text-white transition hover:text-amber-200";
+
+const dropdownLinkClasses =
+  "block px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-700 transition hover:bg-slate-100";
+
 export function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const [chapters, setChapters] = useState<ChapterSummary[]>([]);
+  const [chaptersLoading, setChaptersLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadChapters() {
+      try {
+        const response = await fetch("/api/chapters", { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error("Failed to load chapters");
+        }
+        const data = (await response.json()) as ChapterSummary[];
+        if (isMounted) {
+          setChapters(data);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setChapters([]);
+        }
+      } finally {
+        if (isMounted) {
+          setChaptersLoading(false);
+        }
+      }
+    }
+
+    void loadChapters();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleNavToggle = () => {
+    setIsMenuOpen((prev) => !prev);
+    if (isDropdownOpen) {
+      setIsDropdownOpen(false);
+    }
+  };
+
+  const handleDesktopDropdownToggle = () => {
+    setIsDropdownOpen((prev) => !prev);
+  };
+
+  const closeAllMenus = () => {
+    setIsMenuOpen(false);
+    setIsDropdownOpen(false);
+    setMobileDropdownOpen(false);
+  };
 
   return (
-    <header className="sticky top-0 z-50 w-full">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-slate-950/95 via-slate-950/70 to-transparent" />
-  <nav className="mx-auto mt-4 flex max-w-7xl items-center justify-between rounded-full border border-white/10 bg-white/5 px-8 py-4 shadow-[0_25px_60px_-30px_rgba(15,23,42,0.85)] backdrop-blur-xl lg:px-12">
-        <a
-          href="/"
-          className="heading-font whitespace-nowrap text-sm font-semibold uppercase tracking-[0.5em] text-white transition hover:text-primary-light"
-        >
-          {siteMetadata.shortTitle}
-        </a>
-        <div className="hidden items-center gap-6 md:flex">
-          <ul className="flex flex-nowrap items-center gap-5">
-            {navigation.map((item) => (
-              <li key={item.name}>
-                <a
-                  href={item.href}
-                  className="group relative inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-200 transition hover:text-white"
-                >
-                  <span className="absolute inset-x-2 bottom-0 h-px scale-x-0 bg-gradient-to-r from-transparent via-primary-light to-transparent opacity-0 transition group-hover:scale-x-100 group-hover:opacity-100" aria-hidden />
-                  {item.name}
-                </a>
-              </li>
-            ))}
+    <header className="sticky top-0 z-50 bg-[#052d63]/98 text-white shadow-lg backdrop-blur">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
+        <Link href="/" className="flex items-center gap-3" onClick={closeAllMenus}>
+          <span className="relative h-12 w-12 overflow-hidden">
+            <Image
+              src={siteMetadata.brand?.logo.src ?? "/brand/ieee-bubt-sb-logo.svg"}
+              alt={siteMetadata.brand?.logo.alt ?? "IEEE BUBT Student Branch logo"}
+              fill
+              sizes="48px"
+              priority
+              className="object-contain"
+            />
+          </span>
+          <span className="hidden text-xs font-semibold uppercase tracking-[0.3em] md:block">{siteMetadata.shortTitle}</span>
+        </Link>
+
+        <div className="hidden items-center gap-6 lg:flex">
+          <ul className="flex items-center gap-2">
+            {navItems.map((item) => {
+              if (item.type === "dropdown") {
+                const isOpen = isDropdownOpen;
+
+                return (
+                  <li
+                    key={item.key}
+                    className="relative"
+                    onMouseEnter={() => setIsDropdownOpen(true)}
+                    onMouseLeave={() => setIsDropdownOpen(false)}
+                  >
+                    <button
+                      type="button"
+                      className={`${desktopLinkClasses} gap-1`}
+                      aria-expanded={isOpen}
+                      onClick={handleDesktopDropdownToggle}
+                    >
+                      {item.label}
+                      <ChevronDownIcon className={`h-4 w-4 transition ${isOpen ? "rotate-180" : ""}`} />
+                    </button>
+                    {isOpen ? (
+                      <div className="absolute left-0 z-50 mt-3 w-64 rounded-xl bg-white py-2 text-slate-900 shadow-2xl ring-1 ring-black/5">
+                        {chaptersLoading ? (
+                          <p className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">
+                            Loading...
+                          </p>
+                        ) : chapters.length > 0 ? (
+                          <>
+                            {chapters.map((chapter) => (
+                              <Link
+                                key={chapter.slug}
+                                href={`/chapters/${chapter.slug}`}
+                                className={dropdownLinkClasses}
+                                onClick={closeAllMenus}
+                              >
+                                {chapter.name}
+                              </Link>
+                            ))}
+                            <div className="mt-2 border-t border-slate-200 pt-2">
+                              <Link
+                                href="/chapters"
+                                className="block px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-500 transition hover:text-slate-700"
+                                onClick={closeAllMenus}
+                              >
+                                View All Chapters
+                              </Link>
+                            </div>
+                          </>
+                        ) : (
+                          <p className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">
+                            Chapters coming soon
+                          </p>
+                        )}
+                      </div>
+                    ) : null}
+                  </li>
+                );
+              }
+
+              return (
+                <li key={item.key}>
+                  <Link href={item.href ?? "#"} className={desktopLinkClasses} onClick={closeAllMenus}>
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
+          <Link
+            href={portalLink.href}
+            className="inline-flex items-center gap-2 rounded-full border border-[#64c0ff] px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.26em] text-[#64c0ff] transition hover:border-white hover:text-white"
+          >
+            {portalLink.label}
+          </Link>
         </div>
+
         <button
-          className="md:hidden text-slate-200"
-          onClick={() => setOpen((prev) => !prev)}
-          aria-label={open ? "Close navigation" : "Open navigation"}
+          type="button"
+          className="flex items-center justify-center rounded-md border border-white/20 p-2 text-white lg:hidden"
+          aria-label={isMenuOpen ? "Close navigation" : "Open navigation"}
+          onClick={handleNavToggle}
         >
-          {open ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
+          {isMenuOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
         </button>
       </nav>
-      {open ? (
-        <div className="md:hidden">
-          <div className="mx-auto mt-3 w-[92%] rounded-3xl border border-white/10 bg-slate-950/80 p-6 shadow-xl shadow-slate-950/40 backdrop-blur-xl">
-            <div className="space-y-4">
-              {navigation.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="block rounded-full px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-200 transition hover:bg-white/10 hover:text-white"
-                  onClick={() => setOpen(false)}
-                >
-                  {item.name}
-                </a>
-              ))}
+
+      {isMenuOpen ? (
+        <div className="lg:hidden">
+          <div className="border-t border-white/10 bg-[#042652]">
+            <div className="space-y-2 px-4 py-4">
+              {navItems.map((item) => {
+                if (item.type === "dropdown") {
+                  return (
+                    <div key={item.key} className="rounded-lg bg-white/5 p-3">
+                      <button
+                        type="button"
+                        className="flex w-full items-center justify-between text-sm font-semibold uppercase tracking-[0.28em] text-white"
+                        aria-expanded={mobileDropdownOpen}
+                        onClick={() => setMobileDropdownOpen((prev) => !prev)}
+                      >
+                        {item.label}
+                        <ChevronDownIcon
+                          className={`h-5 w-5 transition ${mobileDropdownOpen ? "rotate-180" : ""}`}
+                        />
+                      </button>
+                      {mobileDropdownOpen ? (
+                        <div className="mt-3 space-y-2">
+                          {chaptersLoading ? (
+                            <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Loading...</p>
+                          ) : chapters.length > 0 ? (
+                            chapters.map((chapter) => (
+                              <Link
+                                key={chapter.slug}
+                                href={`/chapters/${chapter.slug}`}
+                                className="block rounded-md bg-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-white/90 transition hover:bg-white/15"
+                                onClick={closeAllMenus}
+                              >
+                                {chapter.name}
+                              </Link>
+                            ))
+                          ) : (
+                            <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Chapters coming soon</p>
+                          )}
+                          <Link
+                            href="/chapters"
+                            className="block rounded-md border border-white/20 px-3 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-white transition hover:bg-white/10"
+                            onClick={closeAllMenus}
+                          >
+                            View All Chapters
+                          </Link>
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={item.key}
+                    href={item.href ?? "#"}
+                    className="block rounded-lg px-3 py-2 text-sm font-semibold uppercase tracking-[0.28em] text-white transition hover:bg-white/10"
+                    onClick={closeAllMenus}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+              <Link
+                href={portalLink.href}
+                className="mt-2 block rounded-lg border border-[#3aa8ff] px-3 py-2 text-center text-sm font-semibold uppercase tracking-[0.3em] text-[#3aa8ff] transition hover:border-[#63bfff] hover:text-[#63bfff]"
+                onClick={closeAllMenus}
+              >
+                {portalLink.label}
+              </Link>
             </div>
           </div>
         </div>

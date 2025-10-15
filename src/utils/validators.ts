@@ -19,6 +19,9 @@ export const teamMemberSchema = z.object({
   bio: z.string().optional(),
   photoUrl: z.string().url(),
   priority: z.number().int().default(0),
+  affiliation: z.enum(["main", "chapter"]).default("main"),
+  chapter: z.string().optional(),
+  roleKey: z.string().optional(),
   socials: z
     .object({
       facebook: z.string().url().optional(),

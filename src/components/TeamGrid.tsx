@@ -37,8 +37,8 @@ export function TeamGrid({ team }: TeamGridProps) {
 
   return (
     <section id="team" className="relative py-28">
-      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-slate-900/40 via-transparent to-transparent" aria-hidden />
-      <div className="mx-auto max-w-6xl px-6">
+  <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-slate-900/40 via-transparent to-transparent" aria-hidden />
+  <div className="mx-auto max-w-7xl px-6">
         <SectionHeading
           eyebrow="Main Branch Leadership"
           title="Guided by Faculty Mentors and Student Officers"
@@ -50,9 +50,9 @@ export function TeamGrid({ team }: TeamGridProps) {
               <h3 className="heading-font text-lg font-semibold text-white">Faculty Advisors</h3>
               <p className="text-xs uppercase tracking-[0.35em] text-slate-400">Chief advisor, executive advisors, advisor, and counselor</p>
             </div>
-            <div className="mt-6 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-6 grid justify-items-center gap-10 sm:grid-cols-2 xl:grid-cols-3">
               {advisorSpotlight.length > 0 ? (
-                advisorSpotlight.map((member) => <TeamMemberCard key={member._id} member={member} />)
+                advisorSpotlight.map((member) => <TeamMemberCard key={member._id} member={member} variant="faculty" />)
               ) : (
                 <p className="col-span-full rounded-3xl border border-white/15 bg-slate-950/70 p-8 text-center text-sm text-slate-200">
                   Add faculty advisors via the admin panel to highlight them here.
@@ -65,7 +65,7 @@ export function TeamGrid({ team }: TeamGridProps) {
               <h3 className="heading-font text-lg font-semibold text-white">Student Executive Committee</h3>
               <p className="text-xs uppercase tracking-[0.35em] text-slate-400">Chairperson, vice chairperson, GS, JGS, treasurer, and web master</p>
             </div>
-            <div className="mt-6 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid justify-items-center gap-10 sm:grid-cols-2 xl:grid-cols-3">
               {studentSpotlight.length > 0 ? (
                 studentSpotlight.map((member) => <TeamMemberCard key={member._id} member={member} />)
               ) : (

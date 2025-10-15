@@ -37,10 +37,10 @@ const portalLink = {
 };
 
 const desktopLinkClasses =
-  "inline-flex items-center rounded-md px-2.5 py-2 text-[9px] font-semibold uppercase tracking-[0.24em] text-white transition hover:text-amber-200";
+  "inline-flex items-center rounded-md px-2.5 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-white transition hover:text-amber-200 whitespace-nowrap";
 
 const dropdownLinkClasses =
-  "block px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-700 transition hover:bg-slate-100";
+  "block px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-700 transition hover:bg-slate-100";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -114,8 +114,8 @@ export function Navbar() {
           <span className="hidden text-xs font-semibold uppercase tracking-[0.3em] md:block">{siteMetadata.shortTitle}</span>
         </Link>
 
-        <div className="hidden items-center gap-6 lg:flex">
-          <ul className="flex items-center gap-2">
+        <div className="hidden items-center gap-5 lg:flex">
+          <ul className="flex items-center gap-1.5">
             {navItems.map((item) => {
               if (item.type === "dropdown") {
                 const isOpen = isDropdownOpen;
@@ -157,7 +157,7 @@ export function Navbar() {
                             <div className="mt-2 border-t border-slate-200 pt-2">
                               <Link
                                 href="/chapters"
-                                className="block px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-500 transition hover:text-slate-700"
+                                className="block px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500 transition hover:text-slate-700"
                                 onClick={closeAllMenus}
                               >
                                 View All Chapters
@@ -186,7 +186,7 @@ export function Navbar() {
           </ul>
           <Link
             href={portalLink.href}
-            className="inline-flex items-center gap-2 rounded-full border border-[#64c0ff] px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.26em] text-[#64c0ff] transition hover:border-white hover:text-white"
+            className="inline-flex items-center gap-2 rounded-full bg-[#5bb3ff] px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#031a3a] shadow transition hover:bg-white hover:text-[#031a3a]"
           >
             {portalLink.label}
           </Link>

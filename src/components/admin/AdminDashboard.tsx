@@ -875,6 +875,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
               <p className="mt-4 text-sm text-slate-300">No events yet. Create one above.</p>
             )}
           </div>
+
         </section>
       ) : null}
 
@@ -948,10 +949,14 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                       chapter: e.target.value === "chapter" ? prev.chapter : ""
                     }))
                   }
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="rounded-lg border border-white/20 bg-slate-900/80 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                 >
-                  <option value="main">IEEE BUBT SB (Main Branch)</option>
-                  <option value="chapter">Student Branch Chapter</option>
+                  <option className="text-slate-900" value="main">
+                    IEEE BUBT SB (Main Branch)
+                  </option>
+                  <option className="text-slate-900" value="chapter">
+                    Student Branch Chapter
+                  </option>
                 </select>
               </label>
               {teamForm.affiliation === "chapter" ? (
@@ -978,10 +983,10 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 <select
                   value={teamForm.roleKey}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, roleKey: e.target.value }))}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="rounded-lg border border-white/20 bg-slate-900/80 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                 >
                   {roleKeyOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
+                    <option className="text-slate-900" key={option.value} value={option.value}>
                       {option.label}
                     </option>
                   ))}

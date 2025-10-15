@@ -35,45 +35,59 @@ export function resolveRoleKey<T extends RoleLike>(member: T): RoleKey {
   }
 
   const normalized = member.role.toLowerCase();
+  const includesAdvisor = normalized.includes("advisor") || normalized.includes("adviser");
+  const includesCoAdvisor =
+    normalized.includes("co-advisor") || normalized.includes("co advisor") || normalized.includes("co-adviser") || normalized.includes("co adviser");
+  const includesCounselor =
+    normalized.includes("counselor") ||
+    normalized.includes("counsellor") ||
+    normalized.includes("councillor") ||
+    normalized.includes("counsilor") ||
+    normalized.includes("councellor") ||
+    normalized.includes("councelor") ||
+    normalized.includes("councilor");
+  const includesChapter = normalized.includes("chapter") || normalized.includes("affinity");
+  const includesChief = normalized.includes("chief");
+  const includesExecutive = normalized.includes("executive");
 
-  if (normalized.includes("chief") && normalized.includes("advisor")) {
+  if (includesChief && includesAdvisor) {
     return "chief-advisor";
   }
-  if (normalized.includes("executive") && normalized.includes("advisor")) {
+  if (includesExecutive && includesAdvisor) {
     return "executive-advisor";
   }
-  if (normalized.includes("co-advisor") || normalized.includes("co advisor")) {
+  if (includesCoAdvisor) {
     return "chapter-co-advisor";
   }
-  if (normalized.includes("advisor") && normalized.includes("counselor")) {
+  if (includesAdvisor && includesCounselor) {
     return "counselor";
   }
-  if (normalized.includes("advisor")) {
-    return normalized.includes("chapter") || normalized.includes("affinity") ? "chapter-advisor" : "advisor";
+  if (includesAdvisor) {
+    return includesChapter ? "chapter-advisor" : "advisor";
   }
-  if (normalized.includes("counselor")) {
+  if (includesCounselor) {
     return "counselor";
   }
   if (normalized.includes("chairperson") || normalized.includes("chair")) {
     if (normalized.includes("vice")) {
-      return normalized.includes("chapter") || normalized.includes("affinity") ? "chapter-vice-chair" : "vice-chairperson";
+      return includesChapter ? "chapter-vice-chair" : "vice-chairperson";
     }
-    return normalized.includes("chapter") || normalized.includes("affinity") ? "chapter-chair" : "chairperson";
+    return includesChapter ? "chapter-chair" : "chairperson";
   }
   if (normalized.includes("vice chair")) {
-    return normalized.includes("chapter") || normalized.includes("affinity") ? "chapter-vice-chair" : "vice-chairperson";
+    return includesChapter ? "chapter-vice-chair" : "vice-chairperson";
   }
   if (normalized.includes("general secretary") && normalized.includes("joint")) {
-    return normalized.includes("chapter") || normalized.includes("affinity") ? "chapter-joint-secretary" : "joint-general-secretary";
+    return includesChapter ? "chapter-joint-secretary" : "joint-general-secretary";
   }
   if (normalized.includes("general secretary") || normalized.includes("secretary")) {
-    return normalized.includes("chapter") || normalized.includes("affinity") ? "chapter-secretary" : "general-secretary";
+    return includesChapter ? "chapter-secretary" : "general-secretary";
   }
   if (normalized.includes("treasurer")) {
-    return normalized.includes("chapter") || normalized.includes("affinity") ? "chapter-treasurer" : "treasurer";
+    return includesChapter ? "chapter-treasurer" : "treasurer";
   }
   if (normalized.includes("web") && normalized.includes("master")) {
-    return normalized.includes("chapter") || normalized.includes("affinity") ? "chapter-webmaster" : "webmaster";
+    return includesChapter ? "chapter-webmaster" : "webmaster";
   }
   if (normalized.includes("committee")) {
     return "chapter-committee";

@@ -8,27 +8,27 @@ type EventListProps = {
 
 export function EventList({ events }: EventListProps) {
   return (
-    <section id="events" className="relative py-28">
-      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-slate-900/40 via-transparent to-transparent" aria-hidden />
+    <section id="events" className="relative py-24">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-slate-50 to-sky-50/40" aria-hidden />
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeading
           eyebrow="Upcoming & Past Events"
           title="Experiences that Shape Future Engineers"
           subtitle="Explore the touchpoints where innovation, collaboration, and social good collide across our annual calendar."
+          tone="light"
         />
-        <div className="mt-16 grid gap-8 md:grid-cols-2">
+        <div className="mt-16 grid gap-6 md:grid-cols-2">
           {events.length === 0 ? (
-            <p className="col-span-full rounded-3xl border border-white/15 bg-slate-950/70 p-10 text-center text-sm text-slate-200">
+            <p className="col-span-full rounded-3xl border border-slate-200/60 bg-white p-10 text-center text-sm text-slate-600 shadow-[0_18px_40px_-24px_rgba(15,23,42,0.15)]">
               Event calendar is being updated. Check back soon!
             </p>
           ) : (
             events.map((event) => (
               <article
                 key={event.slug}
-                className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-950/70 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.85)] backdrop-blur transition duration-500 hover:-translate-y-1 hover:border-white/30"
+                className="group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200/70 bg-white shadow-[0_22px_45px_-28px_rgba(15,23,42,0.2)] transition duration-300 hover:-translate-y-1"
               >
                 <Link href={`/events/${event.slug}`} className="absolute inset-0 z-10" aria-label={`Read more about ${event.title}`} />
-                <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-primary/40 via-transparent to-transparent opacity-70 transition duration-500 group-hover:opacity-100" aria-hidden />
                 <div className="h-56 w-full overflow-hidden">
                   <div
                     className="h-full w-full bg-cover bg-center transition duration-700 group-hover:scale-105"
@@ -37,17 +37,17 @@ export function EventList({ events }: EventListProps) {
                   />
                 </div>
                 <div className="relative z-20 flex flex-1 flex-col gap-5 p-8">
-                  <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.35em] text-slate-200">
+                  <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.28em] text-slate-500">
                     <span>{new Date(event.eventDate).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}</span>
-                    <span className="truncate text-right text-primary-light">{event.location}</span>
+                    <span className="truncate text-right text-primary">{event.location}</span>
                   </div>
-                  <h3 className="heading-font text-2xl font-semibold text-white">{event.title}</h3>
-                  <p className="text-sm text-slate-200 line-clamp-3">{event.description}</p>
+                  <h3 className="heading-font text-[1.35rem] font-semibold text-slate-900">{event.title}</h3>
+                  <p className="text-sm text-slate-600 line-clamp-3">{event.description}</p>
                   <div className="mt-auto flex flex-wrap gap-2">
                     {event.tags?.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-white"
+                        className="rounded-full border border-slate-200 bg-sky-50 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.26em] text-slate-600"
                       >
                         {tag}
                       </span>
@@ -56,14 +56,14 @@ export function EventList({ events }: EventListProps) {
                   <div className="flex flex-wrap items-center gap-4 pt-2">
                     <Link
                       href={`/events/${event.slug}`}
-                      className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:text-primary-light"
+                      className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-primary transition hover:text-slate-900"
                     >
                       View Details
                       <span aria-hidden>→</span>
                     </Link>
                     <a
                       href="#contact"
-                      className="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.35em] text-primary-light transition hover:text-white"
+                      className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500 transition hover:text-slate-900"
                     >
                       RSVP Today
                       <span aria-hidden>→</span>

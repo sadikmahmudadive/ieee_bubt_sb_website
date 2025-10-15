@@ -5,6 +5,7 @@ import { EventList } from "@/components/EventList";
 import { Footer } from "@/components/Footer";
 import { GallerySection } from "@/components/GallerySection";
 import { Hero } from "@/components/Hero";
+import { HeroHighlights } from "@/components/HeroHighlights";
 import { Navbar } from "@/components/Navbar";
 import { TeamGrid } from "@/components/TeamGrid";
 import { getEvents, getFeaturedEvent, getGalleryItems, getTeamMembers } from "@/lib/actions";
@@ -27,13 +28,16 @@ export default async function HomePage() {
     ]);
   }
 
+  const heroSpotlight = featuredEvent ?? events[0] ?? null;
+
   return (
     <div id="top" className="min-h-screen">
       <Navbar />
       <main>
-        <Hero events={events} spotlight={featuredEvent ?? events[0] ?? null} />
+        <Hero events={events} spotlight={heroSpotlight} />
+        <HeroHighlights spotlight={heroSpotlight} />
         <AboutSection />
-        <EventList events={events} />
+  <EventList events={events} />
         <TeamGrid team={team} />
         <GallerySection items={gallery} />
         <CallToAction />

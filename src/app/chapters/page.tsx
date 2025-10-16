@@ -8,8 +8,8 @@ import { CallToAction } from "@/components/CallToAction";
 import { getTeamMembers } from "@/lib/actions";
 import type { TeamMemberSummary } from "@/lib/actions";
 import { siteMetadata } from "@/utils/siteMetadata";
-import { getChapterTheme } from "@/utils/chapterThemes";
 import { chapterFallbackName, groupChapterMembers } from "@/utils/teamGrouping";
+import { getChapterTheme } from "../../utils/chapterThemes";
 
 export const metadata: Metadata = {
   title: `Chapters & Affinity Groups | ${siteMetadata.title}`,

@@ -9,7 +9,7 @@ import { TeamMemberCard } from "@/components/TeamMemberCard";
 import { getTeamMembers } from "@/lib/actions";
 import type { TeamMemberSummary } from "@/lib/actions";
 import { siteMetadata } from "@/utils/siteMetadata";
-import { getChapterTheme } from "@/utils/chapterThemes";
+import { getChapterTheme } from "../../utils/chapterThemes";
 import {
   advisorRoleOrder,
   chapterAdvisorRoleOrder,

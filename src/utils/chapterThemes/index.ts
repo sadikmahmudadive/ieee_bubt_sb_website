@@ -19,11 +19,16 @@ export type ChapterTheme = {
   panelBackground: string;
   panelBorder: string;
   panelShadow: string;
+  navText: string;
+  navSelectedBackground: string;
+  navSelectedText: string;
 };
+
+type ThemeMap = Record<string, ChapterTheme>;
 
 const hexRegex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
 
-const hexToRgba = (hex: string, alpha = 1): string => {
+const toRgba = (hex: string, alpha = 1): string => {
   const normalized = hex.trim();
   const match = hexRegex.exec(normalized);
 
@@ -40,44 +45,39 @@ const hexToRgba = (hex: string, alpha = 1): string => {
 };
 
 const createTheme = (accent: string): ChapterTheme => {
-  const heroGradient = `linear-gradient(135deg, ${hexToRgba(accent, 0.38)} 0%, rgba(4, 6, 18, 0.92) 55%, rgba(2, 6, 23, 0.9) 100%)`;
-  const heroOverlay = `linear-gradient(180deg, ${hexToRgba(accent, 0.42)} 0%, rgba(8, 11, 25, 0) 70%)`;
-  const accentGradient = `linear-gradient(90deg, ${hexToRgba(accent, 0.85)} 0%, ${hexToRgba(accent, 0.65)} 100%)`;
-  const cardBackground = `linear-gradient(135deg, ${hexToRgba(accent, 0.14)} 0%, rgba(2, 6, 23, 0.92) 100%)`;
-  const panelBackground = `linear-gradient(135deg, ${hexToRgba(accent, 0.2)} 0%, rgba(3, 7, 18, 0.92) 100%)`;
-  const cardBorder = hexToRgba(accent, 0.52);
-  const cardShadow = `0 28px 60px -38px ${hexToRgba(accent, 0.48)}`;
-  const panelShadow = `0 26px 60px -40px ${hexToRgba(accent, 0.45)}`;
-  const pillBackground = hexToRgba(accent, 0.22);
-  const pillBorder = hexToRgba(accent, 0.45);
-  const buttonBorder = hexToRgba(accent, 0.55);
-  const buttonBackground = hexToRgba(accent, 0.12);
+  const soft = toRgba(accent, 0.12);
+  const softer = toRgba(accent, 0.2);
+  const border = toRgba(accent, 0.5);
+  const shadow = toRgba(accent, 0.45);
 
   return {
     accent,
-    accentTextColor: hexToRgba(accent, 0.92),
+    accentTextColor: toRgba(accent, 0.92),
     secondaryTextColor: "rgba(226, 232, 240, 0.85)",
     metaColor: "rgba(203, 213, 225, 0.8)",
-    heroGradient,
-    heroOverlay,
+    heroGradient: `linear-gradient(135deg, ${toRgba(accent, 0.38)} 0%, rgba(4, 6, 18, 0.92) 55%, rgba(2, 6, 23, 0.9) 100%)`,
+    heroOverlay: `linear-gradient(180deg, ${toRgba(accent, 0.42)} 0%, rgba(8, 11, 25, 0) 70%)`,
     heroMetaColor: "rgba(226, 232, 240, 0.92)",
-    accentGradient,
+    accentGradient: `linear-gradient(90deg, ${toRgba(accent, 0.85)} 0%, ${toRgba(accent, 0.65)} 100%)`,
     accentButtonText: "#020617",
-    cardBackground,
-    cardBorder,
-    cardShadow,
-    pillBackground,
-    pillBorder,
-    buttonBorder,
-    buttonBackground,
+    cardBackground: `linear-gradient(135deg, ${soft} 0%, rgba(2, 6, 23, 0.92) 100%)`,
+    cardBorder: border,
+    cardShadow: `0 28px 60px -38px ${shadow}`,
+    pillBackground: softer,
+    pillBorder: border,
+    buttonBorder: border,
+    buttonBackground: soft,
     buttonTextColor: "rgba(248, 250, 252, 0.96)",
-    panelBackground,
-    panelBorder: cardBorder,
-    panelShadow
+    panelBackground: `linear-gradient(135deg, ${toRgba(accent, 0.2)} 0%, rgba(3, 7, 18, 0.92) 100%)`,
+    panelBorder: border,
+    panelShadow: `0 26px 60px -40px ${shadow}`,
+    navText: toRgba(accent, 0.85),
+    navSelectedBackground: toRgba(accent, 0.25),
+    navSelectedText: "#0f172a"
   };
 };
 
-const themeMap: Record<string, ChapterTheme> = {
+const themes: ThemeMap = {
   "ieee-computer-society-student-branch-chapter": createTheme("#38bdf8"),
   "ieee-robotics-and-automation-society-student-branch-chapter": createTheme("#fb923c"),
   "ieee-photonics-society-student-branch-chapter": createTheme("#e879f9"),
@@ -94,5 +94,5 @@ export const getChapterTheme = (slug?: string): ChapterTheme => {
     return defaultTheme;
   }
 
-  return themeMap[slug] ?? defaultTheme;
+  return themes[slug] ?? defaultTheme;
 };

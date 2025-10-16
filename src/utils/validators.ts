@@ -40,3 +40,13 @@ export const galleryItemSchema = z.object({
   event: z.string().optional(),
   uploadedAt: z.coerce.date().optional()
 });
+
+export const newsletterSubscriptionSchema = z.object({
+  email: z.string().email(),
+  source: z
+    .string()
+    .trim()
+    .min(1)
+    .max(120)
+    .optional()
+});

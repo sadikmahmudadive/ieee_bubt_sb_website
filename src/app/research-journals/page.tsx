@@ -96,12 +96,12 @@ export default function ResearchAndJournalsPage() {
       <Navbar />
       <main className="space-y-24 pb-24">
         <section className="relative isolate overflow-hidden border-b border-white/5 py-24 sm:py-32">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-slate-900 to-slate-950" aria-hidden />
-          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-primary/40 via-transparent to-transparent blur-3xl" aria-hidden />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-950 to-slate-950" aria-hidden />
+          <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-primary/55 via-white/10 to-transparent blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-5xl px-6 text-center sm:px-8">
             <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary-light">Research & Journals</p>
-            <h1 className="mt-6 text-4xl font-bold text-white sm:text-5xl">Publish ideas that move industry and society forward</h1>
-            <p className="mt-6 text-base text-slate-200 sm:text-lg">
+            <h1 className="mt-6 text-4xl font-bold text-white sm:text-[2.75rem]">Publish ideas that move industry and society forward</h1>
+            <p className="mt-6 text-base text-slate-200/90 sm:text-lg">
               From ideation clinics to final submission, IEEE BUBT Student Branch mentors guide you through the entire lifecycle of
               scholarly publishing. Join collaborative labs, access tooling, and share your results with global audiences.
             </p>
@@ -114,7 +114,7 @@ export default function ResearchAndJournalsPage() {
               </Link>
               <Link
                 href="/#events"
-                className="inline-flex items-center justify-center rounded-full border border-white/25 px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] text-white transition hover:border-white hover:bg-white/10"
+                className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] text-white transition hover:border-white hover:bg-white/15"
               >
                 Browse Project Showcases
               </Link>
@@ -130,11 +130,11 @@ export default function ResearchAndJournalsPage() {
           />
           <div className="grid gap-8 md:grid-cols-3">
             {researchTracks.map((track) => (
-              <article key={track.title} className="group relative flex h-full flex-col rounded-3xl border border-white/10 bg-white/[0.03] p-6 shadow-lg shadow-slate-950/40 transition hover:-translate-y-1 hover:border-primary/40 hover:bg-white/[0.06]">
+              <article key={track.title} className="group relative flex h-full flex-col rounded-[30px] border border-white/12 bg-white/6 p-6 shadow-lg shadow-slate-950/40 transition hover:-translate-y-1 hover:border-primary/40 hover:bg-white/10">
                 <div className="absolute inset-x-10 -top-1 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent opacity-0 transition group-hover:opacity-100" aria-hidden />
                 <h3 className="heading-font text-lg font-semibold text-white">{track.title}</h3>
-                <p className="mt-4 text-sm text-slate-300">{track.summary}</p>
-                <ul className="mt-6 space-y-2 text-sm text-slate-200">
+                <p className="mt-4 text-sm text-white/75">{track.summary}</p>
+                <ul className="mt-6 space-y-2 text-sm text-white/80">
                   {track.topics.map((item) => (
                     <li key={item} className="flex items-start gap-2">
                       <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-primary-light" aria-hidden />
@@ -155,10 +155,10 @@ export default function ResearchAndJournalsPage() {
           />
           <div className="grid gap-8 md:grid-cols-3">
             {journalSupports.map((program) => (
-              <article key={program.title} className="flex h-full flex-col rounded-3xl border border-white/10 bg-gradient-to-br from-slate-950/80 via-slate-900/70 to-slate-950/90 p-6">
+              <article key={program.title} className="flex h-full flex-col rounded-[30px] border border-white/12 bg-white/6 p-6">
                 <h3 className="heading-font text-lg font-semibold text-white">{program.title}</h3>
-                <p className="mt-4 text-sm text-slate-300">{program.description}</p>
-                <ul className="mt-6 space-y-2 text-sm text-slate-200">
+                <p className="mt-4 text-sm text-white/75">{program.description}</p>
+                <ul className="mt-6 space-y-2 text-sm text-white/80">
                   {program.deliverables.map((deliverable) => (
                     <li key={deliverable} className="flex items-start gap-2">
                       <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-primary-light" aria-hidden />
@@ -179,14 +179,14 @@ export default function ResearchAndJournalsPage() {
           />
           <div className="grid gap-6 md:grid-cols-2">
             {submissionTimeline.map((entry) => (
-              <article key={entry.phase} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-primary-light">{entry.window}</p>
+              <article key={entry.phase} className="rounded-[28px] border border-white/12 bg-white/6 p-6">
+                <p className="text-xs font-semibold uppercase tracking-[0.33em] text-primary-light/95">{entry.window}</p>
                 <h3 className="mt-4 text-lg font-semibold text-white">{entry.phase}</h3>
-                <p className="mt-3 text-sm text-slate-300">{entry.focus}</p>
+                <p className="mt-3 text-sm text-white/75">{entry.focus}</p>
               </article>
             ))}
           </div>
-          <div className="rounded-3xl border border-primary/30 bg-primary/10 p-8 text-sm text-primary-light">
+          <div className="rounded-[28px] border border-primary/25 bg-primary/12 p-8 text-sm text-primary-light">
             <p>
               Need timeline flexibility? Let us know during ideation clinics so we can align lab availability and reviewer cohorts with your
               project scope.
@@ -202,10 +202,10 @@ export default function ResearchAndJournalsPage() {
           />
           <div className="grid gap-6 md:grid-cols-3">
             {partnerResources.map((resource) => (
-              <article key={resource.name} className="flex h-full flex-col justify-between rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+              <article key={resource.name} className="flex h-full flex-col justify-between rounded-[30px] border border-white/12 bg-white/6 p-6">
                 <div>
                   <h3 className="heading-font text-lg font-semibold text-white">{resource.name}</h3>
-                  <p className="mt-4 text-sm text-slate-300">{resource.description}</p>
+                  <p className="mt-4 text-sm text-white/75">{resource.description}</p>
                 </div>
                 <Link
                   href={resource.href}
@@ -222,9 +222,9 @@ export default function ResearchAndJournalsPage() {
         </section>
 
         <section className="mx-auto max-w-4xl px-6 sm:px-8">
-          <div className="rounded-[3rem] border border-white/10 bg-slate-900/70 p-10 text-center shadow-[0_40px_80px_-60px_rgba(15,23,42,0.9)]">
-            <h2 className="heading-font text-3xl font-semibold text-white sm:text-4xl">Ready to launch your manuscript?</h2>
-            <p className="mt-5 text-base text-slate-300">
+          <div className="rounded-[3rem] border border-white/12 bg-white/6 p-10 text-center shadow-[0_30px_70px_-50px_rgba(15,23,42,0.9)] backdrop-blur">
+            <h2 className="heading-font text-3xl font-semibold text-white sm:text-[2.35rem]">Ready to launch your manuscript?</h2>
+            <p className="mt-5 text-base text-white/75">
               Submit a concept brief or request a mentor pairing and the IEEE BUBT SB research desk will follow up with timelines, lab
               bookings, and documentation templates.
             </p>

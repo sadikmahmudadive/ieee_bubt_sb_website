@@ -8,6 +8,7 @@ import { CallToAction } from "@/components/CallToAction";
 import { getTeamMembers } from "@/lib/actions";
 import type { TeamMemberSummary } from "@/lib/actions";
 import { siteMetadata } from "@/utils/siteMetadata";
+import { getChapterTheme } from "@/utils/chapterThemes";
 import { chapterFallbackName, groupChapterMembers } from "@/utils/teamGrouping";
 
 export const metadata: Metadata = {
@@ -33,19 +34,19 @@ export default async function ChaptersIndexPage() {
       <Navbar />
       <main className="space-y-24 pb-24">
         <section className="relative isolate overflow-hidden border-b border-white/5 py-24 sm:py-32">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-slate-900 to-slate-950" aria-hidden />
-          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-primary/40 via-transparent to-transparent blur-3xl" aria-hidden />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-950 to-slate-950" aria-hidden />
+          <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-primary/55 via-white/8 to-transparent blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-5xl px-6 text-center sm:px-8">
             <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary-light">Chapters & Affinity Groups</p>
-            <h1 className="mt-6 text-4xl font-bold text-white sm:text-5xl">Extending IEEE across disciplines at BUBT</h1>
-            <p className="mt-6 text-base text-slate-200 sm:text-lg">
+            <h1 className="mt-6 text-4xl font-bold text-white sm:text-[2.75rem]">Extending IEEE across disciplines at BUBT</h1>
+            <p className="mt-6 text-base text-slate-200/90 sm:text-lg">
               Collaborative committees and faculty mentors empower every IEEE BUBT SB chapter and affinity group. Browse each team to meet
               the advisors and student leaders driving their initiatives.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
                 href="/leadership"
-                className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] text-white transition hover:border-white hover:bg-white/10"
+                className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] text-white transition hover:border-white hover:bg-white/15"
               >
                 View Main Branch Leadership
               </Link>
@@ -67,33 +68,59 @@ export default async function ChaptersIndexPage() {
           />
           {chapterEntries.length > 0 ? (
             <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
-              {chapterEntries.map((chapter) => (
-                <article
-                  key={chapter.slug}
-                  className="flex flex-col gap-6 rounded-3xl border border-white/10 bg-slate-950/70 p-6 shadow-[0_40px_80px_-60px_rgba(15,23,42,0.9)] backdrop-blur"
-                >
+              {chapterEntries.map((chapter) => {
+                const theme = getChapterTheme(chapter.slug);
+
+                return (
+                  <article
+                    key={chapter.slug}
+                    className="flex flex-col gap-6 rounded-[30px] border p-6 backdrop-blur"
+                    style={{
+                      background: theme.cardBackground,
+                      borderColor: theme.cardBorder,
+                      boxShadow: theme.cardShadow
+                    }}
+                  >
                   <div className="space-y-2">
                     <h2 className="heading-font text-lg font-semibold text-white">{chapter.name}</h2>
-                    <p className="text-xs uppercase tracking-[0.35em] text-slate-400">
+                    <p className="text-xs uppercase tracking-[0.35em]" style={{ color: theme.metaColor }}>
                       {chapter.advisors.length} advisor{chapter.advisors.length === 1 ? "" : "s"} · {chapter.committee.length} committee member
                       {chapter.committee.length === 1 ? "" : "s"}
                     </p>
                   </div>
-                  <div className="space-y-3 text-sm text-slate-300">
+                  <div className="space-y-3 text-sm" style={{ color: theme.secondaryTextColor }}>
                     {chapter.advisors.slice(0, 2).map((member) => (
-                      <div key={`${chapter.slug}-${member._id}`} className="flex flex-col rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                      <div
+                        key={`${chapter.slug}-${member._id}`}
+                        className="flex flex-col rounded-2xl border px-3 py-2"
+                        style={{
+                          background: theme.pillBackground,
+                          borderColor: theme.pillBorder
+                        }}
+                      >
                         <span className="heading-font text-sm font-semibold text-white">{member.name}</span>
-                        <span className="text-[11px] uppercase tracking-[0.35em] text-primary-light">{member.role}</span>
+                        <span className="text-[11px] uppercase tracking-[0.32em]" style={{ color: theme.accentTextColor }}>
+                          {member.role}
+                        </span>
                       </div>
                     ))}
                     {chapter.committee.slice(0, 2).map((member) => (
-                      <div key={`${chapter.slug}-${member._id}`} className="flex flex-col rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                      <div
+                        key={`${chapter.slug}-${member._id}`}
+                        className="flex flex-col rounded-2xl border px-3 py-2"
+                        style={{
+                          background: theme.pillBackground,
+                          borderColor: theme.pillBorder
+                        }}
+                      >
                         <span className="heading-font text-sm font-semibold text-white">{member.name}</span>
-                        <span className="text-[11px] uppercase tracking-[0.35em] text-slate-400">{member.role}</span>
+                        <span className="text-[11px] uppercase tracking-[0.32em]" style={{ color: theme.metaColor }}>
+                          {member.role}
+                        </span>
                       </div>
                     ))}
                     {chapter.advisors.length + chapter.committee.length > 4 ? (
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs" style={{ color: theme.metaColor }}>
                         {chapter.advisors.length + chapter.committee.length - 4} additional member
                         {chapter.advisors.length + chapter.committee.length - 4 === 1 ? "" : "s"} featured on the chapter page.
                       </p>
@@ -101,20 +128,26 @@ export default async function ChaptersIndexPage() {
                   </div>
                   <Link
                     href={`/chapters/${chapter.slug}`}
-                    className="inline-flex items-center justify-center rounded-full border border-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:border-white hover:bg-white/10"
+                    className="inline-flex items-center justify-center rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] transition hover:-translate-y-0.5"
+                    style={{
+                      borderColor: theme.buttonBorder,
+                      background: theme.buttonBackground,
+                      color: theme.buttonTextColor
+                    }}
                   >
                     View Chapter Leadership →
                   </Link>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
           ) : (
-            <p className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 text-sm text-slate-200">
+            <p className="rounded-[30px] border border-white/12 bg-white/6 p-8 text-sm text-white/80">
               Add chapter or affinity group members in the admin dashboard to populate this directory.
             </p>
           )}
           {unnamedChapterCount > 0 ? (
-            <p className="text-xs text-amber-300">
+            <p className="text-xs text-amber-200/90">
               {unnamedChapterCount} chapter entr{unnamedChapterCount === 1 ? "y" : "ies"} still use the default name. Edit those records in the admin dashboard to set
               the official chapter title for accurate listings.
             </p>

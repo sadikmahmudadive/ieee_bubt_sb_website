@@ -10,6 +10,7 @@ A modern Next.js 14 web experience for the IEEE Bangladesh University of Busines
 - ☁️ Cloudinary utilities for secure image management and upload signatures
 - 🔄 RESTful API routes with Zod validation for CRUD operations
 - 📸 Responsive components: hero, events grid, team cards, gallery, newsletter CTA
+- 📰 Newsletter capture stored in MongoDB and reviewed in the admin console
 - ✅ ESLint + Prettier configuration for consistent formatting
 
 ## Getting Started
@@ -79,6 +80,10 @@ Base path: `/api`
 - `DELETE /api/events/:id` — remove event
 
 Equivalent CRUD endpoints exist for `/api/team` and `/api/gallery`.
+
+- `POST /api/subscriptions` — add newsletter subscriber (public)
+- `GET /api/subscriptions` — list newsletter subscribers (admin only)
+- `DELETE /api/subscriptions/:id` — remove subscriber (admin only)
 
 > All write routes expect JSON payloads validated with Zod. Ensure the request body matches the schemas in `src/utils/validators.ts`.
 

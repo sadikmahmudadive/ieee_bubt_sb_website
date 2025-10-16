@@ -45,11 +45,11 @@ export function TeamMemberCard({ member, variant = "standard" }: TeamMemberCardP
 
   return (
     <article
-      className={`group relative flex w-full flex-col overflow-hidden rounded-[28px] border border-white/12 bg-black/25 text-white backdrop-blur transition duration-300 hover:border-white/25 hover:-translate-y-1 ${cardSizeClasses}`}
+      className={`group relative flex w-full flex-col overflow-hidden rounded-[28px] border border-white/12 bg-white/6 text-white backdrop-blur transition duration-300 hover:border-white/20 hover:-translate-y-1 ${cardSizeClasses}`}
     >
       <div className="relative flex flex-1 flex-col items-center px-8 pb-14 pt-10">
         <div
-          className={`${photoFrameClasses} overflow-hidden ${photoBorderRound} border border-white/20 bg-white/5 px-[2px] pb-[2px] pt-[2px]`}
+          className={`${photoFrameClasses} overflow-hidden ${photoBorderRound} border border-white/20 bg-white/10 px-[2px] pb-[2px] pt-[2px]`}
         >
           <div className={`relative h-full w-full overflow-hidden ${photoInnerRound} border border-white/10 bg-white`}>
             <Image
@@ -76,7 +76,7 @@ export function TeamMemberCard({ member, variant = "standard" }: TeamMemberCardP
                   href={social.href}
                   target={social.key === "email" ? undefined : "_blank"}
                   rel={social.key === "email" ? undefined : "noreferrer"}
-                  className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-6 py-2 text-[10px] font-semibold uppercase tracking-[0.32em] text-white transition hover:border-primary-light hover:text-primary-light"
+                  className="inline-flex items-center rounded-full border border-white/18 bg-white/12 px-6 py-2 text-[10px] font-semibold uppercase tracking-[0.32em] text-white transition hover:border-primary-light hover:bg-primary-light/15 hover:text-primary-light"
                 >
                   {social.label}
                 </a>

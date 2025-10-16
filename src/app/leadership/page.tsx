@@ -9,6 +9,7 @@ import { TeamMemberCard } from "@/components/TeamMemberCard";
 import { getTeamMembers } from "@/lib/actions";
 import type { TeamMemberSummary } from "@/lib/actions";
 import { siteMetadata } from "@/utils/siteMetadata";
+import { getChapterTheme } from "@/utils/chapterThemes";
 import {
   advisorRoleOrder,
   chapterAdvisorRoleOrder,
@@ -54,19 +55,19 @@ export default async function LeadershipPage() {
       <Navbar />
       <main className="space-y-24 pb-24">
         <section className="relative isolate overflow-hidden border-b border-white/5 py-24 sm:py-32">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-slate-900 to-slate-950" aria-hidden />
-          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-primary/40 via-transparent to-transparent blur-3xl" aria-hidden />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-950 to-slate-950" aria-hidden />
+          <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-primary/60 via-white/10 to-transparent blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-5xl px-6 text-center sm:px-8">
             <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary-light">Leadership</p>
-            <h1 className="mt-6 text-4xl font-bold text-white sm:text-5xl">The people powering IEEE BUBT SB</h1>
-            <p className="mt-6 text-base text-slate-200 sm:text-lg">
+            <h1 className="mt-6 text-4xl font-bold text-white sm:text-[2.75rem]">The people powering IEEE BUBT SB</h1>
+            <p className="mt-6 text-base text-slate-200/90 sm:text-lg">
               A collaborative network of faculty mentors and student officers guides every initiative. Explore the main branch leadership
               and meet the teams advancing each IEEE chapter at BUBT.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
                 href="/#team"
-                className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] text-white transition hover:border-white hover:bg-white/10"
+                className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] text-white transition hover:border-white hover:bg-white/15"
               >
                 View Homepage Highlights
               </Link>
@@ -94,7 +95,7 @@ export default async function LeadershipPage() {
                 {mainAdvisors.length > 0 ? (
                   mainAdvisors.map((member) => <TeamMemberCard key={member._id} member={member} />)
                 ) : (
-                  <p className="col-span-full rounded-3xl border border-white/15 bg-slate-950/70 p-8 text-center text-sm text-slate-200">
+                  <p className="col-span-full rounded-[30px] border border-white/12 bg-white/6 p-8 text-center text-sm text-white/80">
                     Add faculty advisors in the admin dashboard to showcase them here.
                   </p>
                 )}
@@ -108,7 +109,7 @@ export default async function LeadershipPage() {
                 {mainStudents.length > 0 ? (
                   mainStudents.map((member) => <TeamMemberCard key={member._id} member={member} />)
                 ) : (
-                  <p className="col-span-full rounded-3xl border border-white/15 bg-slate-950/70 p-8 text-center text-sm text-slate-200">
+                  <p className="col-span-full rounded-[30px] border border-white/12 bg-white/6 p-8 text-center text-sm text-white/80">
                     Assign homepage spotlight roles in the admin dashboard to populate this section.
                   </p>
                 )}
@@ -122,7 +123,7 @@ export default async function LeadershipPage() {
                 {mainCommittees.length > 0 ? (
                   sortByPriority(mainCommittees).map((member) => <TeamMemberCard key={member._id} member={member} />)
                 ) : (
-                  <p className="col-span-full rounded-3xl border border-white/15 bg-slate-950/70 p-8 text-center text-sm text-slate-200">
+                  <p className="col-span-full rounded-[30px] border border-white/12 bg-white/6 p-8 text-center text-sm text-white/80">
                     Add committee leads to the main branch roster to display them here.
                   </p>
                 )}
@@ -139,40 +140,80 @@ export default async function LeadershipPage() {
               subtitle="Each chapter is guided by faculty advisors and student committees delivering specialized programs."
             />
             <div className="space-y-16">
-              {chapterEntries.map((chapter) => (
-                <div key={chapter.name} className="space-y-10 rounded-3xl border border-white/10 bg-slate-950/70 p-8 shadow-[0_40px_80px_-60px_rgba(15,23,42,0.9)] backdrop-blur">
+              {chapterEntries.map((chapter) => {
+                const theme = getChapterTheme(chapter.slug);
+
+                return (
+                  <div
+                    key={chapter.name}
+                    className="space-y-10 rounded-[32px] border p-8 backdrop-blur"
+                    style={{
+                      background: theme.panelBackground,
+                      borderColor: theme.panelBorder,
+                      boxShadow: theme.panelShadow
+                    }}
+                  >
                   <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
                     <h2 className="heading-font text-xl font-semibold text-white">{chapter.name}</h2>
-                    <span className="text-xs uppercase tracking-[0.35em] text-slate-400">Faculty mentors and chapter committee</span>
+                    <span className="text-xs uppercase tracking-[0.33em]" style={{ color: theme.metaColor }}>
+                      Faculty mentors and chapter committee
+                    </span>
                   </div>
                   <div className="space-y-12">
                     <div>
-                      <h3 className="text-sm font-semibold uppercase tracking-[0.35em] text-primary-light">Advisors & Counselors</h3>
+                      <h3
+                        className="text-sm font-semibold uppercase tracking-[0.35em]"
+                        style={{ color: theme.accentTextColor }}
+                      >
+                        Advisors & Counselors
+                      </h3>
                       <div className="mt-4 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
                         {chapter.advisors.length > 0 ? (
                           chapter.advisors.map((member) => <TeamMemberCard key={member._id} member={member} />)
                         ) : (
-                          <p className="col-span-full rounded-3xl border border-white/15 bg-slate-950/70 p-6 text-center text-sm text-slate-200">
+                          <p
+                            className="col-span-full rounded-[28px] border p-6 text-center text-sm"
+                            style={{
+                              background: theme.cardBackground,
+                              borderColor: theme.cardBorder,
+                              boxShadow: theme.cardShadow,
+                              color: theme.metaColor
+                            }}
+                          >
                             Add chapter advisors in the admin dashboard to highlight them here.
                           </p>
                         )}
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-sm font-semibold uppercase tracking-[0.35em] text-primary-light">Chapter Committee</h3>
+                      <h3
+                        className="text-sm font-semibold uppercase tracking-[0.35em]"
+                        style={{ color: theme.accentTextColor }}
+                      >
+                        Chapter Committee
+                      </h3>
                       <div className="mt-4 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
                         {chapter.committee.length > 0 ? (
                           chapter.committee.map((member) => <TeamMemberCard key={member._id} member={member} />)
                         ) : (
-                          <p className="col-span-full rounded-3xl border border-white/15 bg-slate-950/70 p-6 text-center text-sm text-slate-200">
+                          <p
+                            className="col-span-full rounded-[28px] border p-6 text-center text-sm"
+                            style={{
+                              background: theme.cardBackground,
+                              borderColor: theme.cardBorder,
+                              boxShadow: theme.cardShadow,
+                              color: theme.metaColor
+                            }}
+                          >
                             Committee members will appear once added to this chapter.
                           </p>
                         )}
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </div>
           </section>
         ) : null}

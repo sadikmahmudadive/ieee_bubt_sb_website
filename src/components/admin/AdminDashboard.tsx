@@ -82,7 +82,14 @@ type GalleryRecord = {
   uploadedAt?: string;
 };
 
-type AdminTab = "events" | "team" | "chapters" | "gallery";
+type SubscriptionRecord = {
+  _id: string;
+  email: string;
+  source?: string | null;
+  createdAt: string;
+};
+
+type AdminTab = "events" | "team" | "chapters" | "gallery" | "subscribers";
 
 const chapterNameOptions = [
   "IEEE Computer Society Student Branch Chapter",
@@ -228,6 +235,12 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
     mutate: mutateGallery
   } = useSWR<GalleryRecord[]>("/api/gallery", fetcher, { revalidateOnFocus: false });
 
+  const {
+    data: subscribers,
+    isLoading: isSubscribersLoading,
+    mutate: mutateSubscribers
+  } = useSWR<SubscriptionRecord[]>("/api/subscriptions", fetcher, { revalidateOnFocus: false });
+
   function createInitialEventForm(): EventFormState {
     return {
       title: "",
@@ -284,6 +297,10 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
   const [galleryFeedback, setGalleryFeedback] = useState<string | null>(null);
   const [galleryError, setGalleryError] = useState<string | null>(null);
   const [gallerySubmitting, setGallerySubmitting] = useState(false);
+
+  const [subscriberFeedback, setSubscriberFeedback] = useState<string | null>(null);
+  const [subscriberError, setSubscriberError] = useState<string | null>(null);
+  const [subscriberDeletingId, setSubscriberDeletingId] = useState<string | null>(null);
 
   const [eventUploadLoading, setEventUploadLoading] = useState(false);
   const [eventUploadError, setEventUploadError] = useState<string | null>(null);
@@ -649,6 +666,61 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
     }
   }
 
+  async function handleDeleteSubscriber(id: string) {
+    setSubscriberFeedback(null);
+    setSubscriberError(null);
+    setSubscriberDeletingId(id);
+    try {
+      const response = await fetch(`/api/subscriptions/${id}`, { method: "DELETE" });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({ error: "Failed to delete subscriber." }));
+        throw new Error(body.error ?? "Failed to delete subscriber.");
+      }
+      await mutateSubscribers();
+      setSubscriberFeedback("Subscriber removed.");
+    } catch (error) {
+      setSubscriberError(error instanceof Error ? error.message : "Unable to delete subscriber.");
+    } finally {
+      setSubscriberDeletingId(null);
+    }
+  }
+
+  async function handleCopySubscribers() {
+    setSubscriberFeedback(null);
+    setSubscriberError(null);
+    if (!subscribers || subscribers.length === 0) {
+      setSubscriberFeedback("No subscribers to copy yet.");
+      return;
+    }
+
+    const emailList = subscribers.map((entry) => entry.email).join(", ");
+
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(emailList);
+      } else if (typeof document !== "undefined") {
+        const textarea = document.createElement("textarea");
+        textarea.value = emailList;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      } else {
+        throw new Error("Clipboard API unavailable.");
+      }
+
+      setSubscriberFeedback("Subscriber emails copied to clipboard.");
+    } catch (error) {
+      console.error(error);
+      setSubscriberError("Clipboard copy failed. Select the list and copy manually.");
+    }
+  }
+
+  const subscriberCount = subscribers?.length ?? 0;
+
   return (
     <div className="space-y-10 text-slate-100">
       <header className="flex flex-col gap-4 rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_40px_80px_-40px_rgba(15,23,42,0.9)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
@@ -669,7 +741,9 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
         {[
           { key: "events", label: "Events" },
           { key: "team", label: "Team" },
-          { key: "gallery", label: "Gallery" }
+          { key: "chapters", label: "Chapters" },
+          { key: "gallery", label: "Gallery" },
+          { key: "subscribers", label: "Subscribers" }
         ].map((tab) => (
           <button
             key={tab.key}
@@ -1363,6 +1437,79 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
           </div>
         </section>
       ) : null}
+
+        {activeTab === "subscribers" ? (
+          <section className="space-y-8">
+            <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h2 className="heading-font text-xl font-semibold text-white">Newsletter Subscribers</h2>
+                  <p className="mt-2 text-sm text-slate-300">
+                    Manage the quarterly updates list collected from the public contact page.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleCopySubscribers}
+                    className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-primary-light hover:text-primary-light"
+                  >
+                    Copy Emails
+                  </button>
+                  <span className="rounded-full border border-white/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-200">
+                    Total: {subscriberCount}
+                  </span>
+                </div>
+              </div>
+              {subscriberFeedback ? <p className="mt-4 text-sm text-emerald-300">{subscriberFeedback}</p> : null}
+              {subscriberError ? <p className="mt-2 text-sm text-amber-300">{subscriberError}</p> : null}
+              <div className="mt-6">
+                {isSubscribersLoading ? (
+                  <p className="text-sm text-slate-300">Loading subscribers...</p>
+                ) : subscribers && subscribers.length > 0 ? (
+                  <ul className="space-y-3">
+                    {subscribers.map((subscriber) => {
+                      const subscribedAt = new Date(subscriber.createdAt);
+                      const formattedTimestamp = Number.isNaN(subscribedAt.getTime())
+                        ? subscriber.createdAt
+                        : subscribedAt.toLocaleString(undefined, {
+                            dateStyle: "medium",
+                            timeStyle: "short"
+                          });
+
+                      return (
+                        <li
+                          key={subscriber._id}
+                          className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                          <div>
+                            <p className="heading-font text-base font-semibold text-white">{subscriber.email}</p>
+                            <p className="text-xs uppercase tracking-[0.3em] text-slate-300">
+                              {formattedTimestamp}
+                              {subscriber.source ? ` • ${subscriber.source}` : ""}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteSubscriber(subscriber._id)}
+                            disabled={subscriberDeletingId === subscriber._id}
+                            className="self-start rounded-full border border-red-400/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-red-200 transition hover:border-red-300 hover:text-red-100 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {subscriberDeletingId === subscriber._id ? "Removing..." : "Delete"}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-slate-300">
+                    No subscribers yet. Once visitors join the list from the contact page, emails will appear here.
+                  </p>
+                )}
+              </div>
+            </div>
+          </section>
+        ) : null}
     </div>
   );
 }

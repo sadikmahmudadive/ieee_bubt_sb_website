@@ -1,3 +1,4 @@
+import { NewsletterSignupForm } from "@/components/NewsletterSignupForm";
 import { SectionHeading } from "@/components/SectionHeading";
 import { siteMetadata } from "@/utils/siteMetadata";
 
@@ -48,24 +49,7 @@ export function ContactSection() {
             <p className="mt-3 text-sm text-slate-600">
               Subscribe for quarterly updates on events, fellowships, and tech clinics led by our volunteers.
             </p>
-            <form className="mt-6 space-y-4" action="https://formsubmit.co" method="post">
-              <input type="hidden" name="_next" value="https://ieee.org" />
-              <input type="hidden" name="_subject" value="IEEE BUBT SB Newsletter" />
-              <input
-                name="email"
-                type="email"
-                required
-                placeholder="Your email"
-                className="w-full rounded-full border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="w-full rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold uppercase tracking-[0.32em] text-white transition hover:bg-slate-800"
-              >
-                Subscribe
-              </button>
-              <p className="text-xs text-slate-500">We respect your privacy. Unsubscribe anytime.</p>
-            </form>
+            <NewsletterSignupForm />
           </div>
         </div>
       </div>

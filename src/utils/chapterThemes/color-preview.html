@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEEE BUBT SB Chapter Color Reference</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #020617;
+            color: #e2e8f0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            color: #fff;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 3rem;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .color-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .color-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .color-swatch {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .color-info {
+            padding: 1.5rem;
+        }
+
+        .color-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .color-slug {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 1rem;
+            word-break: break-all;
+        }
+
+        .color-codes {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .color-code {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+
+        .code-label {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .code-value {
+            font-family: 'Courier New', monospace;
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .description {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        .legend {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .legend h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .legend-swatch {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .legend-text {
+            font-size: 0.875rem;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IEEE BUBT SB Chapter & Affinity Group Colors</h1>
+        <p class="subtitle">Visual Reference Guide for All Color Themes</p>
+
+        <div class="color-grid">
+            <!-- Computer Society -->
+            <div class="color-card">
+                <div class="color-swatch" style="background: #38bdf8;">🔵</div>
+                <div class="color-info">
+                    <div class="color-name">IEEE Computer Society</div>
+                    <div class="color-slug">ieee-computer-society-student-branch-chapter</div>
+                    <div class="color-codes">
+                        <div class="color-code">
+                            <span class="code-label">HEX</span>
+                            <span class="code-value">#38bdf8</span>
+                        </div>
+                        <div class="color-code">
+                            <span class="code-label">RGB</span>
+                            <span class="code-value">56, 189, 248</span>
+                        </div>
+                    </div>
+                    <div class="description">
+                        Sky Blue - Represents technology, digital innovation, and computing systems
+                    </div>
+                </div>
+            </div>
+
+            <!-- Robotics & Automation -->
+            <div class="color-card">
+                <div class="color-swatch" style="background: #fb923c;">🟠</div>
+                <div class="color-info">
+                    <div class="color-name">IEEE Robotics & Automation Society</div>
+                    <div class="color-slug">ieee-robotics-and-automation-society-student-branch-chapter</div>
+                    <div class="color-codes">
+                        <div class="color-code">
+                            <span class="code-label">HEX</span>
+                            <span class="code-value">#fb923c</span>
+                        </div>
+                        <div class="color-code">
+                            <span class="code-label">RGB</span>
+                            <span class="code-value">251, 146, 60</span>
+                        </div>
+                    </div>
+                    <div class="description">
+                        Orange - Dynamic and energetic, reflects automation, robotics, and movement
+                    </div>
+                </div>
+            </div>
+
+            <!-- Photonics Society -->
+            <div class="color-card">
+                <div class="color-swatch" style="background: #e879f9;">🟣</div>
+                <div class="color-info">
+                    <div class="color-name">IEEE Photonics Society</div>
+                    <div class="color-slug">ieee-photonics-society-student-branch-chapter</div>
+                    <div class="color-codes">
+                        <div class="color-code">
+                            <span class="code-label">HEX</span>
+                            <span class="code-value">#e879f9</span>
+                        </div>
+                        <div class="color-code">
+                            <span class="code-label">RGB</span>
+                            <span class="code-value">232, 121, 249</span>
+                        </div>
+                    </div>
+                    <div class="description">
+                        Fuchsia - Light and optics theme with vibrant magenta representing photonics
+                    </div>
+                </div>
+            </div>
+
+            <!-- Power & Energy -->
+            <div class="color-card">
+                <div class="color-swatch" style="background: #86efac;">🟢</div>
+                <div class="color-info">
+                    <div class="color-name">IEEE Power & Energy Society</div>
+                    <div class="color-slug">ieee-power-and-energy-society-student-branch-chapter</div>
+                    <div class="color-codes">
+                        <div class="color-code">
+                            <span class="code-label">HEX</span>
+                            <span class="code-value">#86efac</span>
+                        </div>
+                        <div class="color-code">
+                            <span class="code-label">RGB</span>
+                            <span class="code-value">134, 239, 172</span>
+                        </div>
+                    </div>
+                    <div class="description">
+                        Green - Sustainable energy, environmental focus, and renewable power systems
+                    </div>
+                </div>
+            </div>
+
+            <!-- Systems Council -->
+            <div class="color-card">
+                <div class="color-swatch" style="background: #2dd4bf;">🔷</div>
+                <div class="color-info">
+                    <div class="color-name">IEEE Systems Council</div>
+                    <div class="color-slug">ieee-systems-council-student-branch-chapter</div>
+                    <div class="color-codes">
+                        <div class="color-code">
+                            <span class="code-label">HEX</span>
+                            <span class="code-value">#2dd4bf</span>
+                        </div>
+                        <div class="color-code">
+                            <span class="code-label">RGB</span>
+                            <span class="code-value">45, 212, 191</span>
+                        </div>
+                    </div>
+                    <div class="description">
+                        Teal - Systems thinking, interconnected processes, and system integration
+                    </div>
+                </div>
+            </div>
+
+            <!-- Power Electronics -->
+            <div class="color-card">
+                <div class="color-swatch" style="background: #fda4af;">🌸</div>
+                <div class="color-info">
+                    <div class="color-name">IEEE Power Electronics Society</div>
+                    <div class="color-slug">ieee-power-electronics-society-student-branch-chapter</div>
+                    <div class="color-codes">
+                        <div class="color-code">
+                            <span class="code-label">HEX</span>
+                            <span class="code-value">#fda4af</span>
+                        </div>
+                        <div class="color-code">
+                            <span class="code-label">RGB</span>
+                            <span class="code-value">253, 164, 175</span>
+                        </div>
+                    </div>
+                    <div class="description">
+                        Rose Pink - Electronic circuits with a softer, approachable technology feel
+                    </div>
+                </div>
+            </div>
+
+            <!-- Women in Engineering -->
+            <div class="color-card">
+                <div class="color-swatch" style="background: #c084fc;">💜</div>
+                <div class="color-info">
+                    <div class="color-name">IEEE BUBT Women in Engineering</div>
+                    <div class="color-slug">ieee-bubt-women-in-engineering-student-branch-affinity-group</div>
+                    <div class="color-codes">
+                        <div class="color-code">
+                            <span class="code-label">HEX</span>
+                            <span class="code-value">#c084fc</span>
+                        </div>
+                        <div class="color-code">
+                            <span class="code-label">RGB</span>
+                            <span class="code-value">192, 132, 252</span>
+                        </div>
+                    </div>
+                    <div class="description">
+                        Purple - Empowerment, diversity, and inclusivity in engineering
+                    </div>
+                </div>
+            </div>
+
+            <!-- Default Theme -->
+            <div class="color-card">
+                <div class="color-swatch" style="background: #93c5fd;">🔵</div>
+                <div class="color-info">
+                    <div class="color-name">Default Theme</div>
+                    <div class="color-slug">default (fallback)</div>
+                    <div class="color-codes">
+                        <div class="color-code">
+                            <span class="code-label">HEX</span>
+                            <span class="code-value">#93c5fd</span>
+                        </div>
+                        <div class="color-code">
+                            <span class="code-label">RGB</span>
+                            <span class="code-value">147, 197, 253</span>
+                        </div>
+                    </div>
+                    <div class="description">
+                        Light Blue - Used for chapters without specific color themes
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <h2>Quick Color Comparison</h2>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <div class="legend-swatch" style="background: #38bdf8;"></div>
+                    <div class="legend-text">Computer Society</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-swatch" style="background: #fb923c;"></div>
+                    <div class="legend-text">Robotics & Automation</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-swatch" style="background: #e879f9;"></div>
+                    <div class="legend-text">Photonics Society</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-swatch" style="background: #86efac;"></div>
+                    <div class="legend-text">Power & Energy</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-swatch" style="background: #2dd4bf;"></div>
+                    <div class="legend-text">Systems Council</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-swatch" style="background: #fda4af;"></div>
+                    <div class="legend-text">Power Electronics</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-swatch" style="background: #c084fc;"></div>
+                    <div class="legend-text">Women in Engineering</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-swatch" style="background: #93c5fd;"></div>
+                    <div class="legend-text">Default Theme</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>IEEE BUBT SB Chapter Color Reference • All colors carefully selected for accessibility and visual distinction</p>
+            <p style="margin-top: 0.5rem;">For implementation details, see <code>src/utils/chapterThemes/</code></p>
+        </div>
+    </div>
+</body>
+</html>

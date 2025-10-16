@@ -77,6 +77,18 @@ const createTheme = (accent: string): ChapterTheme => {
   };
 };
 
+/**
+ * Color themes for IEEE BUBT SB chapters and affinity groups
+ * 
+ * Each chapter/affinity group has a unique color scheme that reflects its identity:
+ * - Computer Society: Sky Blue (#38bdf8) - Represents technology and digital innovation
+ * - Robotics & Automation: Orange (#fb923c) - Dynamic and energetic, reflects automation
+ * - Photonics Society: Fuchsia (#e879f9) - Light and optics theme with vibrant magenta
+ * - Power & Energy: Green (#86efac) - Sustainable energy and environmental focus
+ * - Systems Council: Teal (#2dd4bf) - Systems thinking and interconnected processes
+ * - Power Electronics: Rose Pink (#fda4af) - Electronic circuits and soft technology
+ * - Women in Engineering: Purple (#c084fc) - Empowerment and diversity
+ */
 const themes: ThemeMap = {
   "ieee-computer-society-student-branch-chapter": createTheme("#38bdf8"),
   "ieee-robotics-and-automation-society-student-branch-chapter": createTheme("#fb923c"),
@@ -87,12 +99,39 @@ const themes: ThemeMap = {
   "ieee-bubt-women-in-engineering-student-branch-affinity-group": createTheme("#c084fc")
 };
 
+/**
+ * Default theme used for chapters without a specific color assignment
+ * Uses a light blue color (#93c5fd)
+ */
 const defaultTheme = createTheme("#93c5fd");
 
+/**
+ * Get the theme for a specific chapter or affinity group
+ * @param slug - The URL slug of the chapter/affinity group
+ * @returns The ChapterTheme object with all color properties
+ */
 export const getChapterTheme = (slug?: string): ChapterTheme => {
   if (!slug) {
     return defaultTheme;
   }
 
   return themes[slug] ?? defaultTheme;
+};
+
+/**
+ * Get all available chapter slugs that have defined themes
+ * @returns Array of chapter/affinity group slugs
+ */
+export const getAvailableChapterSlugs = (): string[] => {
+  return Object.keys(themes);
+};
+
+/**
+ * Check if a specific chapter has a defined theme
+ * @param slug - The URL slug of the chapter/affinity group
+ * @returns true if a theme is defined, false otherwise
+ */
+export const hasChapterTheme = (slug?: string): boolean => {
+  if (!slug) return false;
+  return slug in themes;
 };

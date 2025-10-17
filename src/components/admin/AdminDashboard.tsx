@@ -89,7 +89,30 @@ type SubscriptionRecord = {
   createdAt: string;
 };
 
-type AdminTab = "events" | "team" | "chapters" | "gallery" | "subscribers";
+type NewsRecord = {
+  _id: string;
+  title: string;
+  excerpt: string;
+  content?: string;
+  date: string;
+  category: string;
+  slug: string;
+  imageUrl?: string;
+  published: boolean;
+};
+
+type NewsFormState = {
+  title: string;
+  excerpt: string;
+  content: string;
+  date: string;
+  category: string;
+  slug: string;
+  imageUrl: string;
+  published: boolean;
+};
+
+type AdminTab = "events" | "team" | "chapters" | "gallery" | "subscribers" | "news";
 
 const chapterNameOptions = [
   "IEEE Computer Society Student Branch Chapter",
@@ -150,7 +173,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<AdminTab>("events");
 
   const uploadImage = useCallback(
-    async (file: File, target: "events" | "team" | "gallery") => {
+    async (file: File, target: "events" | "team" | "gallery" | "news") => {
       const signatureResponse = await fetch("/api/uploads/signature", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -241,6 +264,12 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
     mutate: mutateSubscribers
   } = useSWR<SubscriptionRecord[]>("/api/subscriptions", fetcher, { revalidateOnFocus: false });
 
+  const {
+    data: news,
+    isLoading: isNewsLoading,
+    mutate: mutateNews
+  } = useSWR<NewsRecord[]>("/api/news", fetcher, { revalidateOnFocus: false });
+
   function createInitialEventForm(): EventFormState {
     return {
       title: "",
@@ -298,6 +327,26 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
   const [galleryError, setGalleryError] = useState<string | null>(null);
   const [gallerySubmitting, setGallerySubmitting] = useState(false);
 
+  function createInitialNewsForm(): NewsFormState {
+    return {
+      title: "",
+      excerpt: "",
+      content: "",
+      date: "",
+      category: "",
+      slug: "",
+      imageUrl: "",
+      published: false
+    };
+  }
+
+  const [newsForm, setNewsForm] = useState<NewsFormState>(createInitialNewsForm());
+  const [editingNewsId, setEditingNewsId] = useState<string | null>(null);
+  const isEditingNews = Boolean(editingNewsId);
+  const [newsFeedback, setNewsFeedback] = useState<string | null>(null);
+  const [newsError, setNewsError] = useState<string | null>(null);
+  const [newsSubmitting, setNewsSubmitting] = useState(false);
+
   const [subscriberFeedback, setSubscriberFeedback] = useState<string | null>(null);
   const [subscriberError, setSubscriberError] = useState<string | null>(null);
   const [subscriberDeletingId, setSubscriberDeletingId] = useState<string | null>(null);
@@ -308,6 +357,8 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
   const [teamUploadError, setTeamUploadError] = useState<string | null>(null);
   const [galleryUploadLoading, setGalleryUploadLoading] = useState(false);
   const [galleryUploadError, setGalleryUploadError] = useState<string | null>(null);
+  const [newsUploadLoading, setNewsUploadLoading] = useState(false);
+  const [newsUploadError, setNewsUploadError] = useState<string | null>(null);
 
   const toInputDate = (value: string): string => {
     if (!value) {
@@ -376,6 +427,24 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       setGalleryUploadError(error instanceof Error ? error.message : "Failed to upload gallery image.");
     } finally {
       setGalleryUploadLoading(false);
+      event.target.value = "";
+    }
+  }
+
+  async function handleNewsImageSelection(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+    setNewsUploadLoading(true);
+    setNewsUploadError(null);
+    try {
+      const upload = await uploadImage(file, "news");
+      setNewsForm((prev) => ({ ...prev, imageUrl: upload.secureUrl }));
+    } catch (error) {
+      setNewsUploadError(error instanceof Error ? error.message : "Failed to upload news image.");
+    } finally {
+      setNewsUploadLoading(false);
       event.target.value = "";
     }
   }
@@ -666,6 +735,121 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
     }
   }
 
+  async function handleSubmitNews(formEvent: FormEvent<HTMLFormElement>) {
+    formEvent.preventDefault();
+    setNewsSubmitting(true);
+    setNewsFeedback(null);
+    setNewsError(null);
+
+    const payload = {
+      title: newsForm.title,
+      excerpt: newsForm.excerpt,
+      content: newsForm.content || undefined,
+      date: newsForm.date,
+      category: newsForm.category,
+      slug: newsForm.slug,
+      imageUrl: newsForm.imageUrl || undefined,
+      published: newsForm.published
+    };
+
+    const isEdit = Boolean(editingNewsId);
+    const endpoint = isEdit ? `/api/news/${editingNewsId}` : "/api/news";
+    const method = isEdit ? "PATCH" : "POST";
+
+    try {
+      const response = await fetch(endpoint, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({ error: isEdit ? "Failed to update news." : "Failed to create news." }));
+        throw new Error(body.error ?? (isEdit ? "Failed to update news." : "Failed to create news."));
+      }
+
+      setNewsFeedback(isEdit ? "News updated successfully." : "News created successfully.");
+      setNewsForm(createInitialNewsForm());
+      setEditingNewsId(null);
+      setNewsUploadError(null);
+      setNewsUploadLoading(false);
+      await mutateNews();
+    } catch (error) {
+      setNewsError(
+        error instanceof Error
+          ? error.message
+          : isEdit
+            ? "Unable to update news."
+            : "Unable to create news."
+      );
+    } finally {
+      setNewsSubmitting(false);
+    }
+  }
+
+  function startNewsEdit(record: NewsRecord) {
+    setEditingNewsId(record._id);
+    setNewsForm({
+      title: record.title,
+      excerpt: record.excerpt,
+      content: record.content ?? "",
+      date: toInputDate(record.date),
+      category: record.category,
+      slug: record.slug,
+      imageUrl: record.imageUrl ?? "",
+      published: Boolean(record.published)
+    });
+    setNewsFeedback(null);
+    setNewsError(null);
+    setNewsUploadError(null);
+  }
+
+  function cancelNewsEdit() {
+    setEditingNewsId(null);
+    setNewsForm(createInitialNewsForm());
+    setNewsFeedback(null);
+    setNewsError(null);
+    setNewsUploadError(null);
+    setNewsUploadLoading(false);
+  }
+
+  async function handleDeleteNews(id: string) {
+    try {
+      const response = await fetch(`/api/news/${id}`, { method: "DELETE" });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({ error: "Failed to delete news." }));
+        throw new Error(body.error ?? "Failed to delete news.");
+      }
+      if (editingNewsId === id) {
+        cancelNewsEdit();
+      }
+      setNewsFeedback("News deleted.");
+      await mutateNews();
+    } catch (error) {
+      setNewsError(error instanceof Error ? error.message : "Unable to delete news.");
+    }
+  }
+
+  async function handleTogglePublished(id: string, current: boolean) {
+    try {
+      const response = await fetch(`/api/news/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ published: !current })
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({ error: "Failed to update news." }));
+        throw new Error(body.error ?? "Failed to update news.");
+      }
+      if (editingNewsId === id) {
+        setNewsForm((prev) => ({ ...prev, published: !current }));
+      }
+      await mutateNews();
+    } catch (error) {
+      setNewsError(error instanceof Error ? error.message : "Unable to update news.");
+    }
+  }
+
   async function handleDeleteSubscriber(id: string) {
     setSubscriberFeedback(null);
     setSubscriberError(null);
@@ -743,6 +927,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
           { key: "team", label: "Team" },
           { key: "chapters", label: "Chapters" },
           { key: "gallery", label: "Gallery" },
+          { key: "news", label: "News" },
           { key: "subscribers", label: "Subscribers" }
         ].map((tab) => (
           <button
@@ -836,131 +1021,132 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                 />
               </label>
-              <div className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
+                Tags (comma-separated)
+                <input
+                  value={eventForm.tags}
+                  onChange={(e) => setEventForm((prev) => ({ ...prev, tags: e.target.value }))}
+                  placeholder="e.g., workshop, seminar, networking"
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                />
+              </label>
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
                 Cover Image
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleEventImageSelection}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white file:mr-4 file:rounded-full file:border-0 file:bg-primary-light file:px-4 file:py-2 file:text-sm file:font-semibold file:text-slate-900 focus:border-primary focus:outline-none"
-                />
-                {eventUploadLoading ? <span className="text-xs text-slate-300">Uploading image...</span> : null}
-                {eventUploadError ? <span className="text-xs text-amber-300">{eventUploadError}</span> : null}
-                {eventForm.coverImage ? (
-                  <div className="flex items-center gap-3 text-xs text-slate-300">
-                    <span className="rounded-full bg-white/10 px-3 py-1 text-white/80">Image uploaded</span>
-                    <a href={eventForm.coverImage} target="_blank" rel="noreferrer" className="underline transition hover:text-white">
-                      Preview
-                    </a>
-                  </div>
-                ) : (
-                  <span className="text-xs text-slate-400">Upload a JPG or PNG up to 5MB.</span>
-                )}
-              </div>
-              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
-                Tags (comma separated)
-                <input
-                  value={eventForm.tags}
-                  onChange={(e) => setEventForm((prev) => ({ ...prev, tags: e.target.value }))}
                   className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                 />
+                {eventForm.coverImage && (
+                  <img
+                    src={eventForm.coverImage}
+                    alt="Cover preview"
+                    className="mt-2 w-32 h-20 object-cover rounded"
+                  />
+                )}
+                {eventUploadLoading && <p className="text-sm text-slate-400">Uploading...</p>}
+                {eventUploadError && <p className="text-sm text-red-500">{eventUploadError}</p>}
               </label>
-              <label className="flex items-center gap-3 text-sm text-slate-200">
+              <div className="flex items-center gap-2 text-sm text-slate-200">
                 <input
                   type="checkbox"
                   checked={eventForm.featured}
                   onChange={(e) => setEventForm((prev) => ({ ...prev, featured: e.target.checked }))}
-                  className="h-4 w-4"
+                  className="rounded border border-white/15 bg-white/10 text-primary focus:border-primary focus:outline-none"
                 />
-                Mark as featured (showcase in hero slider)
-              </label>
-              <div className="md:col-span-2 flex flex-wrap items-center gap-4">
+                <label>Featured</label>
+              </div>
+
+              <div className="md:col-span-2 flex gap-2">
                 <button
                   type="submit"
                   disabled={eventSubmitting}
-                  className="rounded-full bg-primary-light px-6 py-2 text-sm font-semibold uppercase tracking-[0.3em] text-slate-900 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-lg border border-white/15 bg-primary px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-primary-light disabled:opacity-50"
                 >
-                  {eventSubmitting ? "Saving..." : isEditingEvent ? "Save Changes" : "Create Event"}
+                  {eventSubmitting ? "Saving..." : isEditingEvent ? "Update Event" : "Create Event"}
                 </button>
-                {isEditingEvent ? (
+                {isEditingEvent && (
                   <button
                     type="button"
                     onClick={cancelEventEdit}
-                    className="rounded-full border border-white/30 px-6 py-2 text-sm font-semibold uppercase tracking-[0.3em] text-white transition hover:-translate-y-0.5 hover:border-white/60"
+                    className="rounded-lg border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
                   >
                     Cancel
                   </button>
-                ) : null}
-                {eventFeedback ? <span className="text-sm text-emerald-300">{eventFeedback}</span> : null}
-                {eventError ? <span className="text-sm text-amber-300">{eventError}</span> : null}
+                )}
               </div>
+
             </form>
-          </div>
 
-          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
-            <h3 className="heading-font text-lg font-semibold text-white">Current Events</h3>
-            {isEventsLoading ? (
-              <p className="mt-4 text-sm text-slate-300">Loading events...</p>
-            ) : events && events.length > 0 ? (
-              <ul className="mt-6 space-y-4">
-                {events.map((event) => (
-                  <li key={event._id} className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="heading-font text-base font-semibold text-white">{event.title}</p>
-                      <p className="text-xs uppercase tracking-[0.3em] text-slate-300">
-                        {new Date(event.eventDate).toLocaleDateString()} • {event.location}
-                      </p>
-                      <div className="mt-1 flex flex-wrap gap-2">
-                        {event.featured ? (
-                          <span className="inline-block rounded-full bg-amber-400/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-amber-200">Featured</span>
-                        ) : null}
-                        {editingEventId === event._id ? (
-                          <span className="inline-block rounded-full bg-primary-light/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-primary-light">Editing</span>
-                        ) : null}
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        onClick={() => startEventEdit(event)}
-                        className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-primary-light hover:text-primary-light"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleToggleFeatured(event._id, Boolean(event.featured))}
-                        className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-amber-300 hover:text-amber-200"
-                      >
-                        {event.featured ? "Remove Featured" : "Set Featured"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteEvent(event._id)}
-                        className="rounded-full border border-red-400/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-red-200 transition hover:border-red-300 hover:text-red-100"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-4 text-sm text-slate-300">No events yet. Create one above.</p>
+            {eventFeedback && (
+              <p className="text-sm text-green-500">{eventFeedback}</p>
             )}
+            {eventError && (
+              <p className="text-sm text-red-500">{eventError}</p>
+            )}
+
+            <div className="mt-8">
+              <h3 className="heading-font text-lg font-semibold text-white">Existing Events</h3>
+              <p className="mt-2 text-sm text-slate-300">Click on an event to edit it, or toggle featured status.</p>
+              {isEventsLoading ? (
+                <p className="mt-4 text-sm text-slate-400">Loading events...</p>
+              ) : events && events.length > 0 ? (
+                <ul className="mt-4 space-y-4">
+                  {events.map((event) => (
+                    <li key={event._id} className="flex items-center justify-between rounded-lg border border-white/15 bg-white/5 p-4">
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={event.coverImage}
+                          alt={event.title}
+                          className="h-16 w-16 rounded object-cover"
+                        />
+                        <div>
+                          <h4 className="font-semibold text-white">{event.title}</h4>
+                          <p className="text-sm text-slate-300">{event.location} • {new Date(event.eventDate).toLocaleDateString()}</p>
+                          {event.tags && event.tags.length > 0 && (
+                            <p className="text-xs text-slate-400">{event.tags.join(", ")}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleToggleFeatured(event._id, Boolean(event.featured))}
+                          className={`rounded px-2 py-1 text-xs font-semibold ${event.featured ? "bg-primary-light text-slate-900" : "border border-white/20 text-white hover:border-white"}`}
+                        >
+                          {event.featured ? "Featured" : "Not Featured"}
+                        </button>
+                        <button
+                          onClick={() => startEventEdit(event)}
+                          className="rounded border border-white/20 px-2 py-1 text-xs font-semibold text-white hover:border-white"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteEvent(event._id)}
+                          className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-4 text-sm text-slate-400">No events found.</p>
+              )}
+            </div>
           </div>
-
         </section>
-      ) : null}
 
-      {activeTab === "team" ? (
+      ) : activeTab === "team" ? (
         <section className="space-y-8">
           <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
             <h2 className="heading-font text-xl font-semibold text-white">{isEditingTeam ? "Edit Team Member" : "Add Team Member"}</h2>
             <p className="mt-2 text-sm text-slate-300">
               {isEditingTeam
-                ? "Update the selected leader's profile. Uploading a new photo will replace the existing image."
-                : "Profiles surface across the leadership section and event highlights."}
+                ? "Update team member details. Uploading a new photo replaces the existing asset."
+                : "Add new team members to display on the leadership page."}
             </p>
             <form onSubmit={handleSubmitTeamMember} className="mt-6 grid gap-5 md:grid-cols-2">
               <label className="flex flex-col gap-2 text-sm text-slate-200">
@@ -982,96 +1168,16 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 />
               </label>
               <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
-                Bio
+                Bio (optional)
                 <textarea
                   value={teamForm.bio}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, bio: e.target.value }))}
                   rows={3}
                   className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
-                  placeholder="Optional short description"
                 />
               </label>
-              <div className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
-                Profile Photo
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleTeamPhotoSelection}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white file:mr-4 file:rounded-full file:border-0 file:bg-primary-light file:px-4 file:py-2 file:text-sm file:font-semibold file:text-slate-900 focus:border-primary focus:outline-none"
-                />
-                {teamUploadLoading ? <span className="text-xs text-slate-300">Uploading photo...</span> : null}
-                {teamUploadError ? <span className="text-xs text-amber-300">{teamUploadError}</span> : null}
-                {teamForm.photoUrl ? (
-                  <div className="flex items-center gap-3 text-xs text-slate-300">
-                    <span className="rounded-full bg-white/10 px-3 py-1 text-white/80">Photo uploaded</span>
-                    <a href={teamForm.photoUrl} target="_blank" rel="noreferrer" className="underline transition hover:text-white">
-                      Preview
-                    </a>
-                  </div>
-                ) : (
-                  <span className="text-xs text-slate-400">Upload a square image for best results.</span>
-                )}
-              </div>
               <label className="flex flex-col gap-2 text-sm text-slate-200">
-                Branch Affiliation
-                <select
-                  value={teamForm.affiliation}
-                  onChange={(e) =>
-                    setTeamForm((prev) => ({
-                      ...prev,
-                      affiliation: e.target.value as TeamFormState["affiliation"],
-                      chapter: e.target.value === "chapter" ? prev.chapter : ""
-                    }))
-                  }
-                  className="rounded-lg border border-white/20 bg-slate-900/80 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
-                >
-                  <option className="text-slate-900" value="main">
-                    IEEE BUBT SB (Main Branch)
-                  </option>
-                  <option className="text-slate-900" value="chapter">
-                    Student Branch Chapter
-                  </option>
-                </select>
-              </label>
-              {teamForm.affiliation === "chapter" ? (
-                <label className="flex flex-col gap-2 text-sm text-slate-200">
-                  Chapter Name
-                  <>
-                    <input
-                      value={teamForm.chapter}
-                      onChange={(e) => setTeamForm((prev) => ({ ...prev, chapter: e.target.value }))}
-                      list="chapter-name-options"
-                      placeholder="Select or enter chapter name"
-                      className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
-                    />
-                    <datalist id="chapter-name-options">
-                      {chapterNameOptions.map((option) => (
-                        <option key={option} value={option} />
-                      ))}
-                    </datalist>
-                  </>
-                </label>
-              ) : null}
-              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
-                Homepage Spotlight Role (optional)
-                <select
-                  value={teamForm.roleKey}
-                  onChange={(e) => setTeamForm((prev) => ({ ...prev, roleKey: e.target.value }))}
-                  className="rounded-lg border border-white/20 bg-slate-900/80 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
-                >
-                  {roleKeyOptions.map((option) => (
-                    <option className="text-slate-900" key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                <span className="text-xs text-slate-400">
-                  Assign a role to surface this member on the homepage leadership spotlights. Leave the default option for committee or
-                  chapter-only members.
-                </span>
-              </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
-                Display Priority (higher shows first)
+                Priority
                 <input
                   type="number"
                   value={teamForm.priority}
@@ -1079,269 +1185,293 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                 />
               </label>
-              <div className="grid gap-3 text-sm text-slate-200">
-                <span>Social Links</span>
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
+                Affiliation
+                <select
+                  value={teamForm.affiliation}
+                  onChange={(e) => setTeamForm((prev) => ({ ...prev, affiliation: e.target.value as "main" | "chapter" }))}
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                >
+                  <option value="main">Main Branch</option>
+                  <option value="chapter">Chapter</option>
+                </select>
+              </label>
+              {teamForm.affiliation === "chapter" && (
+                <label className="flex flex-col gap-2 text-sm text-slate-200">
+                  Chapter
+                  <select
+                    value={teamForm.chapter}
+                    onChange={(e) => setTeamForm((prev) => ({ ...prev, chapter: e.target.value }))}
+                    className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  >
+                    {chapterNameOptions.map((chapter) => (
+                      <option key={chapter} value={chapter}>
+                        {chapter}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
+                Role Key
+                <select
+                  value={teamForm.roleKey}
+                  onChange={(e) => setTeamForm((prev) => ({ ...prev, roleKey: e.target.value }))}
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                >
+                  {roleKeyOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
+                Facebook (optional)
                 <input
-                  placeholder="Facebook URL"
                   value={teamForm.facebook}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, facebook: e.target.value }))}
                   className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                 />
+              </label>
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
+                Instagram (optional)
                 <input
-                  placeholder="Instagram URL"
                   value={teamForm.instagram}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, instagram: e.target.value }))}
                   className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                 />
+              </label>
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
+                LinkedIn (optional)
                 <input
-                  placeholder="LinkedIn URL"
                   value={teamForm.linkedin}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, linkedin: e.target.value }))}
                   className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                 />
+              </label>
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
+                Email (optional)
                 <input
-                  placeholder="Email"
+                  type="email"
                   value={teamForm.email}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, email: e.target.value }))}
                   className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                 />
-              </div>
-              <div className="md:col-span-2 flex items-center gap-4">
+              </label>
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+                Profile Photo
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleTeamPhotoSelection}
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                />
+                {teamForm.photoUrl && (
+                  <img
+                    src={teamForm.photoUrl}
+                    alt="Profile preview"
+                    className="mt-2 w-20 h-20 object-cover rounded-full"
+                  />
+                )}
+                {teamUploadLoading && <p className="text-sm text-slate-400">Uploading...</p>}
+                {teamUploadError && <p className="text-sm text-red-500">{teamUploadError}</p>}
+              </label>
+
+              <div className="md:col-span-2 flex gap-2">
                 <button
                   type="submit"
                   disabled={teamSubmitting}
-                  className="rounded-full bg-primary-light px-6 py-2 text-sm font-semibold uppercase tracking-[0.3em] text-slate-900 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-lg border border-white/15 bg-primary px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-primary-light disabled:opacity-50"
                 >
                   {teamSubmitting ? "Saving..." : isEditingTeam ? "Update Member" : "Add Member"}
                 </button>
-                {isEditingTeam ? (
+                {isEditingTeam && (
                   <button
                     type="button"
                     onClick={cancelTeamEdit}
-                    className="rounded-full border border-white/30 px-6 py-2 text-sm font-semibold uppercase tracking-[0.3em] text-white transition hover:-translate-y-0.5 hover:border-white/60"
+                    className="rounded-lg border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
                   >
                     Cancel
                   </button>
-                ) : null}
-                {teamFeedback ? <span className="text-sm text-emerald-300">{teamFeedback}</span> : null}
-                {teamError ? <span className="text-sm text-amber-300">{teamError}</span> : null}
+                )}
               </div>
             </form>
-          </div>
 
-          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
-            <h3 className="heading-font text-lg font-semibold text-white">Current Team</h3>
-            {isTeamLoading ? (
-              <p className="mt-4 text-sm text-slate-300">Loading team information...</p>
-            ) : team && team.length > 0 ? (
-              <ul className="mt-6 space-y-4">
-                {team.map((member) => {
-                  const affiliation = member.affiliation ?? "main";
-                  const roleKey = member.roleKey ?? "none";
-                  const roleLabel = roleKeyLabelMap[roleKey] ?? roleKeyLabelMap.none;
-                  const isSpotlighted = roleKey !== "none";
+            {teamFeedback && (
+              <p className="text-sm text-green-500">{teamFeedback}</p>
+            )}
+            {teamError && (
+              <p className="text-sm text-red-500">{teamError}</p>
+            )}
 
-                  return (
-                    <li key={member._id} className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="space-y-2">
+            <div className="mt-8">
+              <h3 className="heading-font text-lg font-semibold text-white">Existing Team Members</h3>
+              <p className="mt-2 text-sm text-slate-300">Click on a member to edit their details.</p>
+              {isTeamLoading ? (
+                <p className="mt-4 text-sm text-slate-400">Loading team members...</p>
+              ) : team && team.length > 0 ? (
+                <ul className="mt-4 space-y-4">
+                  {team.map((member) => (
+                    <li key={member._id} className="flex items-center justify-between rounded-lg border border-white/15 bg-white/5 p-4">
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={member.photoUrl}
+                          alt={member.name}
+                          className="h-16 w-16 rounded-full object-cover"
+                        />
                         <div>
-                          <p className="heading-font text-base font-semibold text-white">{member.name}</p>
-                          <p className="text-xs uppercase tracking-[0.3em] text-slate-300">{member.role}</p>
-                          {editingTeamId === member._id ? (
-                            <span className="mt-1 inline-block rounded-full bg-primary-light/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-primary-light">
-                              Editing
-                            </span>
-                          ) : null}
-                        </div>
-                        <div className="flex flex-wrap gap-2 text-[11px] font-semibold uppercase tracking-[0.28em]">
-                          <span className="rounded-full border border-white/15 px-3 py-1 text-slate-200">
-                            {affiliation === "chapter"
-                              ? `Chapter${member.chapter ? `: ${member.chapter}` : " (add chapter name)"}`
-                              : "Main Branch"}
-                          </span>
-                          <span
-                            className={`rounded-full border px-3 py-1 ${
-                              isSpotlighted
-                                ? "border-primary-light/70 text-primary-light"
-                                : "border-white/15 text-slate-300"
-                            }`}
-                          >
-                            {isSpotlighted ? `Homepage Spotlight: ${roleLabel}` : roleLabel}
-                          </span>
-                          <span className="rounded-full border border-white/15 px-3 py-1 text-slate-200">
-                            Priority: {typeof member.priority === "number" ? member.priority : 0}
-                          </span>
+                          <h4 className="font-semibold text-white">{member.name}</h4>
+                          <p className="text-sm text-slate-300">{member.role}</p>
+                          {member.roleKey && member.roleKey !== "none" && (
+                            <p className="text-xs text-slate-400">{roleKeyLabelMap[member.roleKey]}</p>
+                          )}
+                          {member.affiliation === "chapter" && member.chapter && (
+                            <p className="text-xs text-slate-400">{member.chapter}</p>
+                          )}
                         </div>
                       </div>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        onClick={() => startTeamEdit(member)}
-                        className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-primary-light hover:text-primary-light"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteTeamMember(member._id)}
-                        className="rounded-full border border-red-400/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-red-200 transition hover:border-red-300 hover:text-red-100"
-                      >
-                        Delete
-                      </button>
-                    </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => startTeamEdit(member)}
+                          className="rounded border border-white/20 px-2 py-1 text-xs font-semibold text-white hover:border-white"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTeamMember(member._id)}
+                          className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </li>
-                  );
-                })}
-              </ul>
-            ) : (
-              <p className="mt-4 text-sm text-slate-300">No team members yet. Add one above.</p>
-            )}
-          </div>
-        </section>
-      ) : null}
-
-      {activeTab === "chapters" ? (
-        <section className="space-y-8">
-          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
-            <h2 className="heading-font text-xl font-semibold text-white">Chapters & Affinity Groups</h2>
-            <p className="mt-2 text-sm text-slate-300">
-              Review chapter rosters, confirm advisor assignments, and jump into the public pages that showcase each community.
-            </p>
-            {chapterEntries.length > 0 ? (
-              <>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  {chapterEntries.map((entry) => (
-                    <button
-                      key={entry.slug}
-                      type="button"
-                      onClick={() => setSelectedChapter(entry.name)}
-                      className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] transition ${
-                        selectedChapter === entry.name
-                          ? "bg-primary-light text-slate-900"
-                          : "border border-white/20 text-white hover:border-white hover:bg-white/10"
-                      }`}
-                    >
-                      {entry.name}
-                      <span className="ml-2 rounded-full border border-white/20 px-2 py-0.5 text-[10px] tracking-[0.25em]">
-                        {entry.members.length}
-                      </span>
-                    </button>
                   ))}
-                </div>
-                {fallbackChapterEntry ? (
-                  <p className="mt-4 text-xs text-amber-300">
-                    {fallbackChapterEntry.members.length} member
-                    {fallbackChapterEntry.members.length === 1 ? "" : "s"} still use the default chapter name. Update their chapter titles for clearer listings.
-                  </p>
-                ) : null}
-              </>
-            ) : (
-              <p className="mt-4 text-sm text-slate-300">Add chapter or affinity group members in the Team tab to populate this view.</p>
-            )}
-          </div>
-
-          {selectedChapterEntry ? (
-            <div className="space-y-6 rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                  <h3 className="heading-font text-lg font-semibold text-white">{selectedChapterEntry.name}</h3>
-                  <p className="mt-1 text-xs uppercase tracking-[0.3em] text-slate-300">
-                    {selectedChapterEntry.advisors.length} advisor{selectedChapterEntry.advisors.length === 1 ? "" : "s"} ·
-                    {" "}
-                    {selectedChapterEntry.committee.length} committee member{selectedChapterEntry.committee.length === 1 ? "" : "s"}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <Link
-                    href={`/chapters/${selectedChapterEntry.slug}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-white hover:bg-white/10"
-                  >
-                    View Public Page
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("team")}
-                    className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-primary-light hover:text-primary-light"
-                  >
-                    Add or Edit Members
-                  </button>
-                </div>
-              </div>
-
-              {selectedChapterEntry.members.length > 0 ? (
-                <ul className="space-y-4">
-                  {selectedChapterEntry.members.map((member) => {
-                    const roleKey = member.roleKey ?? "none";
-                    const roleLabel = roleKeyLabelMap[roleKey] ?? roleKeyLabelMap.none;
-                    const isSpotlighted = roleKey !== "none";
-
-                    return (
-                      <li
-                        key={member._id}
-                        className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 lg:flex-row lg:items-center lg:justify-between"
-                      >
-                        <div className="space-y-2">
-                          <p className="heading-font text-base font-semibold text-white">{member.name}</p>
-                          <p className="text-xs uppercase tracking-[0.3em] text-slate-300">{member.role}</p>
-                          <div className="flex flex-wrap gap-2 text-[11px] font-semibold uppercase tracking-[0.28em]">
-                            <span className="rounded-full border border-white/15 px-3 py-1 text-slate-200">
-                              {member.chapter?.trim() || chapterFallbackName}
-                            </span>
-                            <span
-                              className={`rounded-full border px-3 py-1 ${
-                                isSpotlighted
-                                  ? "border-primary-light/70 text-primary-light"
-                                  : "border-white/15 text-slate-300"
-                              }`}
-                            >
-                              {isSpotlighted ? `Homepage Spotlight: ${roleLabel}` : roleLabel}
-                            </span>
-                            <span className="rounded-full border border-white/15 px-3 py-1 text-slate-200">
-                              Priority: {typeof member.priority === "number" ? member.priority : 0}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              startTeamEdit(member);
-                              setActiveTab("team");
-                            }}
-                            className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-primary-light hover:text-primary-light"
-                          >
-                            Edit in Team Tab
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteTeamMember(member._id)}
-                            className="rounded-full border border-red-400/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-red-200 transition hover:border-red-300 hover:text-red-100"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </li>
-                    );
-                  })}
                 </ul>
               ) : (
-                <p className="text-sm text-slate-300">
-                  No members are assigned to this chapter yet. Use the Team tab to add faculty or committee members with the appropriate
-                  chapter name.
-                </p>
+                <p className="mt-4 text-sm text-slate-400">No team members found.</p>
               )}
             </div>
-          ) : null}
+          </div>
         </section>
-      ) : null}
 
-      {activeTab === "gallery" ? (
+      ) : activeTab === "chapters" ? (
+        <section className="space-y-8">
+          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
+            <h2 className="heading-font text-xl font-semibold text-white">Chapter Management</h2>
+            <p className="mt-2 text-sm text-slate-300">View and manage team members by chapter.</p>
+
+            <div className="mt-6">
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
+                Select Chapter
+                <select
+                  value={selectedChapter || ""}
+                  onChange={(e) => setSelectedChapter(e.target.value || null)}
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                >
+                  <option value="">All Chapters</option>
+                  {chapterEntries.map((entry) => (
+                    <option key={entry.name} value={entry.name}>
+                      {entry.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="mt-8">
+              <h3 className="heading-font text-lg font-semibold text-white">
+                {selectedChapter ? `${selectedChapter} Members` : "All Chapter Members"}
+              </h3>
+              <p className="mt-2 text-sm text-slate-300">
+                {selectedChapter
+                  ? `Showing members of ${selectedChapter}.`
+                  : "Showing all chapter members. Select a chapter to filter."}
+              </p>
+              {isTeamLoading ? (
+                <p className="mt-4 text-sm text-slate-400">Loading team members...</p>
+              ) : selectedChapterEntry ? (
+                <ul className="mt-4 space-y-4">
+                  {selectedChapterEntry.members.map((member) => (
+                    <li key={member._id} className="flex items-center justify-between rounded-lg border border-white/15 bg-white/5 p-4">
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={member.photoUrl}
+                          alt={member.name}
+                          className="h-16 w-16 rounded-full object-cover"
+                        />
+                        <div>
+                          <h4 className="font-semibold text-white">{member.name}</h4>
+                          <p className="text-sm text-slate-300">{member.role}</p>
+                          {member.roleKey && member.roleKey !== "none" && (
+                            <p className="text-xs text-slate-400">{roleKeyLabelMap[member.roleKey]}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => startTeamEdit(member)}
+                          className="rounded border border-white/20 px-2 py-1 text-xs font-semibold text-white hover:border-white"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTeamMember(member._id)}
+                          className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : fallbackChapterEntry ? (
+                <ul className="mt-4 space-y-4">
+                  {fallbackChapterEntry.members.map((member) => (
+                    <li key={member._id} className="flex items-center justify-between rounded-lg border border-white/15 bg-white/5 p-4">
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={member.photoUrl}
+                          alt={member.name}
+                          className="h-16 w-16 rounded-full object-cover"
+                        />
+                        <div>
+                          <h4 className="font-semibold text-white">{member.name}</h4>
+                          <p className="text-sm text-slate-300">{member.role}</p>
+                          {member.roleKey && member.roleKey !== "none" && (
+                            <p className="text-xs text-slate-400">{roleKeyLabelMap[member.roleKey]}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => startTeamEdit(member)}
+                          className="rounded border border-white/20 px-2 py-1 text-xs font-semibold text-white hover:border-white"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTeamMember(member._id)}
+                          className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-4 text-sm text-slate-400">No chapter members found.</p>
+              )}
+            </div>
+          </div>
+        </section>
+
+      ) : activeTab === "gallery" ? (
         <section className="space-y-8">
           <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
             <h2 className="heading-font text-xl font-semibold text-white">Add Gallery Item</h2>
-            <p className="mt-2 text-sm text-slate-300">Feature Cloudinary-hosted photos to refresh the visual storytelling.</p>
+            <p className="mt-2 text-sm text-slate-300">Upload images to the gallery for display on the website.</p>
             <form onSubmit={handleCreateGalleryItem} className="mt-6 grid gap-5 md:grid-cols-2">
               <label className="flex flex-col gap-2 text-sm text-slate-200">
                 Title
@@ -1352,40 +1482,32 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                 />
               </label>
-              <div className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
-                Gallery Image
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
+                Associated Event (optional)
+                <input
+                  value={galleryForm.event}
+                  onChange={(e) => setGalleryForm((prev) => ({ ...prev, event: e.target.value }))}
+                  placeholder="e.g., Annual Tech Fest 2023"
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                />
+              </label>
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+                Image
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleGalleryImageSelection}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white file:mr-4 file:rounded-full file:border-0 file:bg-primary-light file:px-4 file:py-2 file:text-sm file:font-semibold file:text-slate-900 focus:border-primary focus:outline-none"
-                />
-                {galleryUploadLoading ? <span className="text-xs text-slate-300">Uploading image...</span> : null}
-                {galleryUploadError ? <span className="text-xs text-amber-300">{galleryUploadError}</span> : null}
-                {galleryForm.imageUrl ? (
-                  <div className="space-y-1 text-xs text-slate-300">
-                    <div className="flex items-center gap-3">
-                      <span className="rounded-full bg-white/10 px-3 py-1 text-white/80">Image uploaded</span>
-                      <a href={galleryForm.imageUrl} target="_blank" rel="noreferrer" className="underline transition hover:text-white">
-                        Preview
-                      </a>
-                    </div>
-                    <p className="break-all text-slate-400">Public ID: {galleryForm.publicId}</p>
-                  </div>
-                ) : (
-                  <span className="text-xs text-slate-400">Upload a landscape photo to feature in the gallery.</span>
-                )}
-              </div>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
-                Related Event (optional)
-                <input
-                  value={galleryForm.event}
-                  onChange={(e) => setGalleryForm((prev) => ({ ...prev, event: e.target.value }))}
                   className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                 />
+                {galleryUploadLoading && <p className="text-sm text-slate-400">Uploading...</p>}
+                {galleryUploadError && <p className="text-sm text-red-500">{galleryUploadError}</p>}
+                {galleryForm.imageUrl && (
+                  <img src={galleryForm.imageUrl} alt="Preview" className="mt-2 h-24 w-40 rounded object-cover" />
+                )}
               </label>
+
               <label className="flex flex-col gap-2 text-sm text-slate-200">
-                Uploaded Date (optional)
+                Uploaded At (optional)
                 <input
                   type="date"
                   value={galleryForm.uploadedAt}
@@ -1393,123 +1515,259 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
                 />
               </label>
-              <div className="md:col-span-2 flex items-center gap-4">
+
+              <div className="md:col-span-2 flex gap-2">
                 <button
                   type="submit"
                   disabled={gallerySubmitting}
-                  className="rounded-full bg-primary-light px-6 py-2 text-sm font-semibold uppercase tracking-[0.3em] text-slate-900 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-lg border border-white/15 bg-primary px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-primary-light disabled:opacity-50"
                 >
-                  {gallerySubmitting ? "Saving..." : "Add Item"}
+                  {gallerySubmitting ? "Adding..." : "Add to Gallery"}
                 </button>
-                {galleryFeedback ? <span className="text-sm text-emerald-300">{galleryFeedback}</span> : null}
-                {galleryError ? <span className="text-sm text-amber-300">{galleryError}</span> : null}
+                <button
+                  type="button"
+                  onClick={() => setGalleryForm({ title: "", publicId: "", imageUrl: "", event: "", uploadedAt: "" })}
+                  className="rounded-lg border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
+                >
+                  Reset
+                </button>
               </div>
             </form>
-          </div>
 
-          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
-            <h3 className="heading-font text-lg font-semibold text-white">Current Gallery</h3>
-            {isGalleryLoading ? (
-              <p className="mt-4 text-sm text-slate-300">Loading gallery...</p>
-            ) : gallery && gallery.length > 0 ? (
-              <ul className="mt-6 space-y-4">
-                {gallery.map((item) => (
-                  <li key={item._id} className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="heading-font text-base font-semibold text-white">{item.title}</p>
-                      {item.event ? (
-                        <p className="text-xs uppercase tracking-[0.3em] text-slate-300">{item.event}</p>
-                      ) : null}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteGalleryItem(item._id)}
-                      className="self-start rounded-full border border-red-400/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-red-200 transition hover:border-red-300 hover:text-red-100"
-                    >
-                      Delete
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-4 text-sm text-slate-300">No gallery items yet. Add one above.</p>
-            )}
+            {galleryFeedback && <p className="text-sm text-green-500">{galleryFeedback}</p>}
+            {galleryError && <p className="text-sm text-red-500">{galleryError}</p>}
+
+            <div className="mt-8">
+              <h3 className="heading-font text-lg font-semibold text-white">Existing Gallery</h3>
+              {isGalleryLoading ? (
+                <p className="mt-4 text-sm text-slate-400">Loading gallery...</p>
+              ) : gallery && gallery.length > 0 ? (
+                <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {gallery.map((item) => (
+                    <li key={item._id} className="rounded-lg border border-white/15 bg-white/5 p-3">
+                      <img src={item.imageUrl} alt={item.title} className="h-36 w-full rounded object-cover" />
+                      <div className="mt-3 flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-white">{item.title}</p>
+                          {item.event && <p className="text-xs text-slate-400">{item.event}</p>}
+                        </div>
+                        <button
+                          onClick={() => handleDeleteGalleryItem(item._id)}
+                          className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-4 text-sm text-slate-400">No gallery items yet.</p>
+              )}
+            </div>
           </div>
         </section>
-      ) : null}
 
-        {activeTab === "subscribers" ? (
-          <section className="space-y-8">
-            <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <h2 className="heading-font text-xl font-semibold text-white">Newsletter Subscribers</h2>
-                  <p className="mt-2 text-sm text-slate-300">
-                    Manage the quarterly updates list collected from the public contact page.
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
+      ) : activeTab === "news" ? (
+        <section className="space-y-8">
+          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
+            <h2 className="heading-font text-xl font-semibold text-white">{isEditingNews ? "Edit News" : "Create News"}</h2>
+            <p className="mt-2 text-sm text-slate-300">Publish updates and announcements.</p>
+            <form onSubmit={handleSubmitNews} className="mt-6 grid gap-5 md:grid-cols-2">
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
+                Title
+                <input
+                  value={newsForm.title}
+                  onChange={(e) => setNewsForm((p) => ({ ...p, title: e.target.value }))}
+                  required
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                />
+              </label>
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
+                Slug
+                <input
+                  value={newsForm.slug}
+                  onChange={(e) => setNewsForm((p) => ({ ...p, slug: e.target.value }))}
+                  required
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                />
+              </label>
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
+                Category
+                <input
+                  value={newsForm.category}
+                  onChange={(e) => setNewsForm((p) => ({ ...p, category: e.target.value }))}
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                />
+              </label>
+              <label className="flex flex-col gap-2 text-sm text-slate-200">
+                Date
+                <input
+                  type="date"
+                  value={newsForm.date}
+                  onChange={(e) => setNewsForm((p) => ({ ...p, date: e.target.value }))}
+                  required
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                />
+              </label>
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+                Excerpt
+                <input
+                  value={newsForm.excerpt}
+                  onChange={(e) => setNewsForm((p) => ({ ...p, excerpt: e.target.value }))}
+                  required
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                />
+              </label>
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+                Content (optional)
+                <textarea
+                  value={newsForm.content}
+                  onChange={(e) => setNewsForm((p) => ({ ...p, content: e.target.value }))}
+                  rows={6}
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                />
+              </label>
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+                Image (optional)
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleNewsImageSelection}
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                />
+                {newsUploadLoading && <p className="text-sm text-slate-400">Uploading...</p>}
+                {newsUploadError && <p className="text-sm text-red-500">{newsUploadError}</p>}
+                {newsForm.imageUrl && (
+                  <img src={newsForm.imageUrl} alt="News preview" className="mt-2 h-24 w-40 rounded object-cover" />
+                )}
+              </label>
+
+              <div className="flex items-center gap-2 text-sm text-slate-200">
+                <input
+                  type="checkbox"
+                  checked={newsForm.published}
+                  onChange={(e) => setNewsForm((p) => ({ ...p, published: e.target.checked }))}
+                  className="rounded border border-white/15 bg-white/10 text-primary focus:border-primary focus:outline-none"
+                />
+                <label>Published</label>
+              </div>
+
+              <div className="md:col-span-2 flex gap-2">
+                <button
+                  type="submit"
+                  disabled={newsSubmitting}
+                  className="rounded-lg border border-white/15 bg-primary px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-primary-light disabled:opacity-50"
+                >
+                  {newsSubmitting ? "Saving..." : isEditingNews ? "Update News" : "Create News"}
+                </button>
+                {isEditingNews && (
                   <button
                     type="button"
-                    onClick={handleCopySubscribers}
-                    className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-primary-light hover:text-primary-light"
+                    onClick={cancelNewsEdit}
+                    className="rounded-lg border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
                   >
-                    Copy Emails
+                    Cancel
                   </button>
-                  <span className="rounded-full border border-white/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-200">
-                    Total: {subscriberCount}
-                  </span>
-                </div>
-              </div>
-              {subscriberFeedback ? <p className="mt-4 text-sm text-emerald-300">{subscriberFeedback}</p> : null}
-              {subscriberError ? <p className="mt-2 text-sm text-amber-300">{subscriberError}</p> : null}
-              <div className="mt-6">
-                {isSubscribersLoading ? (
-                  <p className="text-sm text-slate-300">Loading subscribers...</p>
-                ) : subscribers && subscribers.length > 0 ? (
-                  <ul className="space-y-3">
-                    {subscribers.map((subscriber) => {
-                      const subscribedAt = new Date(subscriber.createdAt);
-                      const formattedTimestamp = Number.isNaN(subscribedAt.getTime())
-                        ? subscriber.createdAt
-                        : subscribedAt.toLocaleString(undefined, {
-                            dateStyle: "medium",
-                            timeStyle: "short"
-                          });
-
-                      return (
-                        <li
-                          key={subscriber._id}
-                          className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-center sm:justify-between"
-                        >
-                          <div>
-                            <p className="heading-font text-base font-semibold text-white">{subscriber.email}</p>
-                            <p className="text-xs uppercase tracking-[0.3em] text-slate-300">
-                              {formattedTimestamp}
-                              {subscriber.source ? ` • ${subscriber.source}` : ""}
-                            </p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteSubscriber(subscriber._id)}
-                            disabled={subscriberDeletingId === subscriber._id}
-                            className="self-start rounded-full border border-red-400/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-red-200 transition hover:border-red-300 hover:text-red-100 disabled:cursor-not-allowed disabled:opacity-60"
-                          >
-                            {subscriberDeletingId === subscriber._id ? "Removing..." : "Delete"}
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-slate-300">
-                    No subscribers yet. Once visitors join the list from the contact page, emails will appear here.
-                  </p>
                 )}
               </div>
+            </form>
+
+            {newsFeedback && <p className="text-sm text-green-500">{newsFeedback}</p>}
+            {newsError && <p className="text-sm text-red-500">{newsError}</p>}
+
+            <div className="mt-8">
+              <h3 className="heading-font text-lg font-semibold text-white">Existing News</h3>
+              {isNewsLoading ? (
+                <p className="mt-4 text-sm text-slate-400">Loading news...</p>
+              ) : news && news.length > 0 ? (
+                <ul className="mt-4 space-y-4">
+                  {news.map((item) => (
+                    <li key={item._id} className="flex items-center justify-between rounded-lg border border-white/15 bg-white/5 p-4">
+                      <div>
+                        <p className="font-semibold text-white">{item.title}</p>
+                        <p className="text-sm text-slate-300">{new Date(item.date).toLocaleDateString()} • {item.category}</p>
+                        <p className="text-xs text-slate-400">/{item.slug}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setEditingNewsId(item._id)}
+                          className="rounded border border-white/20 px-2 py-1 text-xs font-semibold text-white hover:border-white"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleTogglePublished(item._id, item.published)}
+                          className={`rounded px-2 py-1 text-xs font-semibold ${item.published ? "bg-primary-light text-slate-900" : "border border-white/20 text-white hover:border-white"}`}
+                        >
+                          {item.published ? "Published" : "Draft"}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteNews(item._id)}
+                          className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-4 text-sm text-slate-400">No news yet.</p>
+              )}
             </div>
-          </section>
-        ) : null}
+          </div>
+        </section>
+
+      ) : activeTab === "subscribers" ? (
+        <section className="space-y-8">
+          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
+            <h2 className="heading-font text-xl font-semibold text-white">Subscribers</h2>
+            <p className="mt-2 text-sm text-slate-300">Manage newsletter subscribers captured from the site.</p>
+
+            <div className="mt-4 flex gap-2">
+              <button
+                type="button"
+                onClick={handleCopySubscribers}
+                className="rounded-lg border border-white/15 bg-primary px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-primary-light disabled:opacity-50"
+              >
+                Copy Emails
+              </button>
+              {subscriberFeedback && <p className="text-sm text-green-500">{subscriberFeedback}</p>}
+              {subscriberError && <p className="text-sm text-red-500">{subscriberError}</p>}
+            </div>
+
+            <div className="mt-6">
+              {isSubscribersLoading ? (
+                <p className="mt-4 text-sm text-slate-400">Loading subscribers...</p>
+              ) : subscribers && subscribers.length > 0 ? (
+                <ul className="mt-4 space-y-3">
+                  {subscribers.map((s) => (
+                    <li key={s._id} className="flex items-center justify-between rounded-lg border border-white/15 bg-white/5 p-3">
+                      <div>
+                        <p className="text-sm text-white">{s.email}</p>
+                        <p className="text-xs text-slate-400">{new Date(s.createdAt).toLocaleString()}</p>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteSubscriber(s._id)}
+                        disabled={subscriberDeletingId === s._id}
+                        className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500 disabled:opacity-50"
+                      >
+                        {subscriberDeletingId === s._id ? "Deleting..." : "Delete"}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-4 text-sm text-slate-400">No subscribers yet.</p>
+              )}
+            </div>
+          </div>
+        </section>
+
+      ) : null}
     </div>
+
   );
+
 }

@@ -7,6 +7,7 @@ import { GallerySection } from "@/components/GallerySection";
 import { Hero } from "@/components/Hero";
 import { HeroHighlights } from "@/components/HeroHighlights";
 import { Navbar } from "@/components/Navbar";
+import { NewsSection } from "@/components/NewsSection";
 import { TeamGrid } from "@/components/TeamGrid";
 import { getEvents, getFeaturedEvent, getGalleryItems, getTeamMembers } from "@/lib/actions";
 import type { EventSummary, GalleryItemSummary, TeamMemberSummary } from "@/lib/actions";
@@ -37,9 +38,10 @@ export default async function HomePage() {
         <Hero events={events} spotlight={heroSpotlight} />
         <HeroHighlights spotlight={heroSpotlight} />
         <AboutSection />
-  <EventList events={events} />
+        <EventList events={events} />
         <TeamGrid team={team} />
         <GallerySection items={gallery} />
+        <NewsSection />
         <CallToAction />
         <ContactSection />
       </main>

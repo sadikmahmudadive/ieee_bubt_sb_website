@@ -13,19 +13,32 @@ export const metadata: Metadata = {
   },
   description: siteMetadata.description,
   metadataBase: new URL(siteMetadata.baseUrl),
+  icons: {
+    icon: siteMetadata.brand?.logo.src,
+    apple: siteMetadata.brand?.logo.src
+  },
   openGraph: {
     title: siteMetadata.title,
     description: siteMetadata.description,
     url: siteMetadata.baseUrl,
     siteName: siteMetadata.title,
     locale: "en_US",
-    type: "website"
+    type: "website",
+    images: [
+      {
+        url: siteMetadata.brand?.logo.src,
+        width: 1200,
+        height: 630,
+        alt: siteMetadata.brand?.logo.alt
+      }
+    ]
   },
   twitter: {
     card: "summary_large_image",
     site: siteMetadata.social.twitter,
     title: siteMetadata.title,
-    description: siteMetadata.description
+    description: siteMetadata.description,
+    images: [siteMetadata.brand?.logo.src]
   }
 };
 

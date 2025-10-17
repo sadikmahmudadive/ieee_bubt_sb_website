@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import Link from "next/link";
+// import Link from "next/link"; // Not used currently
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 
@@ -1190,10 +1190,10 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 <select
                   value={teamForm.affiliation}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, affiliation: e.target.value as "main" | "chapter" }))}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none [color-scheme:dark]"
                 >
-                  <option value="main">Main Branch</option>
-                  <option value="chapter">Chapter</option>
+                  <option value="main" className="text-slate-900" style={{ color: "#0f172a" }}>Main Branch</option>
+                  <option value="chapter" className="text-slate-900" style={{ color: "#0f172a" }}>Chapter</option>
                 </select>
               </label>
               {teamForm.affiliation === "chapter" && (
@@ -1202,10 +1202,10 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   <select
                     value={teamForm.chapter}
                     onChange={(e) => setTeamForm((prev) => ({ ...prev, chapter: e.target.value }))}
-                    className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                    className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none [color-scheme:dark]"
                   >
                     {chapterNameOptions.map((chapter) => (
-                      <option key={chapter} value={chapter}>
+                      <option key={chapter} value={chapter} className="text-slate-900" style={{ color: "#0f172a" }}>
                         {chapter}
                       </option>
                     ))}
@@ -1217,10 +1217,10 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 <select
                   value={teamForm.roleKey}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, roleKey: e.target.value }))}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none [color-scheme:dark]"
                 >
                   {roleKeyOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
+                    <option key={option.value} value={option.value} className="text-slate-900" style={{ color: "#0f172a" }}>
                       {option.label}
                     </option>
                   ))}
@@ -1367,11 +1367,11 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 <select
                   value={selectedChapter || ""}
                   onChange={(e) => setSelectedChapter(e.target.value || null)}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none [color-scheme:dark]"
                 >
-                  <option value="">All Chapters</option>
+                  <option value="" className="text-slate-900" style={{ color: "#0f172a" }}>All Chapters</option>
                   {chapterEntries.map((entry) => (
-                    <option key={entry.name} value={entry.name}>
+                    <option key={entry.name} value={entry.name} className="text-slate-900" style={{ color: "#0f172a" }}>
                       {entry.name}
                     </option>
                   ))}

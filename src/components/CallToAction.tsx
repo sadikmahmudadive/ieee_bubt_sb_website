@@ -10,9 +10,7 @@ export function CallToAction() {
           </p>
           <div className="flex flex-col items-center justify-center gap-3 pt-4 sm:flex-row">
             <a
-              href="https://ieee.org"
-              target="_blank"
-              rel="noreferrer"
+              href="/apply"
               className="inline-flex items-center justify-center gap-3 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold uppercase tracking-[0.32em] text-white transition hover:bg-slate-800"
             >
               Apply for Membership

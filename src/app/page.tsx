@@ -9,7 +9,7 @@ import { HeroHighlights } from "@/components/HeroHighlights";
 import { Navbar } from "@/components/Navbar";
 import { NewsSection } from "@/components/NewsSection";
 import { TeamGrid } from "@/components/TeamGrid";
-import { getEvents, getFeaturedEvent, getGalleryItems, getTeamMembers } from "@/lib/actions";
+import { getEvents, getFeaturedEvent, getGalleryItems, getTeamMembers, getNewsItems } from "@/lib/actions";
 import type { EventSummary, GalleryItemSummary, TeamMemberSummary } from "@/lib/actions";
 
 export const revalidate = 0;
@@ -19,13 +19,15 @@ export default async function HomePage() {
   let team: TeamMemberSummary[] = [];
   let gallery: GalleryItemSummary[] = [];
   let featuredEvent: EventSummary | null = null;
+  let newsItems: Awaited<ReturnType<typeof getNewsItems>> = [];
 
   if (process.env.MONGODB_URI) {
-    [events, team, gallery, featuredEvent] = await Promise.all([
+    [events, team, gallery, featuredEvent, newsItems] = await Promise.all([
       getEvents(),
       getTeamMembers(),
       getGalleryItems(),
-      getFeaturedEvent()
+      getFeaturedEvent(),
+      getNewsItems()
     ]);
   }
 
@@ -40,8 +42,8 @@ export default async function HomePage() {
         <AboutSection />
         <EventList events={events} />
         <TeamGrid team={team} />
-        <GallerySection items={gallery} />
-        <NewsSection />
+  <GallerySection items={gallery} />
+  <NewsSection items={newsItems} />
         <CallToAction />
         <ContactSection />
       </main>

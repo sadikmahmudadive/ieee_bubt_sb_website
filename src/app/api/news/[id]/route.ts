@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdminSession } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { News } from "@/models/News";
+import { slugify } from "@/utils/slugify";
 
 export async function PATCH(
   request: NextRequest,
@@ -21,18 +22,29 @@ export async function PATCH(
     const body = await request.json();
     const { title, excerpt, content, date, category, slug, imageUrl, published } = body;
 
+    const update: Record<string, unknown> = {};
+    if (title !== undefined) update.title = title;
+    if (excerpt !== undefined) update.excerpt = excerpt;
+    if (content !== undefined) update.content = content;
+    if (date !== undefined) update.date = date ? new Date(date) : undefined;
+    if (category !== undefined) update.category = category;
+    if (slug !== undefined) {
+      const normalized = slugify(String(slug));
+      if (!normalized) {
+        return NextResponse.json({ error: "Provide a valid slug for the news item." }, { status: 400 });
+      }
+      const exists = await News.findOne({ slug: normalized, _id: { $ne: params.id } }).lean();
+      if (exists) {
+        return NextResponse.json({ error: "Another news item already uses this slug." }, { status: 409 });
+      }
+      update.slug = normalized;
+    }
+    if (imageUrl !== undefined) update.imageUrl = imageUrl;
+    if (published !== undefined) update.published = Boolean(published);
+
     const updatedNews = await News.findByIdAndUpdate(
       params.id,
-      {
-        title,
-        excerpt,
-        content,
-        date: date ? new Date(date) : undefined,
-        category,
-        slug,
-        imageUrl,
-        published: published !== undefined ? Boolean(published) : undefined
-      },
+      { $set: update },
       { new: true, runValidators: true }
     );
 

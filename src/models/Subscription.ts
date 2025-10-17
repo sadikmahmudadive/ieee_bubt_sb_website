@@ -15,6 +15,4 @@ const subscriptionSchema = new Schema<Subscription>(
   { timestamps: true }
 );
 
-subscriptionSchema.index({ email: 1 }, { unique: true });
-
 export const SubscriptionModel = models.Subscription || model<Subscription>("Subscription", subscriptionSchema);

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdminSession } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { News } from "@/models/News";
+import { slugify } from "@/utils/slugify";
 
 export async function GET() {
   try {
@@ -34,12 +35,29 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
 
     const body = await request.json();
-    const { title, excerpt, content, date, category, slug, imageUrl, published } = body;
+  const { title, excerpt, content, date, category, slug, imageUrl, published } = body;
 
     if (!title || !excerpt || !date || !category || !slug) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
+      );
+    }
+
+    const normalizedSlug = slugify(String(slug || ""));
+    if (!normalizedSlug) {
+      return NextResponse.json(
+        { error: "Provide a valid slug for the news item." },
+        { status: 400 }
+      );
+    }
+
+    // Prevent duplicate slugs with a friendlier error
+    const existing = await News.findOne({ slug: normalizedSlug }).lean();
+    if (existing) {
+      return NextResponse.json(
+        { error: "Another news item already uses this slug." },
+        { status: 409 }
       );
     }
 
@@ -49,7 +67,7 @@ export async function POST(request: NextRequest) {
       content,
       date: new Date(date),
       category,
-      slug,
+      slug: normalizedSlug,
       imageUrl,
       published: Boolean(published)
     });

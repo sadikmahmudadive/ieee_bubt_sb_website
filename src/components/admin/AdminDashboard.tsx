@@ -1691,7 +1691,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                       </div>
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => setEditingNewsId(item._id)}
+                          onClick={() => startNewsEdit(item)}
                           className="rounded border border-white/20 px-2 py-1 text-xs font-semibold text-white hover:border-white"
                         >
                           Edit

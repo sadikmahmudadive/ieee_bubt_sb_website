@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { SectionHeading } from "@/components/SectionHeading";
 import { NewspaperIcon, CalendarDaysIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 
@@ -9,7 +10,8 @@ type NewsItem = {
   date: string;
   category: string;
   slug?: string;
-  image?: string;
+  image?: string; // legacy name
+  imageUrl?: string; // preferred name
 };
 
 type NewsSectionProps = {
@@ -64,7 +66,18 @@ export function NewsSection({ items = mockNewsItems }: NewsSectionProps) {
               style={{ animationDelay: `${index * 150}ms` }}
             >
               <div className="relative h-48 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary-light/10 to-amber-400/20" />
+                {(item.imageUrl || item.image) ? (
+                  <Image
+                    src={(item.imageUrl || item.image) as string}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover"
+                    priority={index < 2}
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary-light/10 to-amber-400/20" />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
                 <div className="absolute top-4 left-4">
                   <span className="inline-flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-slate-700">

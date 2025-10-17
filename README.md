@@ -11,6 +11,7 @@ A modern Next.js 14 web experience for the IEEE Bangladesh University of Busines
 - 🔄 RESTful API routes with Zod validation for CRUD operations
 - 📸 Responsive components: hero, events grid, team cards, gallery, newsletter CTA
 - 📰 Newsletter capture stored in MongoDB and reviewed in the admin console
+- 📝 Membership application form at /apply with backend storage and success page
 - ✅ ESLint + Prettier configuration for consistent formatting
 
 ## Getting Started
@@ -85,6 +86,8 @@ Equivalent CRUD endpoints exist for `/api/team` and `/api/gallery`.
 - `GET /api/subscriptions` — list newsletter subscribers (admin only)
 - `DELETE /api/subscriptions/:id` — remove subscriber (admin only)
 
+- `POST /api/applications` — submit a membership application (public form at `/apply`). Accepts `multipart/form-data` and redirects to `/apply/success` on success.
+
 > All write routes expect JSON payloads validated with Zod. Ensure the request body matches the schemas in `src/utils/validators.ts`.
 
 ## Database Seeding (optional)
@@ -113,6 +116,8 @@ Prettier is configured via `.prettierrc`. Tailwind takes care of most utility-cl
 1. Provision environment variables on your hosting provider (Vercel recommended).
 2. Ensure MongoDB network access allows your deployment.
 3. Deploy with `vercel` or your platform of choice.
+
+Note: Some API routes are dynamic (e.g., chapters listing) and are server-rendered on demand during build as indicated by Next.js logs. This is expected.
 
 ## Next Steps
 

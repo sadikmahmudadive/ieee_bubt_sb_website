@@ -7,6 +7,7 @@ import { connectToDatabase } from "@/lib/db";
 import { EventModel } from "@/models/Event";
 import { GalleryItemModel } from "@/models/GalleryItem";
 import { TeamMemberModel } from "@/models/TeamMember";
+import { News } from "@/models/News";
 import { groupChapterMembers } from "@/utils/teamGrouping";
 
 import type { Event } from "@/models/Event";
@@ -55,6 +56,16 @@ export type GalleryItemSummary = {
   imageUrl: string;
   event?: string;
   uploadedAt: string;
+};
+
+export type NewsSummary = {
+  id: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  category: string;
+  slug: string;
+  imageUrl?: string;
 };
 
 export type ChapterSummary = {
@@ -106,6 +117,21 @@ const mapEventDetail = (event: EventLean): EventDetail => ({
   createdAt: normalizeDate(event.createdAt),
   updatedAt: normalizeDate(event.updatedAt)
 });
+
+// News lean type to satisfy TS when using .lean() with Mongoose
+type NewsLean = {
+  _id: Types.ObjectId;
+  title: string;
+  excerpt: string;
+  content?: string;
+  date: LeanDateLike;
+  category: string;
+  slug: string;
+  imageUrl?: string;
+  published: boolean;
+  createdAt: LeanDateLike;
+  updatedAt: LeanDateLike;
+};
 
 export async function getEvents(): Promise<EventSummary[]> {
   noStore();
@@ -182,5 +208,24 @@ export async function getGalleryItems(limit = 12): Promise<GalleryItemSummary[]>
     imageUrl: item.imageUrl,
     event: item.event,
     uploadedAt: item.uploadedAt instanceof Date ? item.uploadedAt.toISOString() : String(item.uploadedAt)
+  }));
+}
+
+export async function getNewsItems(limit = 3): Promise<NewsSummary[]> {
+  noStore();
+  await connectToDatabase();
+  const items = await News.find({ published: true })
+    .sort({ date: -1, createdAt: -1 })
+    .limit(limit)
+    .lean<NewsLean[]>();
+
+  return items.map((n) => ({
+    id: n._id.toString(),
+    title: n.title,
+    excerpt: n.excerpt,
+    date: normalizeDate(n.date),
+    category: n.category,
+    slug: n.slug,
+    imageUrl: n.imageUrl ?? undefined
   }));
 }

@@ -5,7 +5,8 @@ import { getUploadSignature } from "@/lib/cloudinary";
 const folderMap: Record<string, string> = {
   events: "ieee-bubt/events",
   team: "ieee-bubt/team",
-  gallery: "ieee-bubt/gallery"
+  gallery: "ieee-bubt/gallery",
+  news: "ieee-bubt/news"
 };
 
 export async function POST(request: Request) {

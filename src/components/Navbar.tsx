@@ -32,15 +32,15 @@ const navItems: NavItem[] = [
 ];
 
 const portalLink = {
-  label: "IEEE BUBT SB Portal",
+  label: "Portal",
   href: "/#contact"
 };
 
 const desktopLinkClasses =
-  "inline-flex items-center rounded-md px-3 py-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-100 transition hover:text-primary-light whitespace-nowrap";
+  "inline-flex items-center rounded-lg px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] text-slate-100 transition-all duration-300 hover:text-primary-light hover:bg-white/5 hover:shadow-lg hover:shadow-primary-light/10 whitespace-nowrap";
 
 const dropdownLinkClasses =
-  "block px-4 py-2 text-[11px] font-medium uppercase tracking-[0.18em] text-slate-700 transition hover:bg-slate-100";
+  "block px-4 py-3 text-[11px] font-medium uppercase tracking-[0.18em] text-slate-700 transition-all duration-300 hover:bg-slate-100 hover:text-primary";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -129,24 +129,24 @@ export function Navbar() {
   }, [isDropdownOpen]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/5 bg-slate-950/80 text-white backdrop-blur-xl">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
-        <Link href="/" className="flex items-center gap-3" onClick={closeAllMenus}>
-          <span className="relative h-12 w-12 overflow-hidden">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-gradient-to-r from-slate-950/90 via-slate-950/95 to-slate-950/90 text-white backdrop-blur-2xl shadow-lg shadow-slate-900/50">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
+        <Link href="/" className="flex items-center gap-4 group" onClick={closeAllMenus}>
+          <span className="relative h-16 w-16 overflow-hidden rounded-xl transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary-light/20">
             <Image
               src={siteMetadata.brand?.logo.src ?? "/brand/ieee-bubt-sb-logo.svg"}
               alt={siteMetadata.brand?.logo.alt ?? "IEEE BUBT Student Branch logo"}
               fill
-              sizes="48px"
+              sizes="64px"
               priority
-              className="object-contain"
+              className="object-contain transition-transform duration-300 group-hover:scale-105"
             />
           </span>
-          <span className="hidden text-xs font-medium uppercase tracking-[0.25em] text-slate-200 md:block">{siteMetadata.shortTitle}</span>
+          <span className="hidden text-sm font-bold uppercase tracking-[0.3em] text-slate-200 transition-colors duration-300 group-hover:text-primary-light md:block">{siteMetadata.shortTitle}</span>
         </Link>
 
-        <div className="hidden items-center gap-5 lg:flex">
-          <ul className="flex items-center gap-1.5">
+        <div className="hidden items-center gap-6 lg:flex">
+          <ul className="flex items-center gap-2">
             {navItems.map((item) => {
               if (item.type === "dropdown") {
                 const isOpen = isDropdownOpen;
@@ -174,19 +174,19 @@ export function Navbar() {
                   >
                     <button
                       type="button"
-                      className={`${desktopLinkClasses} gap-1`}
+                      className={`${desktopLinkClasses} gap-1.5`}
                       aria-expanded={isOpen}
                       onClick={handleDesktopDropdownToggle}
                     >
                       {item.label}
-                      <ChevronDownIcon className={`h-4 w-4 transition ${isOpen ? "rotate-180" : ""}`} />
+                      <ChevronDownIcon className={`h-4 w-4 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
                     </button>
                     {isOpen ? (
-                      <div className="absolute left-0 top-full z-50 pt-3">
-                        <div className="w-64 rounded-xl bg-white py-2 text-slate-900 shadow-2xl ring-1 ring-black/5">
+                      <div className="absolute left-0 top-full z-50 pt-4">
+                        <div className="w-72 rounded-2xl bg-white py-3 text-slate-900 shadow-2xl ring-1 ring-black/5 backdrop-blur-xl">
                           {chaptersLoading ? (
-                            <p className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">
-                              Loading...
+                            <p className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">
+                              Loading chapters...
                             </p>
                           ) : chapters.length > 0 ? (
                             <>
@@ -200,18 +200,18 @@ export function Navbar() {
                                   {chapter.name}
                                 </Link>
                               ))}
-                              <div className="mt-2 border-t border-slate-200 pt-2">
+                              <div className="mt-3 border-t border-slate-200 pt-3">
                                 <Link
                                   href="/chapters"
-                                  className="block px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500 transition hover:text-slate-700"
+                                  className="block px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500 transition-all duration-300 hover:text-primary hover:bg-slate-50"
                                   onClick={closeAllMenus}
                                 >
-                                  View All Chapters
+                                  View All Chapters →
                                 </Link>
                               </div>
                             </>
                           ) : (
-                            <p className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">
+                            <p className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">
                               Chapters coming soon
                             </p>
                           )}
@@ -233,7 +233,7 @@ export function Navbar() {
           </ul>
           <Link
             href={portalLink.href}
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-white transition hover:border-primary-light hover:bg-primary-light/10"
+            className="inline-flex items-center gap-2 rounded-full border border-primary-light/30 bg-gradient-to-r from-primary/10 to-primary-light/10 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-light transition-all duration-300 hover:border-primary-light hover:bg-primary-light/20 hover:shadow-lg hover:shadow-primary-light/20"
           >
             {portalLink.label}
           </Link>
@@ -241,7 +241,7 @@ export function Navbar() {
 
         <button
           type="button"
-          className="flex items-center justify-center rounded-md border border-white/15 p-2 text-white lg:hidden"
+          className="flex items-center justify-center rounded-xl border border-white/20 bg-white/5 p-3 text-white transition-all duration-300 hover:border-primary-light/50 hover:bg-primary-light/10 hover:shadow-lg hover:shadow-primary-light/20 lg:hidden"
           aria-label={isMenuOpen ? "Close navigation" : "Open navigation"}
           onClick={handleNavToggle}
         >
@@ -251,33 +251,33 @@ export function Navbar() {
 
       {isMenuOpen ? (
         <div className="lg:hidden">
-          <div className="border-t border-white/10 bg-slate-950/95 backdrop-blur">
-            <div className="space-y-2 px-4 py-4">
+          <div className="border-t border-white/10 bg-gradient-to-b from-slate-950/95 to-slate-950/90 backdrop-blur-xl">
+            <div className="space-y-3 px-4 py-6">
               {navItems.map((item) => {
                 if (item.type === "dropdown") {
                   return (
-                    <div key={item.key} className="rounded-lg bg-white/5 p-3">
+                    <div key={item.key} className="rounded-xl bg-white/5 p-4 border border-white/10">
                       <button
                         type="button"
-                        className="flex w-full items-center justify-between text-sm font-medium uppercase tracking-[0.24em] text-white"
+                        className="flex w-full items-center justify-between text-sm font-semibold uppercase tracking-[0.24em] text-white"
                         aria-expanded={mobileDropdownOpen}
                         onClick={() => setMobileDropdownOpen((prev) => !prev)}
                       >
                         {item.label}
                         <ChevronDownIcon
-                          className={`h-5 w-5 transition ${mobileDropdownOpen ? "rotate-180" : ""}`}
+                          className={`h-5 w-5 transition-transform duration-300 ${mobileDropdownOpen ? "rotate-180" : ""}`}
                         />
                       </button>
                       {mobileDropdownOpen ? (
-                        <div className="mt-3 space-y-2">
+                        <div className="mt-4 space-y-2">
                           {chaptersLoading ? (
-                            <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Loading...</p>
+                            <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Loading chapters...</p>
                           ) : chapters.length > 0 ? (
                             chapters.map((chapter) => (
                               <Link
                                 key={chapter.slug}
                                 href={`/chapters/${chapter.slug}`}
-                                className="block rounded-md bg-white/5 px-3 py-2 text-xs font-medium uppercase tracking-[0.24em] text-white/90 transition hover:bg-white/10"
+                                className="block rounded-lg bg-white/5 px-4 py-3 text-xs font-medium uppercase tracking-[0.24em] text-white/90 transition-all duration-300 hover:bg-white/10 hover:text-primary-light border border-white/10"
                                 onClick={closeAllMenus}
                               >
                                 {chapter.name}
@@ -288,10 +288,10 @@ export function Navbar() {
                           )}
                           <Link
                             href="/chapters"
-                            className="block rounded-md border border-white/15 px-3 py-2 text-xs font-medium uppercase tracking-[0.24em] text-white transition hover:bg-white/10"
+                            className="block rounded-lg border border-primary-light/30 bg-primary/5 px-4 py-3 text-xs font-semibold uppercase tracking-[0.24em] text-primary-light transition-all duration-300 hover:bg-primary/10 hover:border-primary-light"
                             onClick={closeAllMenus}
                           >
-                            View All Chapters
+                            View All Chapters →
                           </Link>
                         </div>
                       ) : null}
@@ -303,7 +303,7 @@ export function Navbar() {
                   <Link
                     key={item.key}
                     href={item.href ?? "#"}
-                    className="block rounded-lg px-3 py-2 text-sm font-medium uppercase tracking-[0.24em] text-white transition hover:bg-white/10"
+                    className="block rounded-lg px-4 py-3 text-sm font-semibold uppercase tracking-[0.24em] text-white transition-all duration-300 hover:bg-white/10 hover:text-primary-light border border-white/10"
                     onClick={closeAllMenus}
                   >
                     {item.label}
@@ -312,7 +312,7 @@ export function Navbar() {
               })}
               <Link
                 href={portalLink.href}
-                className="mt-2 block rounded-lg border border-white/15 px-3 py-2 text-center text-sm font-medium uppercase tracking-[0.24em] text-white transition hover:bg-white/10"
+                className="mt-4 block rounded-xl border border-primary-light/30 bg-gradient-to-r from-primary/10 to-primary-light/10 px-4 py-3 text-center text-sm font-semibold uppercase tracking-[0.24em] text-primary-light transition-all duration-300 hover:border-primary-light hover:bg-primary-light/20 hover:shadow-lg hover:shadow-primary-light/20"
                 onClick={closeAllMenus}
               >
                 {portalLink.label}

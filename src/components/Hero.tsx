@@ -92,83 +92,112 @@ export function Hero({ events = [], spotlight }: HeroProps) {
         {heroSlides.map((slide, index) => (
           <div
             key={slide.key}
-            className={`absolute inset-0 bg-cover bg-center transition-opacity duration-[1200ms] ease-out ${index === activeIndex ? "opacity-100" : "opacity-0"}`}
+            className={`absolute inset-0 bg-cover bg-center transition-all duration-[1500ms] ease-out ${index === activeIndex ? "opacity-100 scale-100" : "opacity-0 scale-105"}`}
             style={{ backgroundImage: `url(${slide.coverImage})` }}
           />
         ))}
-        <div className="absolute inset-0 bg-slate-950/70" />
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950/85 via-slate-950/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950/80 via-slate-950/50 to-slate-950/30 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-slate-950/20" />
       </div>
 
-      <div className="relative mx-auto flex min-h-[78vh] max-w-6xl flex-col justify-center gap-12 px-6 py-24 lg:flex-row lg:items-center lg:gap-16">
-        <div className="max-w-2xl space-y-8 text-white">
-          <span className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.32em] text-white/80">
-            <span className="relative h-7 w-7 overflow-hidden rounded-full border border-white/20 bg-white/10 p-1">
+      <div className="relative mx-auto flex min-h-[85vh] max-w-7xl flex-col justify-center gap-12 px-6 py-32 lg:flex-row lg:items-center lg:gap-20">
+        <div className="max-w-3xl space-y-10 text-white animate-fade-in">
+          <span className="inline-flex items-center gap-4 rounded-full border border-white/20 bg-white/10 backdrop-blur-xl px-4 py-2 text-xs font-medium uppercase tracking-[0.3em] text-white/90 shadow-lg">
+            <span className="relative h-8 w-8 overflow-hidden rounded-full border border-white/30 bg-white/15 p-1.5">
               <Image
                 src={siteMetadata.brand?.logo.src ?? "/brand/ieee-bubt-sb-logo.svg"}
                 alt={siteMetadata.brand?.logo.alt ?? "IEEE BUBT Student Branch logo"}
                 fill
-                sizes="28px"
+                sizes="32px"
                 className="object-contain"
                 priority
               />
             </span>
             IEEE BUBT Student Branch
           </span>
-          <h1 className="heading-font text-4xl font-semibold leading-tight sm:text-5xl lg:text-[3.5rem]">
-            {baseHeadline ? <span>{baseHeadline} </span> : null}
-            <span className="text-primary-light">{emphasized}</span>
+          <h1 className="heading-font text-5xl font-bold leading-tight sm:text-6xl lg:text-7xl xl:text-8xl">
+            {baseHeadline ? <span className="text-white/95">{baseHeadline} </span> : null}
+            <span className="bg-gradient-to-r from-primary-light via-amber-300 to-primary bg-clip-text text-transparent animate-pulse">
+              {emphasized}
+            </span>
           </h1>
-          <p className="max-w-xl text-base text-white/75 sm:text-lg">
+          <p className="max-w-2xl text-lg text-white/80 sm:text-xl leading-relaxed">
             {highlight?.subtitle ||
               "An inclusive community where emerging engineers collaborate with mentors and industry to deliver meaningful technology."}
           </p>
-          <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <Link
               href={primaryCtaHref}
-              className="inline-flex items-center gap-3 rounded-full bg-white px-6 py-3 text-sm font-semibold uppercase tracking-[0.32em] text-slate-950 transition hover:bg-slate-100"
+              className="group inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-white to-slate-100 px-8 py-4 text-sm font-bold uppercase tracking-[0.28em] text-slate-950 transition-all duration-300 hover:shadow-2xl hover:shadow-white/25 hover:-translate-y-1"
             >
-              <ArrowRightIcon className="h-4 w-4" />
+              <ArrowRightIcon className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
               {primaryCtaLabel}
             </Link>
             <a
               href="#contact"
-              className="inline-flex items-center gap-3 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold uppercase tracking-[0.32em] text-white transition hover:border-primary-light hover:text-primary-light"
+              className="group inline-flex items-center gap-3 rounded-full border-2 border-white/30 bg-white/5 backdrop-blur-sm px-8 py-4 text-sm font-bold uppercase tracking-[0.28em] text-white transition-all duration-300 hover:border-primary-light hover:bg-primary-light/10 hover:shadow-xl hover:shadow-primary-light/20"
             >
               Get Involved
+              <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
             </a>
           </div>
         </div>
+
+        {highlight?.eventDate && (
+          <div className="hidden lg:block animate-fade-in-up" style={{ animationDelay: "300ms" }}>
+            <div className="rounded-3xl border border-white/20 bg-white/10 backdrop-blur-xl p-6 shadow-2xl">
+              <div className="text-center space-y-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.4em] text-white/70">Next Event</p>
+                <p className="text-2xl font-bold text-white">
+                  {new Date(highlight.eventDate).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric'
+                  })}
+                </p>
+                <p className="text-sm text-white/80 uppercase tracking-[0.2em]">
+                  {new Date(highlight.eventDate).toLocaleDateString('en-US', { weekday: 'long' })}
+                </p>
+                {highlight.location && (
+                  <p className="text-xs text-white/60 mt-2">{highlight.location}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {heroSlides.length > 1 ? (
-        <div className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between px-4 sm:px-8">
+        <div className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between px-6 sm:px-12">
           <button
             type="button"
             onClick={() => setActiveIndex((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
-            className="pointer-events-auto hidden h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-slate-950/50 text-white transition hover:border-white hover:bg-slate-950/70 lg:flex"
+            className="pointer-events-auto hidden h-14 w-14 items-center justify-center rounded-full border-2 border-white/20 bg-slate-950/40 backdrop-blur-xl text-white transition-all duration-300 hover:border-white hover:bg-white/10 hover:shadow-xl hover:shadow-white/20 lg:flex"
             aria-label="Previous slide"
           >
-            <ChevronLeftIcon className="h-6 w-6" />
+            <ChevronLeftIcon className="h-7 w-7" />
           </button>
           <button
             type="button"
             onClick={() => setActiveIndex((prev) => (prev + 1) % heroSlides.length)}
-            className="pointer-events-auto hidden h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-slate-950/50 text-white transition hover:border-white hover:bg-slate-950/70 lg:flex"
+            className="pointer-events-auto hidden h-14 w-14 items-center justify-center rounded-full border-2 border-white/20 bg-slate-950/40 backdrop-blur-xl text-white transition-all duration-300 hover:border-white hover:bg-white/10 hover:shadow-xl hover:shadow-white/20 lg:flex"
             aria-label="Next slide"
           >
-            <ChevronRightIcon className="h-6 w-6" />
+            <ChevronRightIcon className="h-7 w-7" />
           </button>
         </div>
       ) : null}
 
-      <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 gap-2">
+      <div className="absolute bottom-12 left-1/2 flex -translate-x-1/2 gap-3">
         {heroSlides.map((slide, index) => (
           <button
             key={`dot-${slide.key}`}
             type="button"
             onClick={() => setActiveIndex(index)}
-            className={`h-2 w-8 rounded-full transition ${index === activeIndex ? "bg-amber-400" : "bg-white/30 hover:bg-white/50"}`}
+            className={`h-3 rounded-full transition-all duration-500 ${
+              index === activeIndex
+                ? "w-12 bg-gradient-to-r from-primary-light to-amber-400 shadow-lg shadow-primary-light/30"
+                : "w-3 bg-white/40 hover:bg-white/60 hover:shadow-md"
+            }`}
             aria-label={`Show slide ${index + 1}`}
           />
         ))}

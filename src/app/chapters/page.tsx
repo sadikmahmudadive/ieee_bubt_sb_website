@@ -74,7 +74,7 @@ export default async function ChaptersIndexPage() {
                 return (
                   <article
                     key={chapter.slug}
-                    className="flex flex-col gap-6 rounded-[30px] border p-6 backdrop-blur"
+                    className="group flex flex-col gap-6 rounded-[30px] border p-8 backdrop-blur transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
                     style={{
                       background: theme.cardBackground,
                       borderColor: theme.cardBorder,

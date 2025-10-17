@@ -78,13 +78,13 @@ const createTheme = (accent: string): ChapterTheme => {
 };
 
 const themes: ThemeMap = {
-  "ieee-computer-society-student-branch-chapter": createTheme("#38bdf8"),
-  "ieee-robotics-and-automation-society-student-branch-chapter": createTheme("#fb923c"),
-  "ieee-photonics-society-student-branch-chapter": createTheme("#e879f9"),
-  "ieee-power-and-energy-society-student-branch-chapter": createTheme("#86efac"),
-  "ieee-systems-council-student-branch-chapter": createTheme("#2dd4bf"),
-  "ieee-power-electronics-society-student-branch-chapter": createTheme("#fda4af"),
-  "ieee-bubt-women-in-engineering-student-branch-affinity-group": createTheme("#c084fc")
+  "ieee-computer-society-student-branch-chapter": createTheme("#eb7734"),
+  "ieee-robotics-and-automation-society-student-branch-chapter": createTheme("#b8074e"),
+  "ieee-photonics-society-student-branch-chapter": createTheme("#eddc1f"),
+  "ieee-power-and-energy-society-student-branch-chapter": createTheme("#71eb34"),
+  "ieee-systems-council-student-branch-chapter": createTheme("#0ceef2"),
+  "ieee-power-electronics-society-student-branch-chapter": createTheme("#d40606"),
+  "ieee-bubt-women-in-engineering-student-branch-affinity-group": createTheme("#8907b8")
 };
 
 const defaultTheme = createTheme("#93c5fd");

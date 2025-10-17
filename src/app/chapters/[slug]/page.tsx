@@ -63,19 +63,19 @@ export default async function ChapterDetailPage({ params }: ChapterPageProps) {
     <div className="min-h-screen bg-slate-950 text-white">
       <Navbar />
       <main className="space-y-24 pb-24">
-        <section className="relative isolate overflow-hidden border-b border-white/5 py-24 sm:py-32">
-          <div className="absolute inset-0" aria-hidden style={{ backgroundImage: theme.heroGradient }} />
-          <div className="absolute inset-x-0 top-0 h-44 blur-3xl" aria-hidden style={{ backgroundImage: theme.heroOverlay }} />
+        <section className="relative isolate overflow-hidden border-b border-white/5 py-28 sm:py-36">
+          <div className="absolute inset-0 animate-pulse" aria-hidden style={{ backgroundImage: theme.heroGradient }} />
+          <div className="absolute inset-x-0 top-0 h-48 blur-3xl animate-pulse" aria-hidden style={{ backgroundImage: theme.heroOverlay }} />
           <div className="relative mx-auto max-w-5xl px-6 text-center sm:px-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary-light">Chapter Leadership</p>
-            <h1 className="mt-6 text-4xl font-bold text-white sm:text-[2.75rem]">{chapter.name}</h1>
-            <p className="mt-6 text-base sm:text-lg" style={{ color: theme.heroMetaColor }}>
+            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary-light animate-fade-in">Chapter Leadership</p>
+            <h1 className="mt-6 text-4xl font-bold text-white sm:text-[2.75rem] animate-fade-in-up">{chapter.name}</h1>
+            <p className="mt-6 text-base sm:text-lg animate-fade-in-up animation-delay-200" style={{ color: theme.heroMetaColor }}>
               Advisors and committee members drive programs, membership engagement, and technical initiatives for this IEEE community at BUBT.
             </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row animate-fade-in-up animation-delay-400">
               <Link
                 href="/chapters"
-                className="inline-flex items-center justify-center rounded-full border px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] transition hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center rounded-full border px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 style={{
                   borderColor: theme.buttonBorder,
                   background: theme.buttonBackground,
@@ -86,7 +86,7 @@ export default async function ChapterDetailPage({ params }: ChapterPageProps) {
               </Link>
               <Link
                 href="/#contact"
-                className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] transition hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 style={{
                   backgroundImage: theme.accentGradient,
                   color: theme.accentButtonText

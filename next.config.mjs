@@ -4,7 +4,9 @@ const nextConfig = {
 	experimental: {
 		serverActions: {
 			bodySizeLimit: "2mb"
-		}
+		},
+		// Enable faster refresh and compilation
+		webpackBuildWorker: true,
 	},
 	images: {
 		remotePatterns: [
@@ -13,7 +15,9 @@ const nextConfig = {
 				hostname: "res.cloudinary.com"
 			}
 		]
-	}
+	},
+	// Enable swcMinify for faster builds
+	swcMinify: true,
 };
 
 export default nextConfig;

@@ -1,16 +1,8 @@
 import "server-only";
 
-import { Types } from "mongoose";
 import { unstable_noStore as noStore } from "next/cache";
-
-import { connectToDatabase } from "@/lib/db";
-import { EventModel } from "@/models/Event";
-import { GalleryItemModel } from "@/models/GalleryItem";
-import { TeamMemberModel } from "@/models/TeamMember";
-import { News } from "@/models/News";
+import { adminDb } from "@/lib/firebase-admin";
 import { groupChapterMembers } from "@/utils/teamGrouping";
-
-import type { Event } from "@/models/Event";
 
 export type EventSummary = {
   _id: string;
@@ -74,117 +66,137 @@ export type ChapterSummary = {
   memberCount: number;
 };
 
-type LeanDateLike = Date | string | number | undefined | null;
-
-type EventLean = Omit<Event, "eventDate" | "createdAt" | "updatedAt"> & {
-  _id: Types.ObjectId;
-  eventDate: LeanDateLike;
-  createdAt: LeanDateLike;
-  updatedAt: LeanDateLike;
-};
-
-const normalizeDate = (value: LeanDateLike): string => {
+const normalizeDate = (value: any): string => {
+  if (value && typeof value.toDate === 'function') {
+    return value.toDate().toISOString();
+  }
   if (value instanceof Date) {
     return value.toISOString();
   }
-
   if (typeof value === "string" || typeof value === "number") {
     const parsed = new Date(value);
     if (!Number.isNaN(parsed.getTime())) {
       return parsed.toISOString();
     }
   }
-
   return new Date().toISOString();
-};
-
-const mapEventSummary = (event: EventLean): EventSummary => ({
-  _id: event._id.toString(),
-  title: event.title,
-  slug: event.slug,
-  description: event.description,
-  eventDate: normalizeDate(event.eventDate),
-  location: event.location,
-  coverImage: event.coverImage,
-  tags: Array.isArray(event.tags) ? event.tags : [],
-  featured: Boolean(event.featured),
-  heroTitle: typeof event.heroTitle === "string" && event.heroTitle.trim() ? event.heroTitle : undefined,
-  heroSubtitle: typeof event.heroSubtitle === "string" && event.heroSubtitle.trim() ? event.heroSubtitle : undefined
-});
-
-const mapEventDetail = (event: EventLean): EventDetail => ({
-  ...mapEventSummary(event),
-  createdAt: normalizeDate(event.createdAt),
-  updatedAt: normalizeDate(event.updatedAt)
-});
-
-// News lean type to satisfy TS when using .lean() with Mongoose
-type NewsLean = {
-  _id: Types.ObjectId;
-  title: string;
-  excerpt: string;
-  content?: string;
-  date: LeanDateLike;
-  category: string;
-  slug: string;
-  imageUrl?: string;
-  published: boolean;
-  createdAt: LeanDateLike;
-  updatedAt: LeanDateLike;
 };
 
 export async function getEvents(): Promise<EventSummary[]> {
   noStore();
-  await connectToDatabase();
-  const events = await EventModel.find().sort({ eventDate: -1 }).limit(6).lean<EventLean[]>();
-  return events.map(mapEventSummary);
+  const snapshot = await adminDb.collection("events").orderBy("eventDate", "desc").limit(6).get();
+  return snapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      _id: doc.id,
+      title: data.title,
+      slug: data.slug,
+      description: data.description,
+      eventDate: normalizeDate(data.eventDate),
+      location: data.location,
+      coverImage: data.coverImage,
+      tags: Array.isArray(data.tags) ? data.tags : [],
+      featured: Boolean(data.featured),
+      heroTitle: data.heroTitle || undefined,
+      heroSubtitle: data.heroSubtitle || undefined,
+    };
+  });
 }
 
 export async function getEventBySlug(slug: string): Promise<EventDetail | null> {
   noStore();
-  await connectToDatabase();
-  const event = await EventModel.findOne({ slug }).lean<EventLean | null>();
-  if (!event) {
+  const snapshot = await adminDb.collection("events").where("slug", "==", slug).limit(1).get();
+  if (snapshot.empty) {
     return null;
   }
-
-  return mapEventDetail(event);
+  const doc = snapshot.docs[0];
+  const data = doc.data();
+  return {
+    _id: doc.id,
+    title: data.title,
+    slug: data.slug,
+    description: data.description,
+    eventDate: normalizeDate(data.eventDate),
+    location: data.location,
+    coverImage: data.coverImage,
+    tags: Array.isArray(data.tags) ? data.tags : [],
+    featured: Boolean(data.featured),
+    heroTitle: data.heroTitle || undefined,
+    heroSubtitle: data.heroSubtitle || undefined,
+    createdAt: normalizeDate(data.createdAt),
+    updatedAt: normalizeDate(data.updatedAt)
+  };
 }
 
 export async function getRecentEvents(limit = 3, excludeSlug?: string): Promise<EventSummary[]> {
   noStore();
-  await connectToDatabase();
-  const query = excludeSlug ? { slug: { $ne: excludeSlug } } : {};
-  const events = await EventModel.find(query).sort({ eventDate: -1 }).limit(limit).lean<EventLean[]>();
-  return events.map(mapEventSummary);
+  let query: any = adminDb.collection("events").orderBy("eventDate", "desc");
+  const snapshot = await query.get();
+  
+  let events = snapshot.docs.map((doc: any) => {
+    const data = doc.data();
+    return {
+      _id: doc.id,
+      title: data.title,
+      slug: data.slug,
+      description: data.description,
+      eventDate: normalizeDate(data.eventDate),
+      location: data.location,
+      coverImage: data.coverImage,
+      tags: Array.isArray(data.tags) ? data.tags : [],
+      featured: Boolean(data.featured),
+      heroTitle: data.heroTitle || undefined,
+      heroSubtitle: data.heroSubtitle || undefined,
+    };
+  });
+  
+  if (excludeSlug) {
+    events = events.filter((e: any) => e.slug !== excludeSlug);
+  }
+  return events.slice(0, limit);
 }
 
 export async function getFeaturedEvent(): Promise<EventSummary | null> {
   noStore();
-  await connectToDatabase();
-  const event = await EventModel.findOne({ featured: true }).sort({ eventDate: -1 }).lean<EventLean | null>();
-  if (!event) {
+  const snapshot = await adminDb.collection("events").where("featured", "==", true).orderBy("eventDate", "desc").limit(1).get();
+  if (snapshot.empty) {
     return null;
   }
-  return mapEventSummary(event);
+  const doc = snapshot.docs[0];
+  const data = doc.data();
+  return {
+    _id: doc.id,
+    title: data.title,
+    slug: data.slug,
+    description: data.description,
+    eventDate: normalizeDate(data.eventDate),
+    location: data.location,
+    coverImage: data.coverImage,
+    tags: Array.isArray(data.tags) ? data.tags : [],
+    featured: Boolean(data.featured),
+    heroTitle: data.heroTitle || undefined,
+    heroSubtitle: data.heroSubtitle || undefined,
+  };
 }
 
 export async function getTeamMembers(): Promise<TeamMemberSummary[]> {
   noStore();
-  await connectToDatabase();
-  const members = await TeamMemberModel.find().sort({ priority: -1 }).exec();
-  return members.map((member): TeamMemberSummary => ({
-    _id: member._id.toString(),
-    name: member.name,
-    role: member.role,
-    bio: member.bio,
-    photoUrl: member.photoUrl,
-    priority: member.priority ?? 0,
-    affiliation: member.affiliation ?? "main",
-    chapter: member.chapter ?? undefined,
-    roleKey: member.roleKey ?? undefined,
-    socials: member.socials ?? {}
-  }));
+  const snapshot = await adminDb.collection("teamMembers").orderBy("priority", "desc").get();
+  return snapshot.docs.map((doc): TeamMemberSummary => {
+    const data = doc.data();
+    return {
+      _id: doc.id,
+      name: data.name,
+      role: data.role,
+      bio: data.bio,
+      photoUrl: data.photoUrl,
+      priority: data.priority ?? 0,
+      affiliation: data.affiliation ?? "main",
+      chapter: data.chapter ?? undefined,
+      roleKey: data.roleKey ?? undefined,
+      socials: data.socials ?? {}
+    };
+  });
 }
 
 export async function getChapterSummaries(): Promise<ChapterSummary[]> {
@@ -199,33 +211,33 @@ export async function getChapterSummaries(): Promise<ChapterSummary[]> {
 
 export async function getGalleryItems(limit = 12): Promise<GalleryItemSummary[]> {
   noStore();
-  await connectToDatabase();
-  const items = await GalleryItemModel.find().sort({ uploadedAt: -1 }).limit(limit).exec();
-  return items.map((item): GalleryItemSummary => ({
-    _id: item._id.toString(),
-    title: item.title,
-    publicId: item.publicId,
-    imageUrl: item.imageUrl,
-    event: item.event,
-    uploadedAt: item.uploadedAt instanceof Date ? item.uploadedAt.toISOString() : String(item.uploadedAt)
-  }));
+  const snapshot = await adminDb.collection("galleryItems").orderBy("uploadedAt", "desc").limit(limit).get();
+  return snapshot.docs.map((doc): GalleryItemSummary => {
+    const data = doc.data();
+    return {
+      _id: doc.id,
+      title: data.title,
+      publicId: data.publicId,
+      imageUrl: data.imageUrl,
+      event: data.event,
+      uploadedAt: normalizeDate(data.uploadedAt)
+    };
+  });
 }
 
 export async function getNewsItems(limit = 3): Promise<NewsSummary[]> {
   noStore();
-  await connectToDatabase();
-  const items = await News.find({ published: true })
-    .sort({ date: -1, createdAt: -1 })
-    .limit(limit)
-    .lean<NewsLean[]>();
-
-  return items.map((n) => ({
-    id: n._id.toString(),
-    title: n.title,
-    excerpt: n.excerpt,
-    date: normalizeDate(n.date),
-    category: n.category,
-    slug: n.slug,
-    imageUrl: n.imageUrl ?? undefined
-  }));
+  const snapshot = await adminDb.collection("news").where("published", "==", true).orderBy("date", "desc").limit(limit).get();
+  return snapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      title: data.title,
+      excerpt: data.excerpt,
+      date: normalizeDate(data.date),
+      category: data.category,
+      slug: data.slug,
+      imageUrl: data.imageUrl ?? undefined
+    };
+  });
 }

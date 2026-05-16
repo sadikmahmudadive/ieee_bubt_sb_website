@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { connectToDatabase } from "@/lib/db";
-import { Application } from "@/models/Application";
+import { adminDb } from "@/lib/firebase-admin";
 
 const schema = z.object({
   fullName: z.string().min(2),
@@ -17,8 +16,6 @@ const schema = z.object({
 
 export async function POST(request: Request) {
   try {
-    await connectToDatabase();
-
     const formData = await request.formData();
 
     const payload = Object.fromEntries(formData.entries());
@@ -28,9 +25,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid input.", details: parsed.error.flatten() }, { status: 400 });
     }
 
-    const doc = await Application.create(parsed.data);
+    const docRef = await adminDb.collection("applications").add({
+      ...parsed.data,
+      createdAt: new Date().toISOString()
+    });
 
-    return NextResponse.redirect(new URL(`/apply/success?id=${doc._id.toString()}`, request.url));
+    return NextResponse.redirect(new URL(`/apply/success?id=${docRef.id}`, request.url));
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Failed to submit application." }, { status: 500 });

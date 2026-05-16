@@ -21,7 +21,7 @@ export default async function HomePage() {
   let featuredEvent: EventSummary | null = null;
   let newsItems: Awaited<ReturnType<typeof getNewsItems>> = [];
 
-  if (process.env.MONGODB_URI) {
+  if (process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
     [events, team, gallery, featuredEvent, newsItems] = await Promise.all([
       getEvents(),
       getTeamMembers(),

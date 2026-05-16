@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import { GalleryItemModel } from "@/models/GalleryItem";
+import { adminDb } from "@/lib/firebase-admin";
 import { galleryItemSchema } from "@/utils/validators";
 import { requireAdminSession } from "@/lib/auth";
 
@@ -14,19 +13,18 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await connectToDatabase();
     const payload = await request.json();
     const data = galleryItemSchema.partial().parse(payload);
 
-    const updated = await GalleryItemModel.findByIdAndUpdate(params.id, data, {
-      new: true
-    }).lean();
-
-    if (!updated) {
+    const docRef = adminDb.collection("galleryItems").doc(params.id);
+    const doc = await docRef.get();
+    
+    if (!doc.exists) {
       return NextResponse.json({ error: "Gallery item not found." }, { status: 404 });
     }
 
-    return NextResponse.json(updated);
+    await docRef.update({ ...data, updatedAt: new Date().toISOString() });
+    return NextResponse.json({ _id: params.id, ...doc.data(), ...data });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Unable to update gallery item." }, { status: 400 });
@@ -42,10 +40,13 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  await connectToDatabase();
-  const deleted = await GalleryItemModel.findByIdAndDelete(params.id).lean();
-  if (!deleted) {
+  const docRef = adminDb.collection("galleryItems").doc(params.id);
+  const doc = await docRef.get();
+  
+  if (!doc.exists) {
     return NextResponse.json({ error: "Gallery item not found." }, { status: 404 });
   }
+  
+  await docRef.delete();
   return NextResponse.json({ success: true });
 }

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import { EventModel } from "@/models/Event";
+import { adminDb } from "@/lib/firebase-admin";
 import { eventSchema } from "@/utils/validators";
 import { requireAdminSession } from "@/lib/auth";
 import { slugify } from "@/utils/slugify";
@@ -9,12 +8,11 @@ export async function GET(
   _request: Request,
   { params }: { params: { id: string } }
 ) {
-  await connectToDatabase();
-  const event = await EventModel.findById(params.id).lean();
-  if (!event) {
+  const doc = await adminDb.collection("events").doc(params.id).get();
+  if (!doc.exists) {
     return NextResponse.json({ error: "Event not found." }, { status: 404 });
   }
-  return NextResponse.json(event);
+  return NextResponse.json({ _id: doc.id, ...doc.data() });
 }
 
 export async function PATCH(
@@ -27,9 +25,8 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await connectToDatabase();
     const payload = await request.json();
-    const data = eventSchema.partial().parse(payload);
+    const data: any = eventSchema.partial().parse(payload);
 
     if (data.slug) {
       const sanitized = slugify(data.slug);
@@ -38,21 +35,25 @@ export async function PATCH(
       }
       data.slug = sanitized;
 
-      const existing = await EventModel.findOne({ slug: sanitized, _id: { $ne: params.id } });
-      if (existing) {
+      const existing = await adminDb.collection("events").where("slug", "==", sanitized).get();
+      if (!existing.empty && existing.docs[0].id !== params.id) {
         return NextResponse.json({ error: "Another event already uses this slug." }, { status: 409 });
       }
     }
 
-    const updated = await EventModel.findByIdAndUpdate(params.id, data, {
-      new: true
-    }).lean();
+    if (data.eventDate) {
+      data.eventDate = new Date(data.eventDate).toISOString();
+    }
 
-    if (!updated) {
+    const docRef = adminDb.collection("events").doc(params.id);
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
       return NextResponse.json({ error: "Event not found." }, { status: 404 });
     }
 
-    return NextResponse.json(updated);
+    await docRef.update({ ...data, updatedAt: new Date().toISOString() });
+    return NextResponse.json({ _id: params.id, ...doc.data(), ...data });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Unable to update event." }, { status: 400 });
@@ -68,10 +69,13 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  await connectToDatabase();
-  const deleted = await EventModel.findByIdAndDelete(params.id).lean();
-  if (!deleted) {
+  const docRef = adminDb.collection("events").doc(params.id);
+  const doc = await docRef.get();
+  
+  if (!doc.exists) {
     return NextResponse.json({ error: "Event not found." }, { status: 404 });
   }
+  
+  await docRef.delete();
   return NextResponse.json({ success: true });
 }

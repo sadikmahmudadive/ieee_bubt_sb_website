@@ -1,19 +1,49 @@
 import { NextResponse } from "next/server";
-import { createAdminSession, validateAdminCredentials } from "@/lib/auth";
+import { createAdminSession } from "@/lib/auth";
+import { adminAuth, adminDb } from "@/lib/firebase-admin";
 
 export async function POST(request: Request) {
   try {
-    const { username, password } = await request.json();
+    const { idToken } = await request.json();
 
-    if (typeof username !== "string" || typeof password !== "string") {
+    if (typeof idToken !== "string") {
       return NextResponse.json({ error: "Invalid credentials." }, { status: 400 });
     }
 
-    if (!validateAdminCredentials(username, password)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Verify token to get user info
+    const decodedToken = await adminAuth.verifyIdToken(idToken);
+    const { uid, email, name, picture } = decodedToken;
+
+    // Check or create user in Firestore
+    const userRef = adminDb.collection("users").doc(uid);
+    const userDoc = await userRef.get();
+
+    let role = "user";
+
+    if (!userDoc.exists) {
+      // First time login - save user info
+      await userRef.set({
+        email: email || "",
+        name: name || "",
+        picture: picture || "",
+        role: "user",
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString()
+      });
+    } else {
+      // Update last login
+      role = userDoc.data()?.role || "user";
+      await userRef.update({
+        lastLogin: new Date().toISOString()
+      });
     }
 
-    await createAdminSession(username);
+    // Enforce admin role
+    if (role !== "admin") {
+      return NextResponse.json({ error: "Access denied. Admin role required. Your account has been registered, please contact the site owner to grant you admin privileges." }, { status: 403 });
+    }
+
+    await createAdminSession(idToken);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Admin login failed", error);

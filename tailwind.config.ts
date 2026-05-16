@@ -6,13 +6,13 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#0056A3",
-          dark: "#003C73",
-          light: "#0F75BC"
+          DEFAULT: "#00629B",
+          dark: "#004B76",
+          light: "#1F82B8"
         },
         accent: "#FDBA21",
-        surface: "rgba(255,255,255,0.04)",
-        "surface-strong": "rgba(148, 163, 184, 0.12)"
+        surface: "rgba(0,0,0,0.04)",
+        "surface-strong": "rgba(15, 23, 42, 0.08)"
       },
       fontFamily: {
         heading: ["var(--font-heading)", "sans-serif"],

@@ -1,13 +1,16 @@
 import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import { GalleryItemModel } from "@/models/GalleryItem";
+import { adminDb } from "@/lib/firebase-admin";
 import { galleryItemSchema } from "@/utils/validators";
 import { requireAdminSession } from "@/lib/auth";
 
 export async function GET() {
-  await connectToDatabase();
-  const items = await GalleryItemModel.find().sort({ uploadedAt: -1 }).lean();
-  return NextResponse.json(items);
+  try {
+    const snapshot = await adminDb.collection("galleryItems").orderBy("uploadedAt", "desc").get();
+    const items = snapshot.docs.map(doc => ({ _id: doc.id, ...doc.data() }));
+    return NextResponse.json(items);
+  } catch (error) {
+    return NextResponse.json({ error: "Unable to fetch gallery items." }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
@@ -17,12 +20,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await connectToDatabase();
     const payload = await request.json();
     const data = galleryItemSchema.parse(payload);
 
-    const item = await GalleryItemModel.create(data);
-    return NextResponse.json(item, { status: 201 });
+    const docData = {
+      ...data,
+      uploadedAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
+    const docRef = await adminDb.collection("galleryItems").add(docData);
+    return NextResponse.json({ _id: docRef.id, ...docData }, { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Unable to create gallery item." }, { status: 400 });

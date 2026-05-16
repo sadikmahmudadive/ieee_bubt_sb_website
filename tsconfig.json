@@ -26,7 +26,11 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    // Performance optimizations
+    "tsBuildInfoFile": ".next/cache/tsconfig.tsbuildinfo",
+    "skipDefaultLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "next-env.d.ts",

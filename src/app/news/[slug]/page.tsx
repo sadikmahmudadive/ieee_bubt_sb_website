@@ -5,18 +5,18 @@ import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { siteMetadata } from "@/utils/siteMetadata";
-import { connectToDatabase } from "@/lib/db";
-import { News } from "@/models/News";
-import type { INews } from "@/models/News";
+import { adminDb } from "@/lib/firebase-admin";
 
 type Params = { params: { slug: string } };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const slug = params.slug;
   try {
-    await connectToDatabase();
-  const item = await News.findOne({ slug, published: true }).lean<INews | null>();
-    if (!item) return { title: `News Not Found | ${siteMetadata.shortTitle}` };
+    const snapshot = await adminDb.collection("news").where("slug", "==", slug).where("published", "==", true).limit(1).get();
+    
+    if (snapshot.empty) return { title: `News Not Found | ${siteMetadata.shortTitle}` };
+    
+    const item = snapshot.docs[0].data();
     return {
       title: `${item.title} | ${siteMetadata.shortTitle}`,
       description: item.excerpt
@@ -28,8 +28,16 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function NewsDetailPage({ params }: Params) {
   const slug = params.slug;
-  await connectToDatabase();
-  const item = await News.findOne({ slug, published: true }).lean<INews | null>();
+  
+  let item: any = null;
+  try {
+    const snapshot = await adminDb.collection("news").where("slug", "==", slug).where("published", "==", true).limit(1).get();
+    if (!snapshot.empty) {
+      item = snapshot.docs[0].data();
+    }
+  } catch (error) {
+    console.error("Failed to load news detail", error);
+  }
 
   if (!item) {
     return (
@@ -49,7 +57,7 @@ export default async function NewsDetailPage({ params }: Params) {
     );
   }
 
-  const dateStr = new Date(item.date).toLocaleDateString();
+  const dateStr = item.date ? new Date(item.date).toLocaleDateString() : "";
 
   return (
     <div className="min-h-screen bg-white text-gray-900">

@@ -8,54 +8,54 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer id="contact" className="border-t border-white/10 py-12 text-white/80">
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 lg:flex-row lg:items-start lg:justify-between">
+    <footer id="contact" className="bg-slate-900 border-t-4 border-primary py-12 text-slate-300">
+      <div className="mx-auto flex max-w-7xl flex-col gap-10 px-6 lg:flex-row lg:items-start lg:justify-between lg:px-8">
         <div className="space-y-4">
-          <div className="heading-font text-sm font-semibold uppercase tracking-[0.4em] text-primary-light/90">
-            {siteMetadata.shortTitle}
+          <div className="text-xl font-bold text-white">
+            {siteMetadata.title}
           </div>
-          <p className="max-w-md text-sm text-white/65">{siteMetadata.description}</p>
-          <div className="space-y-2 text-sm text-white/55">
+          <p className="max-w-md text-sm text-slate-400">{siteMetadata.description}</p>
+          <div className="space-y-1 text-sm text-slate-400">
             <p>{siteMetadata.contact.address}</p>
             <p>{siteMetadata.contact.phone}</p>
-            <a className="inline-block text-primary-light/90 transition hover:text-white" href={`mailto:${siteMetadata.social.email}`}>
+            <a className="inline-block text-primary-light transition hover:text-white" href={`mailto:${siteMetadata.social.email}`}>
               {siteMetadata.social.email}
             </a>
           </div>
         </div>
         <div className="space-y-4">
-          <h4 className="text-xs font-semibold uppercase tracking-[0.3em] text-white/50">Connect</h4>
-          <ul className="flex flex-wrap gap-4 text-sm text-white/65">
+          <h4 className="text-sm font-semibold uppercase text-white">Connect</h4>
+          <ul className="flex flex-col gap-2 text-sm text-slate-400">
             {socialLinks
               .filter((item) => Boolean(item.href))
               .map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} target="_blank" rel="noreferrer" className="transition hover:text-white">
+                  <a href={item.href} target="_blank" rel="noreferrer" className="transition hover:text-primary-light">
                     {item.name}
                   </a>
                 </li>
               ))}
             <li>
-              <a href="/research-journals" className="transition hover:text-white">
+              <a href="/research-journals" className="transition hover:text-primary-light">
                 Research & Journals
               </a>
             </li>
             <li>
-              <a href="/chapters" className="transition hover:text-white">
+              <a href="/chapters" className="transition hover:text-primary-light">
                 Chapters & Affinity Groups
               </a>
             </li>
             <li>
-              <a href="/admin/login" className="transition hover:text-white">
+              <a href="/admin/login" className="transition hover:text-primary-light">
                 Admin Login
               </a>
             </li>
           </ul>
         </div>
       </div>
-      <div className="mx-auto mt-10 flex max-w-6xl flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/45 sm:flex-row">
-        <p>© {new Date().getFullYear()} {siteMetadata.title}. All rights reserved.</p>
-        <p>Crafted for the IEEE BUBT Student Branch community.</p>
+      <div className="mx-auto mt-10 flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-slate-700 px-6 py-6 text-xs text-slate-400 sm:flex-row lg:px-8">
+        <p>© {new Date().getFullYear()} {siteMetadata.shortTitle}. All rights reserved.</p>
+        <p>A Student Branch of IEEE.</p>
       </div>
     </footer>
   );

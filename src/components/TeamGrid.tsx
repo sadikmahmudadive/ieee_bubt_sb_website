@@ -45,58 +45,59 @@ export function TeamGrid({ team }: TeamGridProps) {
     .sort(sortByRoleOrder(studentRoleOrder));
 
   return (
-    <section id="team" className="relative py-24">
-      <div className="absolute inset-0 -z-10 bg-slate-950" aria-hidden />
+    <section id="team" className="relative py-24 border-t border-slate-200">
+      <div className="absolute inset-0 -z-10 bg-slate-50" aria-hidden />
       <div className="mx-auto max-w-7xl px-6">
         <SectionHeading
           eyebrow="Main Branch Leadership"
           title="Guided by Faculty Mentors and Student Officers"
           subtitle="Meet the advisors and executive student team steering IEEE BUBT SB. Visit the leadership and chapter hubs to explore the complete organization."
+          tone="light"
         />
         <div className="mt-16 space-y-14">
           <div>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <h3 className="heading-font text-lg font-semibold text-white">Faculty Advisors</h3>
-              <p className="text-xs uppercase tracking-[0.3em] text-white/60">Chief advisor, executive advisors, advisor, and counselor</p>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
+              <h3 className="heading-font text-lg font-semibold text-slate-900">Faculty Advisors</h3>
+              <p className="text-xs uppercase tracking-wider text-slate-500">Chief advisor, executive advisors, advisor, and counselor</p>
             </div>
-            <div className="mt-6 grid justify-items-center gap-8 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-8 grid justify-items-center gap-8 sm:grid-cols-2 xl:grid-cols-3">
               {advisorSpotlight.length > 0 ? (
                 advisorSpotlight.map((member) => <TeamMemberCard key={member._id} member={member} variant="faculty" />)
               ) : (
-                <p className="col-span-full rounded-3xl border border-white/10 bg-black/25 p-8 text-center text-sm text-white/70">
+                <p className="col-span-full rounded-none border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm">
                   Add faculty advisors via the admin panel to highlight them here.
                 </p>
               )}
             </div>
           </div>
           <div>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <h3 className="heading-font text-lg font-semibold text-white">Student Executive Committee</h3>
-              <p className="text-xs uppercase tracking-[0.3em] text-white/60">Chairperson, vice chairperson, GS, JGS, treasurer, and web master</p>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
+              <h3 className="heading-font text-lg font-semibold text-slate-900">Student Executive Committee</h3>
+              <p className="text-xs uppercase tracking-wider text-slate-500">Chairperson, vice chairperson, GS, JGS, treasurer, and web master</p>
             </div>
-            <div className="mt-6 grid justify-items-center gap-8 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-8 grid justify-items-center gap-8 sm:grid-cols-2 xl:grid-cols-3">
               {studentSpotlight.length > 0 ? (
                 studentSpotlight.map((member) => <TeamMemberCard key={member._id} member={member} />)
               ) : (
-                <p className="col-span-full rounded-3xl border border-white/10 bg-black/25 p-8 text-center text-sm text-white/70">
+                <p className="col-span-full rounded-none border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm">
                   Add student leaders with the homepage spotlight role to feature them here.
                 </p>
               )}
             </div>
           </div>
         </div>
-        <div className="mt-14 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+        <div className="mt-14 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link
             href="/leadership"
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-primary-light hover:text-primary-light"
+            className="inline-flex items-center justify-center min-w-[240px] rounded-none border border-primary bg-primary px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark"
           >
             Explore Full Leadership →
           </Link>
           <Link
             href="/chapters"
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-primary-light hover:text-primary-light"
+            className="inline-flex items-center justify-center min-w-[240px] rounded-none border border-slate-300 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary"
           >
-            Browse Chapters & Affinity Groups →
+            Browse Chapters →
           </Link>
         </div>
       </div>

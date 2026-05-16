@@ -8,7 +8,8 @@ A modern Next.js 14 web experience for the IEEE Bangladesh University of Busines
 - 🎨 Tailwind CSS design system inspired by IEEE brand
 - 🗂️ MongoDB (Mongoose) models for events, team members, and gallery items
 - ☁️ Cloudinary utilities for secure image management and upload signatures
-- 🔄 RESTful API routes with Zod validation for CRUD operations
+- � **Email Notifications** for new published news and events
+- �🔄 RESTful API routes with Zod validation for CRUD operations
 - 📸 Responsive components: hero, events grid, team cards, gallery, newsletter CTA
 - 📰 Newsletter capture stored in MongoDB and reviewed in the admin console
 - 📝 Membership application form at /apply with backend storage and success page
@@ -49,10 +50,39 @@ NEXT_PUBLIC_BASE_URL="https://your-domain.example"
 NEXT_PUBLIC_SITE_URL="https://your-domain.example"
 ```
 
+### Email Configuration
+
+The application includes automatic email notifications for new published news and events. Add these SMTP settings to your `.env.local`:
+
+```dotenv
+SMTP_HOST="smtp-relay.brevo.com"
+SMTP_PORT="587"
+SMTP_SECURE="false"
+SMTP_USER="your-smtp-username"
+SMTP_PASS="your-smtp-password"
+SMTP_FROM="noreply@yourdomain.com"
+```
+
+- **Brevo (Sendinblue)**: Uses SMTP relay for transactional emails
+- **Other providers**: Update SMTP_HOST, SMTP_PORT, and SMTP_SECURE accordingly
+- **Testing**: Use services like Mailtrap or Ethereal for development
+
 ### 4. Run the development server
 
 ```bash
 npm run dev
+```
+
+For faster compilation with increased memory (if experiencing slow dev server):
+
+```bash
+npm run dev:fast  # Uses more memory for faster compilation
+```
+
+Or clean and restart:
+
+```bash
+npm run clean && npm run dev
 ```
 
 Visit `http://localhost:3000` to view the site locally. The server reloads automatically on file changes.

@@ -3,20 +3,19 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   scroll-behavior: smooth;
-  --app-surface-dark: linear-gradient(180deg, rgba(8, 15, 28, 0.96) 0%, rgba(9, 17, 30, 0.96) 60%, rgba(6, 13, 24, 0.98) 100%);
-  --app-surface-light: #f5f7fb;
+  --app-surface-light: #ffffff;
+  --app-surface-alt: #f5f7fb;
 }
 
 body {
-  @apply font-body bg-slate-950 text-slate-100 antialiased;
-  background: var(--app-surface-dark);
+  @apply font-body bg-white text-slate-900 antialiased;
   min-height: 100vh;
 }
 
 a {
-  @apply text-primary-light transition hover:text-white;
+  @apply text-primary transition hover:text-primary-dark;
 }
 
 .heading-font {

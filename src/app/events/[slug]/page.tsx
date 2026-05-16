@@ -76,19 +76,19 @@ export default async function EventPage({ params }: EventPageProps) {
   const [leadParagraph, ...supportingParagraphs] = detailBlocks;
 
   return (
-    <div className="relative bg-slate-950 text-slate-100">
+    <div className="relative bg-white text-slate-900">
       <div className="mx-auto flex min-h-[80vh] max-w-6xl flex-col gap-12 px-6 pb-24 pt-24">
         <div className="flex items-center justify-between">
           <Link
             href="/#events"
-            className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.35em] text-primary-light transition hover:text-white"
+            className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.25em] text-primary transition hover:text-primary-dark"
           >
             <ArrowLeftIcon className="h-4 w-4" /> Back to Events
           </Link>
-          <span className="text-xs uppercase tracking-[0.35em] text-slate-400">Updated {formatDate(event.updatedAt)}</span>
+          <span className="text-xs uppercase tracking-[0.25em] text-slate-500">Updated {formatDate(event.updatedAt)}</span>
         </div>
 
-        <section className="overflow-hidden rounded-3xl border border-white/10 bg-slate-900/60 shadow-[0_40px_80px_-60px_rgba(15,23,42,0.9)] backdrop-blur">
+        <section className="overflow-hidden border border-slate-200 bg-white shadow-lg">
           <div className="relative h-80 w-full sm:h-[420px]">
             <Image
               src={event.coverImage}
@@ -97,33 +97,33 @@ export default async function EventPage({ params }: EventPageProps) {
               priority
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" aria-hidden />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent" aria-hidden />
             <div className="absolute bottom-10 left-0 right-0 flex flex-col gap-4 px-8 text-white sm:px-12">
-              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em]">
+              <span className="inline-flex w-fit items-center gap-2 border border-white/40 bg-white/20 px-4 py-1 text-xs font-semibold uppercase tracking-wider backdrop-blur-md">
                 {formatDate(event.eventDate, { month: "short", day: "numeric", year: "numeric" })}
               </span>
               <h1 className="heading-font text-3xl font-semibold sm:text-4xl lg:text-5xl">{event.title}</h1>
-              <p className="max-w-3xl text-sm text-white/85 sm:text-base">{leadParagraph}</p>
+              <p className="max-w-3xl text-sm text-white/90 sm:text-base">{leadParagraph}</p>
             </div>
           </div>
 
-          <div className="grid gap-10 border-t border-white/10 bg-slate-950/70 px-8 py-12 sm:px-12 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-            <article className="space-y-6 text-base text-slate-200">
-              <p className="leading-relaxed text-slate-200">{leadParagraph}</p>
+          <div className="grid gap-10 border-t border-slate-200 bg-white px-8 py-12 sm:px-12 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+            <article className="space-y-6 text-base text-slate-700">
+              <p className="leading-relaxed text-slate-700">{leadParagraph}</p>
               {supportingParagraphs.map((paragraph, index) => (
-                <p key={`paragraph-${index}`} className="leading-relaxed text-slate-200">
+                <p key={`paragraph-${index}`} className="leading-relaxed text-slate-700">
                   {paragraph}
                 </p>
               ))}
 
-              <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 p-6">
-                <h2 className="heading-font text-lg font-semibold text-white">Ready to collaborate?</h2>
-                <p className="mt-2 text-sm text-slate-200">
+              <div className="mt-10 border border-slate-200 bg-slate-50 p-6 shadow-sm">
+                <h2 className="heading-font text-lg font-semibold text-slate-900">Ready to collaborate?</h2>
+                <p className="mt-2 text-sm text-slate-600">
                   Reach out to the IEEE BUBT SB team to partner, volunteer, or request a guest pass for this event.
                 </p>
                 <Link
                   href="/#contact"
-                  className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-primary-light transition hover:text-white"
+                  className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary transition hover:text-primary-dark"
                 >
                   Contact Us
                   <span aria-hidden>→</span>
@@ -131,40 +131,40 @@ export default async function EventPage({ params }: EventPageProps) {
               </div>
             </article>
 
-            <aside className="space-y-6 rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-slate-200">
+            <aside className="space-y-6 border border-slate-200 bg-slate-50 p-6 text-sm text-slate-700 shadow-sm">
               <div className="space-y-4">
-                <h2 className="heading-font text-lg font-semibold text-white">Event Overview</h2>
+                <h2 className="heading-font text-lg font-semibold text-slate-900">Event Overview</h2>
                 <div className="flex items-start gap-3">
-                  <CalendarDaysIcon className="mt-0.5 h-5 w-5 text-primary-light" />
+                  <CalendarDaysIcon className="mt-0.5 h-5 w-5 text-primary" />
                   <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Date</p>
-                    <p className="mt-1 text-sm text-slate-100">{formatDate(event.eventDate)}</p>
+                    <p className="text-xs uppercase tracking-wider text-slate-500">Date</p>
+                    <p className="mt-1 text-sm text-slate-900 font-medium">{formatDate(event.eventDate)}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <MapPinIcon className="mt-0.5 h-5 w-5 text-primary-light" />
+                  <MapPinIcon className="mt-0.5 h-5 w-5 text-primary" />
                   <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Location</p>
-                    <p className="mt-1 text-sm text-slate-100">{event.location}</p>
+                    <p className="text-xs uppercase tracking-wider text-slate-500">Location</p>
+                    <p className="mt-1 text-sm text-slate-900 font-medium">{event.location}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <ClockIcon className="mt-0.5 h-5 w-5 text-primary-light" />
+                  <ClockIcon className="mt-0.5 h-5 w-5 text-primary" />
                   <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Published</p>
-                    <p className="mt-1 text-sm text-slate-100">{formatDate(event.createdAt)}</p>
+                    <p className="text-xs uppercase tracking-wider text-slate-500">Published</p>
+                    <p className="mt-1 text-sm text-slate-900 font-medium">{formatDate(event.createdAt)}</p>
                   </div>
                 </div>
                 {event.tags?.length ? (
                   <div className="flex items-start gap-3">
-                    <TagIcon className="mt-0.5 h-5 w-5 text-primary-light" />
+                    <TagIcon className="mt-0.5 h-5 w-5 text-primary" />
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Tags</p>
+                      <p className="text-xs uppercase tracking-wider text-slate-500">Tags</p>
                       <div className="mt-1 flex flex-wrap gap-2">
                         {event.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-white"
+                            className="border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-700 shadow-sm"
                           >
                             {tag}
                           </span>
@@ -175,14 +175,14 @@ export default async function EventPage({ params }: EventPageProps) {
                 ) : null}
               </div>
 
-              <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs uppercase tracking-[0.35em] text-slate-400">Share</p>
-                <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/80">
+              <div className="border border-slate-200 bg-white p-4 shadow-sm">
+                <p className="text-xs uppercase tracking-wider text-slate-500">Share</p>
+                <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-wider text-slate-700">
                   <a
                     href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(event.title)}&url=${encodeURIComponent(`${siteUrl}/events/${event.slug}`)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-full border border-white/15 bg-white/10 px-3 py-1 transition hover:border-primary-light hover:text-primary-light"
+                    className="border border-slate-200 bg-slate-50 px-3 py-1 transition hover:border-primary hover:text-primary"
                   >
                     Twitter
                   </a>
@@ -190,13 +190,13 @@ export default async function EventPage({ params }: EventPageProps) {
                     href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${siteUrl}/events/${event.slug}`)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-full border border-white/15 bg-white/10 px-3 py-1 transition hover:border-primary-light hover:text-primary-light"
+                    className="border border-slate-200 bg-slate-50 px-3 py-1 transition hover:border-primary hover:text-primary"
                   >
                     Facebook
                   </a>
                   <a
                     href={`mailto:?subject=${encodeURIComponent(event.title)}&body=${encodeURIComponent(`${event.description}\n\n${siteUrl}/events/${event.slug}`)}`}
-                    className="rounded-full border border-white/15 bg-white/10 px-3 py-1 transition hover:border-primary-light hover:text-primary-light"
+                    className="border border-slate-200 bg-slate-50 px-3 py-1 transition hover:border-primary hover:text-primary"
                   >
                     Email
                   </a>
@@ -208,11 +208,11 @@ export default async function EventPage({ params }: EventPageProps) {
 
         {relatedEvents.length > 0 ? (
           <section className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="heading-font text-2xl font-semibold text-white">More from IEEE BUBT SB</h2>
+            <div className="flex items-center justify-between border-t border-slate-200 pt-10">
+              <h2 className="heading-font text-2xl font-semibold text-slate-900">More from IEEE BUBT SB</h2>
               <Link
                 href="/#events"
-                className="text-xs font-semibold uppercase tracking-[0.35em] text-primary-light transition hover:text-white"
+                className="text-xs font-semibold uppercase tracking-wider text-primary transition hover:text-primary-dark"
               >
                 View All Events →
               </Link>
@@ -222,7 +222,7 @@ export default async function EventPage({ params }: EventPageProps) {
                 <Link
                   key={item.slug}
                   href={`/events/${item.slug}`}
-                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900/60 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.85)] transition hover:-translate-y-1 hover:border-white/30"
+                  className="group flex h-full flex-col overflow-hidden border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
                 >
                   <div className="h-44 w-full overflow-hidden">
                     <div
@@ -232,12 +232,12 @@ export default async function EventPage({ params }: EventPageProps) {
                     />
                   </div>
                   <div className="flex flex-1 flex-col gap-3 p-6">
-                    <span className="text-[11px] uppercase tracking-[0.3em] text-slate-300">
+                    <span className="text-[11px] uppercase tracking-wider text-slate-500">
                       {formatDate(item.eventDate, { month: "short", day: "numeric", year: "numeric" })}
                     </span>
-                    <h3 className="heading-font text-lg font-semibold text-white">{item.title}</h3>
-                    <p className="text-xs text-slate-300 line-clamp-3">{item.description}</p>
-                    <span className="mt-auto inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-primary-light transition group-hover:text-white">
+                    <h3 className="heading-font text-lg font-semibold text-slate-900">{item.title}</h3>
+                    <p className="text-xs text-slate-600 line-clamp-3">{item.description}</p>
+                    <span className="mt-auto inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-primary transition group-hover:text-primary-dark">
                       Explore Event
                       <span aria-hidden>→</span>
                     </span>

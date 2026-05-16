@@ -64,9 +64,7 @@ export default async function NewsIndexPage() {
           )}
         </section>
       </main>
-      <div className="bg-slate-950">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 }

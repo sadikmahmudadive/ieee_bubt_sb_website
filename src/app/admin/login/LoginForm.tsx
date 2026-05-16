@@ -70,24 +70,24 @@ export function LoginForm() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-6 rounded-3xl border border-white/10 bg-white/5 p-10 shadow-2xl shadow-slate-950/40 backdrop-blur">
-      <h1 className="heading-font text-2xl font-semibold text-white">Admin Portal</h1>
-      <p className="mt-3 text-sm text-slate-300">Access the dashboard to manage homepage content and media.</p>
+    <div className="mx-auto w-full max-w-md space-y-6 border border-slate-200 bg-white p-10 shadow-lg">
+      <h1 className="heading-font text-2xl font-semibold text-slate-900">Admin Portal</h1>
+      <p className="mt-3 text-sm text-slate-600">Access the dashboard to manage homepage content and media.</p>
       {showPostLogoutActions ? (
-        <div className="rounded-2xl border border-white/15 bg-white/5 p-4 text-sm text-slate-200">
+        <div className="border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
           <p>You have been signed out.</p>
           <div className="mt-4 flex flex-wrap gap-3">
             <button
               type="button"
               onClick={() => router.push("/")}
-              className="inline-flex items-center justify-center rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:border-white hover:bg-white/10"
+              className="inline-flex items-center justify-center rounded-none border border-slate-300 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary hover:bg-white"
             >
               Back to Home
             </button>
             <button
               type="button"
               onClick={() => router.replace("/admin/login")}
-              className="inline-flex items-center justify-center rounded-full border border-primary-light/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-primary-light transition hover:border-primary-light hover:text-white"
+              className="inline-flex items-center justify-center rounded-none border border-primary px-4 py-2 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-white"
             >
               Sign in Again
             </button>
@@ -99,20 +99,20 @@ export function LoginForm() {
         type="button"
         onClick={handleGoogleSignIn}
         disabled={isSubmitting}
-        className="flex w-full items-center justify-center gap-3 rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold uppercase tracking-[0.1em] text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-3 rounded-none border border-slate-300 bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wider text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        <FaGoogle /> Sign in with Google
+        <FaGoogle className="text-primary" /> Sign in with Google
       </button>
 
       <div className="relative flex items-center py-2">
-        <div className="flex-grow border-t border-white/10"></div>
-        <span className="mx-4 flex-shrink-0 text-xs text-white/40 uppercase">Or email</span>
-        <div className="flex-grow border-t border-white/10"></div>
+        <div className="flex-grow border-t border-slate-200"></div>
+        <span className="mx-4 flex-shrink-0 text-xs text-slate-400 uppercase">Or email</span>
+        <div className="flex-grow border-t border-slate-200"></div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
-          <label htmlFor="email" className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-300">
+          <label htmlFor="email" className="text-xs font-semibold uppercase tracking-wider text-slate-500">
             Email
           </label>
           <input
@@ -122,11 +122,11 @@ export function LoginForm() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-primary focus:outline-none"
+            className="w-full rounded-none border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="password" className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-300">
+          <label htmlFor="password" className="text-xs font-semibold uppercase tracking-wider text-slate-500">
             Password
           </label>
           <input
@@ -136,14 +136,14 @@ export function LoginForm() {
             required
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-primary focus:outline-none"
+            className="w-full rounded-none border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
-        {error ? <p className="text-sm text-amber-300">{error}</p> : null}
+        {error ? <p className="text-sm text-red-600 font-medium">{error}</p> : null}
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-3 rounded-full bg-gradient-to-r from-primary to-primary-light px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] text-white transition hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-3 rounded-none bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting ? "Processing..." : isSignUp ? "Create Account" : "Sign in"}
         </button>
@@ -155,7 +155,7 @@ export function LoginForm() {
               setIsSignUp(!isSignUp);
               setError(null);
             }}
-            className="text-xs text-white/70 hover:text-white transition"
+            className="text-xs text-slate-500 hover:text-primary transition font-medium"
           >
             {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
           </button>

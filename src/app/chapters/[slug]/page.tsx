@@ -22,8 +22,10 @@ type ChapterPageProps = {
 async function fetchChapterEntries() {
   let members: TeamMemberSummary[] = [];
 
-  if (process.env.MONGODB_URI) {
+  try {
     members = await getTeamMembers();
+  } catch (error) {
+    console.error("Failed to fetch team members", error);
   }
 
   return groupChapterMembers(members);
@@ -60,37 +62,28 @@ export default async function ChapterDetailPage({ params }: ChapterPageProps) {
   const theme = getChapterTheme(chapter.slug);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-white text-slate-900">
       <Navbar />
       <main className="space-y-24 pb-24">
-        <section className="relative isolate overflow-hidden border-b border-white/5 py-28 sm:py-36">
+        <section className="relative isolate overflow-hidden border-b border-slate-200 py-28 sm:py-36">
           <div className="absolute inset-0 animate-pulse" aria-hidden style={{ backgroundImage: theme.heroGradient }} />
           <div className="absolute inset-x-0 top-0 h-48 blur-3xl animate-pulse" aria-hidden style={{ backgroundImage: theme.heroOverlay }} />
           <div className="relative mx-auto max-w-5xl px-6 text-center sm:px-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary-light animate-fade-in">Chapter Leadership</p>
-            <h1 className="mt-6 text-4xl font-bold text-white sm:text-[2.75rem] animate-fade-in-up">{chapter.name}</h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary animate-fade-in">Chapter Leadership</p>
+            <h1 className="mt-6 text-4xl font-bold text-slate-900 sm:text-[2.75rem] animate-fade-in-up">{chapter.name}</h1>
             <p className="mt-6 text-base sm:text-lg animate-fade-in-up animation-delay-200" style={{ color: theme.heroMetaColor }}>
               Advisors and committee members drive programs, membership engagement, and technical initiatives for this IEEE community at BUBT.
             </p>
             <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row animate-fade-in-up animation-delay-400">
               <Link
                 href="/chapters"
-                className="inline-flex items-center justify-center rounded-full border px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                style={{
-                  borderColor: theme.buttonBorder,
-                  background: theme.buttonBackground,
-                  color: theme.buttonTextColor
-                }}
+                className="inline-flex items-center justify-center rounded-none border border-slate-300 bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
               >
                 Back to Chapters Directory
               </Link>
               <Link
                 href="/#contact"
-                className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                style={{
-                  backgroundImage: theme.accentGradient,
-                  color: theme.accentButtonText
-                }}
+                className="inline-flex items-center justify-center rounded-none border border-primary bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark hover:border-primary-dark"
               >
                 Collaborate with {hasNamedChapter ? chapter.name : "this Chapter"}
               </Link>
@@ -103,6 +96,7 @@ export default async function ChapterDetailPage({ params }: ChapterPageProps) {
             eyebrow="Faculty Mentors"
             title="Advisors and counselors guiding chapter strategy"
             subtitle="Each chapter thrives with faculty support linking student work to IEEE’s regional and global programs."
+            tone="light"
           />
           {chapter.advisors.length > 0 ? (
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
@@ -112,13 +106,7 @@ export default async function ChapterDetailPage({ params }: ChapterPageProps) {
             </div>
           ) : (
             <p
-              className="rounded-[30px] border p-8 text-sm"
-              style={{
-                background: theme.panelBackground,
-                borderColor: theme.panelBorder,
-                boxShadow: theme.panelShadow,
-                color: theme.metaColor
-              }}
+              className="border border-slate-200 bg-slate-50 p-8 text-sm text-slate-500 shadow-sm"
             >
               Add chapter advisors in the admin dashboard to highlight them here.
             </p>
@@ -130,6 +118,7 @@ export default async function ChapterDetailPage({ params }: ChapterPageProps) {
             eyebrow="Student Committee"
             title="Officers and coordinators leading daily chapter operations"
             subtitle="Student volunteers plan initiatives, recruit members, and deliver technical events for the community."
+            tone="light"
           />
           {chapter.committee.length > 0 ? (
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
@@ -139,13 +128,7 @@ export default async function ChapterDetailPage({ params }: ChapterPageProps) {
             </div>
           ) : (
             <p
-              className="rounded-[30px] border p-8 text-sm"
-              style={{
-                background: theme.panelBackground,
-                borderColor: theme.panelBorder,
-                boxShadow: theme.panelShadow,
-                color: theme.metaColor
-              }}
+              className="border border-slate-200 bg-slate-50 p-8 text-sm text-slate-500 shadow-sm"
             >
               Committee members will appear once they are added to this chapter.
             </p>

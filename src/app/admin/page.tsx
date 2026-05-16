@@ -15,7 +15,7 @@ export default async function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 px-6 py-16">
+    <div className="min-h-screen bg-slate-50 px-6 py-16">
       <div className="mx-auto max-w-6xl">
         <AdminDashboard adminUsername={session.username} />
       </div>

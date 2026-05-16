@@ -89,9 +89,7 @@ export default async function NewsDetailPage({ params }: Params) {
           </div>
         </section>
       </main>
-      <div className="bg-slate-950">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 }

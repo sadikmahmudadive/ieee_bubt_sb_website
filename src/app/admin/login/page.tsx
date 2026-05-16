@@ -15,7 +15,7 @@ export default async function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-6 py-24">
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6 py-24">
       <LoginForm />
     </div>
   );

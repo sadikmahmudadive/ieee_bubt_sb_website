@@ -45,35 +45,35 @@ const toRgba = (hex: string, alpha = 1): string => {
 };
 
 const createTheme = (accent: string): ChapterTheme => {
-  const soft = toRgba(accent, 0.12);
-  const softer = toRgba(accent, 0.2);
-  const border = toRgba(accent, 0.5);
-  const shadow = toRgba(accent, 0.45);
+  const soft = toRgba(accent, 0.08);
+  const softer = toRgba(accent, 0.04);
+  const border = toRgba(accent, 0.2);
+  const shadow = toRgba(accent, 0.15);
 
   return {
     accent,
-    accentTextColor: toRgba(accent, 0.92),
-    secondaryTextColor: "rgba(226, 232, 240, 0.85)",
-    metaColor: "rgba(203, 213, 225, 0.8)",
-    heroGradient: `linear-gradient(135deg, ${toRgba(accent, 0.38)} 0%, rgba(4, 6, 18, 0.92) 55%, rgba(2, 6, 23, 0.9) 100%)`,
-    heroOverlay: `linear-gradient(180deg, ${toRgba(accent, 0.42)} 0%, rgba(8, 11, 25, 0) 70%)`,
-    heroMetaColor: "rgba(226, 232, 240, 0.92)",
-    accentGradient: `linear-gradient(90deg, ${toRgba(accent, 0.85)} 0%, ${toRgba(accent, 0.65)} 100%)`,
-    accentButtonText: "#020617",
-    cardBackground: `linear-gradient(135deg, ${soft} 0%, rgba(2, 6, 23, 0.92) 100%)`,
+    accentTextColor: accent,
+    secondaryTextColor: "rgba(71, 85, 105, 0.9)", // slate-600
+    metaColor: "rgba(100, 116, 139, 0.9)", // slate-500
+    heroGradient: `linear-gradient(135deg, ${toRgba(accent, 0.15)} 0%, rgba(248, 250, 252, 0.92) 55%, rgba(255, 255, 255, 1) 100%)`,
+    heroOverlay: `linear-gradient(180deg, ${toRgba(accent, 0.1)} 0%, rgba(255, 255, 255, 0) 70%)`,
+    heroMetaColor: "rgba(51, 65, 85, 0.9)", // slate-700
+    accentGradient: `linear-gradient(90deg, ${toRgba(accent, 0.9)} 0%, ${toRgba(accent, 0.7)} 100%)`,
+    accentButtonText: "#ffffff",
+    cardBackground: `linear-gradient(135deg, ${softer} 0%, rgba(255, 255, 255, 1) 100%)`,
     cardBorder: border,
-    cardShadow: `0 28px 60px -38px ${shadow}`,
-    pillBackground: softer,
+    cardShadow: `0 4px 12px -2px ${shadow}`,
+    pillBackground: "rgba(255, 255, 255, 1)",
     pillBorder: border,
     buttonBorder: border,
-    buttonBackground: soft,
-    buttonTextColor: "rgba(248, 250, 252, 0.96)",
-    panelBackground: `linear-gradient(135deg, ${toRgba(accent, 0.2)} 0%, rgba(3, 7, 18, 0.92) 100%)`,
+    buttonBackground: "rgba(255, 255, 255, 1)",
+    buttonTextColor: accent,
+    panelBackground: `linear-gradient(135deg, ${soft} 0%, rgba(255, 255, 255, 1) 100%)`,
     panelBorder: border,
-    panelShadow: `0 26px 60px -40px ${shadow}`,
-    navText: toRgba(accent, 0.85),
-    navSelectedBackground: toRgba(accent, 0.25),
-    navSelectedText: "#0f172a"
+    panelShadow: `0 8px 24px -4px ${shadow}`,
+    navText: "rgba(51, 65, 85, 0.9)",
+    navSelectedBackground: toRgba(accent, 0.1),
+    navSelectedText: accent
   };
 };
 

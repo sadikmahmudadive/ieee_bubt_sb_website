@@ -906,22 +906,22 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
   const subscriberCount = subscribers?.length ?? 0;
 
   return (
-    <div className="space-y-10 text-slate-100">
-      <header className="flex flex-col gap-4 rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_40px_80px_-40px_rgba(15,23,42,0.9)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-10 text-slate-900">
+      <header className="flex flex-col gap-4 border border-slate-200 bg-white p-8 shadow-sm sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.35em] text-primary-light">Admin Console</p>
-          <h1 className="heading-font mt-2 text-2xl font-semibold text-white">Welcome back, {adminUsername}</h1>
-          <p className="mt-2 text-sm text-slate-300">Manage events, team profiles, and gallery snapshots from a single dashboard.</p>
+          <p className="text-xs uppercase tracking-wider text-primary">Admin Console</p>
+          <h1 className="heading-font mt-2 text-2xl font-semibold text-slate-900">Welcome back, {adminUsername}</h1>
+          <p className="mt-2 text-sm text-slate-600">Manage events, team profiles, and gallery snapshots from a single dashboard.</p>
         </div>
         <button
           onClick={handleLogout}
-          className="self-start rounded-full border border-white/25 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:border-white hover:bg-white/10"
+          className="self-start border border-slate-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
         >
           Log out
         </button>
       </header>
 
-      <nav className="flex flex-wrap gap-3">
+      <nav className="flex flex-wrap gap-2">
         {[
           { key: "events", label: "Events" },
           { key: "team", label: "Team" },
@@ -934,10 +934,10 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
             key={tab.key}
             type="button"
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
-            className={`rounded-full px-5 py-2 text-sm font-semibold uppercase tracking-[0.3em] transition ${
+            className={`border px-5 py-2 text-sm font-semibold uppercase tracking-wider transition ${
               activeTab === tab.key
-                ? "bg-primary-light text-slate-900"
-                : "border border-white/20 text-white hover:border-white hover:bg-white/10"
+                ? "border-primary bg-primary text-white"
+                : "border-slate-300 bg-white text-slate-600 hover:border-primary hover:text-primary hover:bg-slate-50"
             }`}
           >
             {tab.label}
@@ -947,122 +947,122 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
 
       {activeTab === "events" ? (
         <section className="space-y-8">
-          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
-            <h2 className="heading-font text-xl font-semibold text-white">{isEditingEvent ? "Edit Event" : "Create Event"}</h2>
-            <p className="mt-2 text-sm text-slate-300">
+          <div className="border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="heading-font text-xl font-semibold text-slate-900">{isEditingEvent ? "Edit Event" : "Create Event"}</h2>
+            <p className="mt-2 text-sm text-slate-600">
               {isEditingEvent
                 ? "Update event details to refresh the public event page and hero section. Uploading a new cover image replaces the existing asset."
                 : "Titles, dates, and descriptions power the homepage hero and event listings."}
             </p>
             <form onSubmit={handleSubmitEvent} className="mt-6 grid gap-5 md:grid-cols-2">
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Title
                 <input
                   value={eventForm.title}
                   onChange={(e) => setEventForm((prev) => ({ ...prev, title: e.target.value }))}
                   required
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Slug
                 <input
                   value={eventForm.slug}
                   onChange={(e) => setEventForm((prev) => ({ ...prev, slug: e.target.value }))}
                   required
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Description
                 <textarea
                   value={eventForm.description}
                   onChange={(e) => setEventForm((prev) => ({ ...prev, description: e.target.value }))}
                   required
                   rows={4}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Hero Headline (optional)
                 <input
                   value={eventForm.heroTitle}
                   onChange={(e) => setEventForm((prev) => ({ ...prev, heroTitle: e.target.value }))}
                   placeholder="Shown on homepage hero when this event is featured"
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Hero Summary (optional)
                 <textarea
                   value={eventForm.heroSubtitle}
                   onChange={(e) => setEventForm((prev) => ({ ...prev, heroSubtitle: e.target.value }))}
                   rows={3}
                   placeholder="Provide a short teaser that appears in the hero carousel"
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Event Date
                 <input
                   type="date"
                   value={eventForm.eventDate}
                   onChange={(e) => setEventForm((prev) => ({ ...prev, eventDate: e.target.value }))}
                   required
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Location
                 <input
                   value={eventForm.location}
                   onChange={(e) => setEventForm((prev) => ({ ...prev, location: e.target.value }))}
                   required
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Tags (comma-separated)
                 <input
                   value={eventForm.tags}
                   onChange={(e) => setEventForm((prev) => ({ ...prev, tags: e.target.value }))}
                   placeholder="e.g., workshop, seminar, networking"
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Cover Image
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleEventImageSelection}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 {eventForm.coverImage && (
                   <img
                     src={eventForm.coverImage}
                     alt="Cover preview"
-                    className="mt-2 w-32 h-20 object-cover rounded"
+                    className="mt-2 w-32 h-20 object-cover border border-slate-200"
                   />
                 )}
-                {eventUploadLoading && <p className="text-sm text-slate-400">Uploading...</p>}
-                {eventUploadError && <p className="text-sm text-red-500">{eventUploadError}</p>}
+                {eventUploadLoading && <p className="text-sm text-slate-500">Uploading...</p>}
+                {eventUploadError && <p className="text-sm text-red-600 font-medium">{eventUploadError}</p>}
               </label>
-              <div className="flex items-center gap-2 text-sm text-slate-200">
+              <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
                 <input
                   type="checkbox"
                   checked={eventForm.featured}
                   onChange={(e) => setEventForm((prev) => ({ ...prev, featured: e.target.checked }))}
-                  className="rounded border border-white/15 bg-white/10 text-primary focus:border-primary focus:outline-none"
+                  className="border border-slate-300 text-primary focus:ring-primary"
                 />
                 <label>Featured</label>
               </div>
 
-              <div className="md:col-span-2 flex gap-2">
+              <div className="md:col-span-2 flex gap-4 pt-4">
                 <button
                   type="submit"
                   disabled={eventSubmitting}
-                  className="rounded-lg border border-white/15 bg-primary px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-primary-light disabled:opacity-50"
+                  className="border border-primary bg-primary px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark disabled:opacity-50"
                 >
                   {eventSubmitting ? "Saving..." : isEditingEvent ? "Update Event" : "Create Event"}
                 </button>
@@ -1070,7 +1070,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   <button
                     type="button"
                     onClick={cancelEventEdit}
-                    className="rounded-lg border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
+                    className="border border-slate-300 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
                   >
                     Cancel
                   </button>
@@ -1080,21 +1080,21 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
             </form>
 
             {eventFeedback && (
-              <p className="text-sm text-green-500">{eventFeedback}</p>
+              <p className="mt-4 text-sm text-green-600 font-medium">{eventFeedback}</p>
             )}
             {eventError && (
-              <p className="text-sm text-red-500">{eventError}</p>
+              <p className="mt-4 text-sm text-red-600 font-medium">{eventError}</p>
             )}
 
-            <div className="mt-8">
-              <h3 className="heading-font text-lg font-semibold text-white">Existing Events</h3>
-              <p className="mt-2 text-sm text-slate-300">Click on an event to edit it, or toggle featured status.</p>
+            <div className="mt-12 pt-10 border-t border-slate-200">
+              <h3 className="heading-font text-lg font-semibold text-slate-900">Existing Events</h3>
+              <p className="mt-2 text-sm text-slate-600">Click on an event to edit it, or toggle featured status.</p>
               {isEventsLoading ? (
-                <p className="mt-4 text-sm text-slate-400">Loading events...</p>
+                <p className="mt-4 text-sm text-slate-500">Loading events...</p>
               ) : events && events.length > 0 ? (
-                <ul className="mt-4 space-y-4">
+                <ul className="mt-6 divide-y divide-slate-100 border border-slate-200">
                   {events.map((event) => (
-                    <li key={event._id} className="flex items-center justify-between rounded-lg border border-white/15 bg-white/5 p-4">
+                    <li key={event._id} className="flex items-center justify-between bg-white p-4 transition hover:bg-slate-50">
                       <div className="flex items-center gap-4">
                         <img
                           src={event.coverImage}
@@ -1102,29 +1102,29 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                           className="h-16 w-16 rounded object-cover"
                         />
                         <div>
-                          <h4 className="font-semibold text-white">{event.title}</h4>
-                          <p className="text-sm text-slate-300">{event.location} • {new Date(event.eventDate).toLocaleDateString()}</p>
+                          <h4 className="font-semibold text-slate-900">{event.title}</h4>
+                          <p className="text-sm text-slate-600">{event.location} • {new Date(event.eventDate).toLocaleDateString()}</p>
                           {event.tags && event.tags.length > 0 && (
-                            <p className="text-xs text-slate-400">{event.tags.join(", ")}</p>
+                            <p className="text-xs text-slate-500">{event.tags.join(", ")}</p>
                           )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleToggleFeatured(event._id, Boolean(event.featured))}
-                          className={`rounded px-2 py-1 text-xs font-semibold ${event.featured ? "bg-primary-light text-slate-900" : "border border-white/20 text-white hover:border-white"}`}
+                          className={`px-2 py-1 text-xs font-semibold border ${event.featured ? "bg-primary border-primary text-white" : "border-slate-300 text-slate-600 hover:border-primary hover:text-primary hover:bg-slate-50"}`}
                         >
                           {event.featured ? "Featured" : "Not Featured"}
                         </button>
                         <button
                           onClick={() => startEventEdit(event)}
-                          className="rounded border border-white/20 px-2 py-1 text-xs font-semibold text-white hover:border-white"
+                          className="border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-600 hover:border-primary hover:text-primary hover:bg-slate-50"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteEvent(event._id)}
-                          className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500"
+                          className="border border-red-200 px-2 py-1 text-xs font-semibold text-red-600 hover:border-red-600 hover:bg-red-50"
                         >
                           Delete
                         </button>
@@ -1133,7 +1133,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   ))}
                 </ul>
               ) : (
-                <p className="mt-4 text-sm text-slate-400">No events found.</p>
+                <p className="mt-4 text-sm text-slate-500">No events found.</p>
               )}
             </div>
           </div>
@@ -1141,148 +1141,148 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
 
       ) : activeTab === "team" ? (
         <section className="space-y-8">
-          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
-            <h2 className="heading-font text-xl font-semibold text-white">{isEditingTeam ? "Edit Team Member" : "Add Team Member"}</h2>
-            <p className="mt-2 text-sm text-slate-300">
+          <div className="border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="heading-font text-xl font-semibold text-slate-900">{isEditingTeam ? "Edit Team Member" : "Add Team Member"}</h2>
+            <p className="mt-2 text-sm text-slate-600">
               {isEditingTeam
                 ? "Update team member details. Uploading a new photo replaces the existing asset."
                 : "Add new team members to display on the leadership page."}
             </p>
             <form onSubmit={handleSubmitTeamMember} className="mt-6 grid gap-5 md:grid-cols-2">
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Name
                 <input
                   value={teamForm.name}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, name: e.target.value }))}
                   required
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Role
                 <input
                   value={teamForm.role}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, role: e.target.value }))}
                   required
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Bio (optional)
                 <textarea
                   value={teamForm.bio}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, bio: e.target.value }))}
                   rows={3}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Priority
                 <input
                   type="number"
                   value={teamForm.priority}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, priority: e.target.value }))}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Affiliation
                 <select
                   value={teamForm.affiliation}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, affiliation: e.target.value as "main" | "chapter" }))}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none [color-scheme:dark]"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 >
-                  <option value="main" className="text-slate-900" style={{ color: "#0f172a" }}>Main Branch</option>
-                  <option value="chapter" className="text-slate-900" style={{ color: "#0f172a" }}>Chapter</option>
+                  <option value="main">Main Branch</option>
+                  <option value="chapter">Chapter</option>
                 </select>
               </label>
               {teamForm.affiliation === "chapter" && (
-                <label className="flex flex-col gap-2 text-sm text-slate-200">
+                <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                   Chapter
                   <select
                     value={teamForm.chapter}
                     onChange={(e) => setTeamForm((prev) => ({ ...prev, chapter: e.target.value }))}
-                    className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none [color-scheme:dark]"
+                    className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   >
                     {chapterNameOptions.map((chapter) => (
-                      <option key={chapter} value={chapter} className="text-slate-900" style={{ color: "#0f172a" }}>
+                      <option key={chapter} value={chapter}>
                         {chapter}
                       </option>
                     ))}
                   </select>
                 </label>
               )}
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Role Key
                 <select
                   value={teamForm.roleKey}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, roleKey: e.target.value }))}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none [color-scheme:dark]"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 >
                   {roleKeyOptions.map((option) => (
-                    <option key={option.value} value={option.value} className="text-slate-900" style={{ color: "#0f172a" }}>
+                    <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
                   ))}
                 </select>
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Facebook (optional)
                 <input
                   value={teamForm.facebook}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, facebook: e.target.value }))}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Instagram (optional)
                 <input
                   value={teamForm.instagram}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, instagram: e.target.value }))}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 LinkedIn (optional)
                 <input
                   value={teamForm.linkedin}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, linkedin: e.target.value }))}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Email (optional)
                 <input
                   type="email"
                   value={teamForm.email}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, email: e.target.value }))}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Profile Photo
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleTeamPhotoSelection}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 {teamForm.photoUrl && (
                   <img
                     src={teamForm.photoUrl}
                     alt="Profile preview"
-                    className="mt-2 w-20 h-20 object-cover rounded-full"
+                    className="mt-2 w-20 h-20 object-cover rounded-full border border-slate-200"
                   />
                 )}
-                {teamUploadLoading && <p className="text-sm text-slate-400">Uploading...</p>}
-                {teamUploadError && <p className="text-sm text-red-500">{teamUploadError}</p>}
+                {teamUploadLoading && <p className="text-sm text-slate-500">Uploading...</p>}
+                {teamUploadError && <p className="text-sm text-red-600 font-medium">{teamUploadError}</p>}
               </label>
 
-              <div className="md:col-span-2 flex gap-2">
+              <div className="md:col-span-2 flex gap-4 pt-4">
                 <button
                   type="submit"
                   disabled={teamSubmitting}
-                  className="rounded-lg border border-white/15 bg-primary px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-primary-light disabled:opacity-50"
+                  className="border border-primary bg-primary px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark disabled:opacity-50"
                 >
                   {teamSubmitting ? "Saving..." : isEditingTeam ? "Update Member" : "Add Member"}
                 </button>
@@ -1290,7 +1290,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   <button
                     type="button"
                     onClick={cancelTeamEdit}
-                    className="rounded-lg border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
+                    className="border border-slate-300 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
                   >
                     Cancel
                   </button>
@@ -1299,21 +1299,21 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
             </form>
 
             {teamFeedback && (
-              <p className="text-sm text-green-500">{teamFeedback}</p>
+              <p className="mt-4 text-sm text-green-600 font-medium">{teamFeedback}</p>
             )}
             {teamError && (
-              <p className="text-sm text-red-500">{teamError}</p>
+              <p className="mt-4 text-sm text-red-600 font-medium">{teamError}</p>
             )}
 
-            <div className="mt-8">
-              <h3 className="heading-font text-lg font-semibold text-white">Existing Team Members</h3>
-              <p className="mt-2 text-sm text-slate-300">Click on a member to edit their details.</p>
+            <div className="mt-12 pt-10 border-t border-slate-200">
+              <h3 className="heading-font text-lg font-semibold text-slate-900">Existing Team Members</h3>
+              <p className="mt-2 text-sm text-slate-600">Click on a member to edit their details.</p>
               {isTeamLoading ? (
-                <p className="mt-4 text-sm text-slate-400">Loading team members...</p>
+                <p className="mt-4 text-sm text-slate-500">Loading team members...</p>
               ) : team && team.length > 0 ? (
-                <ul className="mt-4 space-y-4">
+                <ul className="mt-6 divide-y divide-slate-100 border border-slate-200">
                   {team.map((member) => (
-                    <li key={member._id} className="flex items-center justify-between rounded-lg border border-white/15 bg-white/5 p-4">
+                    <li key={member._id} className="flex items-center justify-between bg-white p-4 transition hover:bg-slate-50">
                       <div className="flex items-center gap-4">
                         <img
                           src={member.photoUrl}
@@ -1321,26 +1321,26 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                           className="h-16 w-16 rounded-full object-cover"
                         />
                         <div>
-                          <h4 className="font-semibold text-white">{member.name}</h4>
-                          <p className="text-sm text-slate-300">{member.role}</p>
+                          <h4 className="font-semibold text-slate-900">{member.name}</h4>
+                          <p className="text-sm text-slate-600">{member.role}</p>
                           {member.roleKey && member.roleKey !== "none" && (
-                            <p className="text-xs text-slate-400">{roleKeyLabelMap[member.roleKey]}</p>
+                            <p className="text-xs text-slate-500">{roleKeyLabelMap[member.roleKey]}</p>
                           )}
                           {member.affiliation === "chapter" && member.chapter && (
-                            <p className="text-xs text-slate-400">{member.chapter}</p>
+                            <p className="text-xs text-slate-500">{member.chapter}</p>
                           )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => startTeamEdit(member)}
-                          className="rounded border border-white/20 px-2 py-1 text-xs font-semibold text-white hover:border-white"
+                          className="border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-600 hover:border-primary hover:text-primary hover:bg-slate-50"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteTeamMember(member._id)}
-                          className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500"
+                          className="border border-red-200 px-2 py-1 text-xs font-semibold text-red-600 hover:border-red-600 hover:bg-red-50"
                         >
                           Delete
                         </button>
@@ -1349,7 +1349,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   ))}
                 </ul>
               ) : (
-                <p className="mt-4 text-sm text-slate-400">No team members found.</p>
+                <p className="mt-4 text-sm text-slate-500">No team members found.</p>
               )}
             </div>
           </div>
@@ -1357,21 +1357,21 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
 
       ) : activeTab === "chapters" ? (
         <section className="space-y-8">
-          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
-            <h2 className="heading-font text-xl font-semibold text-white">Chapter Management</h2>
-            <p className="mt-2 text-sm text-slate-300">View and manage team members by chapter.</p>
+          <div className="border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="heading-font text-xl font-semibold text-slate-900">Chapter Management</h2>
+            <p className="mt-2 text-sm text-slate-600">View and manage team members by chapter.</p>
 
             <div className="mt-6">
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Select Chapter
                 <select
                   value={selectedChapter || ""}
                   onChange={(e) => setSelectedChapter(e.target.value || null)}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none [color-scheme:dark]"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 >
-                  <option value="" className="text-slate-900" style={{ color: "#0f172a" }}>All Chapters</option>
+                  <option value="">All Chapters</option>
                   {chapterEntries.map((entry) => (
-                    <option key={entry.name} value={entry.name} className="text-slate-900" style={{ color: "#0f172a" }}>
+                    <option key={entry.name} value={entry.name}>
                       {entry.name}
                     </option>
                   ))}
@@ -1379,21 +1379,21 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
               </label>
             </div>
 
-            <div className="mt-8">
-              <h3 className="heading-font text-lg font-semibold text-white">
+            <div className="mt-12 pt-10 border-t border-slate-200">
+              <h3 className="heading-font text-lg font-semibold text-slate-900">
                 {selectedChapter ? `${selectedChapter} Members` : "All Chapter Members"}
               </h3>
-              <p className="mt-2 text-sm text-slate-300">
+              <p className="mt-2 text-sm text-slate-600">
                 {selectedChapter
                   ? `Showing members of ${selectedChapter}.`
                   : "Showing all chapter members. Select a chapter to filter."}
               </p>
               {isTeamLoading ? (
-                <p className="mt-4 text-sm text-slate-400">Loading team members...</p>
+                <p className="mt-4 text-sm text-slate-500">Loading team members...</p>
               ) : selectedChapterEntry ? (
-                <ul className="mt-4 space-y-4">
+                <ul className="mt-6 divide-y divide-slate-100 border border-slate-200">
                   {selectedChapterEntry.members.map((member) => (
-                    <li key={member._id} className="flex items-center justify-between rounded-lg border border-white/15 bg-white/5 p-4">
+                    <li key={member._id} className="flex items-center justify-between bg-white p-4 transition hover:bg-slate-50">
                       <div className="flex items-center gap-4">
                         <img
                           src={member.photoUrl}
@@ -1401,23 +1401,23 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                           className="h-16 w-16 rounded-full object-cover"
                         />
                         <div>
-                          <h4 className="font-semibold text-white">{member.name}</h4>
-                          <p className="text-sm text-slate-300">{member.role}</p>
+                          <h4 className="font-semibold text-slate-900">{member.name}</h4>
+                          <p className="text-sm text-slate-600">{member.role}</p>
                           {member.roleKey && member.roleKey !== "none" && (
-                            <p className="text-xs text-slate-400">{roleKeyLabelMap[member.roleKey]}</p>
+                            <p className="text-xs text-slate-500">{roleKeyLabelMap[member.roleKey]}</p>
                           )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => startTeamEdit(member)}
-                          className="rounded border border-white/20 px-2 py-1 text-xs font-semibold text-white hover:border-white"
+                          className="border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-600 hover:border-primary hover:text-primary hover:bg-slate-50"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteTeamMember(member._id)}
-                          className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500"
+                          className="border border-red-200 px-2 py-1 text-xs font-semibold text-red-600 hover:border-red-600 hover:bg-red-50"
                         >
                           Delete
                         </button>
@@ -1426,9 +1426,9 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   ))}
                 </ul>
               ) : fallbackChapterEntry ? (
-                <ul className="mt-4 space-y-4">
+                <ul className="mt-6 divide-y divide-slate-100 border border-slate-200">
                   {fallbackChapterEntry.members.map((member) => (
-                    <li key={member._id} className="flex items-center justify-between rounded-lg border border-white/15 bg-white/5 p-4">
+                    <li key={member._id} className="flex items-center justify-between bg-white p-4 transition hover:bg-slate-50">
                       <div className="flex items-center gap-4">
                         <img
                           src={member.photoUrl}
@@ -1436,23 +1436,23 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                           className="h-16 w-16 rounded-full object-cover"
                         />
                         <div>
-                          <h4 className="font-semibold text-white">{member.name}</h4>
-                          <p className="text-sm text-slate-300">{member.role}</p>
+                          <h4 className="font-semibold text-slate-900">{member.name}</h4>
+                          <p className="text-sm text-slate-600">{member.role}</p>
                           {member.roleKey && member.roleKey !== "none" && (
-                            <p className="text-xs text-slate-400">{roleKeyLabelMap[member.roleKey]}</p>
+                            <p className="text-xs text-slate-500">{roleKeyLabelMap[member.roleKey]}</p>
                           )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => startTeamEdit(member)}
-                          className="rounded border border-white/20 px-2 py-1 text-xs font-semibold text-white hover:border-white"
+                          className="border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-600 hover:border-primary hover:text-primary hover:bg-slate-50"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteTeamMember(member._id)}
-                          className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500"
+                          className="border border-red-200 px-2 py-1 text-xs font-semibold text-red-600 hover:border-red-600 hover:bg-red-50"
                         >
                           Delete
                         </button>
@@ -1461,7 +1461,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   ))}
                 </ul>
               ) : (
-                <p className="mt-4 text-sm text-slate-400">No chapter members found.</p>
+                <p className="mt-4 text-sm text-slate-500">No chapter members found.</p>
               )}
             </div>
           </div>
@@ -1469,91 +1469,91 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
 
       ) : activeTab === "gallery" ? (
         <section className="space-y-8">
-          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
-            <h2 className="heading-font text-xl font-semibold text-white">Add Gallery Item</h2>
-            <p className="mt-2 text-sm text-slate-300">Upload images to the gallery for display on the website.</p>
+          <div className="border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="heading-font text-xl font-semibold text-slate-900">Add Gallery Item</h2>
+            <p className="mt-2 text-sm text-slate-600">Upload images to the gallery for display on the website.</p>
             <form onSubmit={handleCreateGalleryItem} className="mt-6 grid gap-5 md:grid-cols-2">
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Title
                 <input
                   value={galleryForm.title}
                   onChange={(e) => setGalleryForm((prev) => ({ ...prev, title: e.target.value }))}
                   required
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Associated Event (optional)
                 <input
                   value={galleryForm.event}
                   onChange={(e) => setGalleryForm((prev) => ({ ...prev, event: e.target.value }))}
                   placeholder="e.g., Annual Tech Fest 2023"
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Image
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleGalleryImageSelection}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
-                {galleryUploadLoading && <p className="text-sm text-slate-400">Uploading...</p>}
-                {galleryUploadError && <p className="text-sm text-red-500">{galleryUploadError}</p>}
+                {galleryUploadLoading && <p className="text-sm text-slate-500">Uploading...</p>}
+                {galleryUploadError && <p className="text-sm text-red-600 font-medium">{galleryUploadError}</p>}
                 {galleryForm.imageUrl && (
-                  <img src={galleryForm.imageUrl} alt="Preview" className="mt-2 h-24 w-40 rounded object-cover" />
+                  <img src={galleryForm.imageUrl} alt="Preview" className="mt-2 h-24 w-40 rounded-none object-cover border border-slate-200" />
                 )}
               </label>
 
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Uploaded At (optional)
                 <input
                   type="date"
                   value={galleryForm.uploadedAt}
                   onChange={(e) => setGalleryForm((prev) => ({ ...prev, uploadedAt: e.target.value }))}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
 
-              <div className="md:col-span-2 flex gap-2">
+              <div className="md:col-span-2 flex gap-4 pt-4">
                 <button
                   type="submit"
                   disabled={gallerySubmitting}
-                  className="rounded-lg border border-white/15 bg-primary px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-primary-light disabled:opacity-50"
+                  className="border border-primary bg-primary px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark disabled:opacity-50"
                 >
                   {gallerySubmitting ? "Adding..." : "Add to Gallery"}
                 </button>
                 <button
                   type="button"
                   onClick={() => setGalleryForm({ title: "", publicId: "", imageUrl: "", event: "", uploadedAt: "" })}
-                  className="rounded-lg border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
+                  className="border border-slate-300 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
                 >
                   Reset
                 </button>
               </div>
             </form>
 
-            {galleryFeedback && <p className="text-sm text-green-500">{galleryFeedback}</p>}
-            {galleryError && <p className="text-sm text-red-500">{galleryError}</p>}
+            {galleryFeedback && <p className="mt-4 text-sm text-green-600 font-medium">{galleryFeedback}</p>}
+            {galleryError && <p className="mt-4 text-sm text-red-600 font-medium">{galleryError}</p>}
 
-            <div className="mt-8">
-              <h3 className="heading-font text-lg font-semibold text-white">Existing Gallery</h3>
+            <div className="mt-12 pt-10 border-t border-slate-200">
+              <h3 className="heading-font text-lg font-semibold text-slate-900">Existing Gallery</h3>
               {isGalleryLoading ? (
-                <p className="mt-4 text-sm text-slate-400">Loading gallery...</p>
+                <p className="mt-4 text-sm text-slate-500">Loading gallery...</p>
               ) : gallery && gallery.length > 0 ? (
-                <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {gallery.map((item) => (
-                    <li key={item._id} className="rounded-lg border border-white/15 bg-white/5 p-3">
-                      <img src={item.imageUrl} alt={item.title} className="h-36 w-full rounded object-cover" />
+                    <li key={item._id} className="border border-slate-200 bg-white p-3 shadow-sm transition hover:shadow-md">
+                      <img src={item.imageUrl} alt={item.title} className="h-40 w-full object-cover" />
                       <div className="mt-3 flex items-center justify-between">
                         <div>
-                          <p className="font-semibold text-white">{item.title}</p>
-                          {item.event && <p className="text-xs text-slate-400">{item.event}</p>}
+                          <p className="font-semibold text-slate-900">{item.title}</p>
+                          {item.event && <p className="text-xs text-slate-500">{item.event}</p>}
                         </div>
                         <button
                           onClick={() => handleDeleteGalleryItem(item._id)}
-                          className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500"
+                          className="border border-red-200 px-2 py-1 text-xs font-semibold text-red-600 hover:border-red-600 hover:bg-red-50"
                         >
                           Delete
                         </button>
@@ -1570,94 +1570,94 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
 
       ) : activeTab === "news" ? (
         <section className="space-y-8">
-          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
-            <h2 className="heading-font text-xl font-semibold text-white">{isEditingNews ? "Edit News" : "Create News"}</h2>
-            <p className="mt-2 text-sm text-slate-300">Publish updates and announcements.</p>
+          <div className="border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="heading-font text-xl font-semibold text-slate-900">{isEditingNews ? "Edit News" : "Create News"}</h2>
+            <p className="mt-2 text-sm text-slate-600">Publish updates and announcements.</p>
             <form onSubmit={handleSubmitNews} className="mt-6 grid gap-5 md:grid-cols-2">
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Title
                 <input
                   value={newsForm.title}
                   onChange={(e) => setNewsForm((p) => ({ ...p, title: e.target.value }))}
                   required
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Slug
                 <input
                   value={newsForm.slug}
                   onChange={(e) => setNewsForm((p) => ({ ...p, slug: e.target.value }))}
                   required
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Category
                 <input
                   value={newsForm.category}
                   onChange={(e) => setNewsForm((p) => ({ ...p, category: e.target.value }))}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm text-slate-200">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Date
                 <input
                   type="date"
                   value={newsForm.date}
                   onChange={(e) => setNewsForm((p) => ({ ...p, date: e.target.value }))}
                   required
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Excerpt
                 <input
                   value={newsForm.excerpt}
                   onChange={(e) => setNewsForm((p) => ({ ...p, excerpt: e.target.value }))}
                   required
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Content (optional)
                 <textarea
                   value={newsForm.content}
                   onChange={(e) => setNewsForm((p) => ({ ...p, content: e.target.value }))}
                   rows={6}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="md:col-span-2 flex flex-col gap-2 text-sm text-slate-200">
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Image (optional)
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleNewsImageSelection}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-primary focus:outline-none"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
-                {newsUploadLoading && <p className="text-sm text-slate-400">Uploading...</p>}
-                {newsUploadError && <p className="text-sm text-red-500">{newsUploadError}</p>}
+                {newsUploadLoading && <p className="text-sm text-slate-500">Uploading...</p>}
+                {newsUploadError && <p className="text-sm text-red-600 font-medium">{newsUploadError}</p>}
                 {newsForm.imageUrl && (
-                  <img src={newsForm.imageUrl} alt="News preview" className="mt-2 h-24 w-40 rounded object-cover" />
+                  <img src={newsForm.imageUrl} alt="News preview" className="mt-2 h-24 w-40 object-cover border border-slate-200" />
                 )}
               </label>
 
-              <div className="flex items-center gap-2 text-sm text-slate-200">
+              <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
                 <input
                   type="checkbox"
                   checked={newsForm.published}
                   onChange={(e) => setNewsForm((p) => ({ ...p, published: e.target.checked }))}
-                  className="rounded border border-white/15 bg-white/10 text-primary focus:border-primary focus:outline-none"
+                  className="border border-slate-300 text-primary focus:ring-primary"
                 />
                 <label>Published</label>
               </div>
 
-              <div className="md:col-span-2 flex gap-2">
+              <div className="md:col-span-2 flex gap-4 pt-4">
                 <button
                   type="submit"
                   disabled={newsSubmitting}
-                  className="rounded-lg border border-white/15 bg-primary px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-primary-light disabled:opacity-50"
+                  className="border border-primary bg-primary px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark disabled:opacity-50"
                 >
                   {newsSubmitting ? "Saving..." : isEditingNews ? "Update News" : "Create News"}
                 </button>
@@ -1665,7 +1665,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   <button
                     type="button"
                     onClick={cancelNewsEdit}
-                    className="rounded-lg border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
+                    className="border border-slate-300 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
                   >
                     Cancel
                   </button>
@@ -1673,38 +1673,38 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
               </div>
             </form>
 
-            {newsFeedback && <p className="text-sm text-green-500">{newsFeedback}</p>}
-            {newsError && <p className="text-sm text-red-500">{newsError}</p>}
+            {newsFeedback && <p className="mt-4 text-sm text-green-600 font-medium">{newsFeedback}</p>}
+            {newsError && <p className="mt-4 text-sm text-red-600 font-medium">{newsError}</p>}
 
-            <div className="mt-8">
-              <h3 className="heading-font text-lg font-semibold text-white">Existing News</h3>
+            <div className="mt-12 pt-10 border-t border-slate-200">
+              <h3 className="heading-font text-lg font-semibold text-slate-900">Existing News</h3>
               {isNewsLoading ? (
-                <p className="mt-4 text-sm text-slate-400">Loading news...</p>
+                <p className="mt-4 text-sm text-slate-500">Loading news...</p>
               ) : news && news.length > 0 ? (
-                <ul className="mt-4 space-y-4">
+                <ul className="mt-6 divide-y divide-slate-100 border border-slate-200">
                   {news.map((item) => (
-                    <li key={item._id} className="flex items-center justify-between rounded-lg border border-white/15 bg-white/5 p-4">
+                    <li key={item._id} className="flex items-center justify-between bg-white p-4 transition hover:bg-slate-50">
                       <div>
-                        <p className="font-semibold text-white">{item.title}</p>
-                        <p className="text-sm text-slate-300">{new Date(item.date).toLocaleDateString()} • {item.category}</p>
-                        <p className="text-xs text-slate-400">/{item.slug}</p>
+                        <p className="font-semibold text-slate-900">{item.title}</p>
+                        <p className="text-sm text-slate-600">{new Date(item.date).toLocaleDateString()} • {item.category}</p>
+                        <p className="text-xs text-slate-500 font-mono">/{item.slug}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => startNewsEdit(item)}
-                          className="rounded border border-white/20 px-2 py-1 text-xs font-semibold text-white hover:border-white"
+                          className="border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-600 hover:border-primary hover:text-primary hover:bg-slate-50"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleTogglePublished(item._id, item.published)}
-                          className={`rounded px-2 py-1 text-xs font-semibold ${item.published ? "bg-primary-light text-slate-900" : "border border-white/20 text-white hover:border-white"}`}
+                          className={`px-2 py-1 text-xs font-semibold border ${item.published ? "bg-primary border-primary text-white" : "border-slate-300 text-slate-600 hover:border-primary hover:text-primary hover:bg-slate-50"}`}
                         >
                           {item.published ? "Published" : "Draft"}
                         </button>
                         <button
                           onClick={() => handleDeleteNews(item._id)}
-                          className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500"
+                          className="border border-red-200 px-2 py-1 text-xs font-semibold text-red-600 hover:border-red-600 hover:bg-red-50"
                         >
                           Delete
                         </button>
@@ -1713,7 +1713,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   ))}
                 </ul>
               ) : (
-                <p className="mt-4 text-sm text-slate-400">No news yet.</p>
+                <p className="mt-4 text-sm text-slate-500">No news yet.</p>
               )}
             </div>
           </div>
@@ -1721,37 +1721,37 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
 
       ) : activeTab === "subscribers" ? (
         <section className="space-y-8">
-          <div className="rounded-3xl border border-white/15 bg-slate-950/70 p-8 shadow-[0_30px_60px_-40px_rgba(15,23,42,0.8)] backdrop-blur">
-            <h2 className="heading-font text-xl font-semibold text-white">Subscribers</h2>
-            <p className="mt-2 text-sm text-slate-300">Manage newsletter subscribers captured from the site.</p>
+          <div className="border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="heading-font text-xl font-semibold text-slate-900">Subscribers</h2>
+            <p className="mt-2 text-sm text-slate-600">Manage newsletter subscribers captured from the site.</p>
 
-            <div className="mt-4 flex gap-2">
+            <div className="mt-4 flex gap-4 items-center">
               <button
                 type="button"
                 onClick={handleCopySubscribers}
-                className="rounded-lg border border-white/15 bg-primary px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-primary-light disabled:opacity-50"
+                className="border border-primary bg-primary px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark disabled:opacity-50"
               >
                 Copy Emails
               </button>
-              {subscriberFeedback && <p className="text-sm text-green-500">{subscriberFeedback}</p>}
-              {subscriberError && <p className="text-sm text-red-500">{subscriberError}</p>}
+              {subscriberFeedback && <p className="text-sm text-green-600 font-medium">{subscriberFeedback}</p>}
+              {subscriberError && <p className="text-sm text-red-600 font-medium">{subscriberError}</p>}
             </div>
 
-            <div className="mt-6">
+            <div className="mt-12 pt-10 border-t border-slate-200">
               {isSubscribersLoading ? (
-                <p className="mt-4 text-sm text-slate-400">Loading subscribers...</p>
+                <p className="mt-4 text-sm text-slate-500">Loading subscribers...</p>
               ) : subscribers && subscribers.length > 0 ? (
-                <ul className="mt-4 space-y-3">
+                <ul className="mt-6 divide-y divide-slate-100 border border-slate-200">
                   {subscribers.map((s) => (
-                    <li key={s._id} className="flex items-center justify-between rounded-lg border border-white/15 bg-white/5 p-3">
+                    <li key={s._id} className="flex items-center justify-between bg-white p-4 transition hover:bg-slate-50">
                       <div>
-                        <p className="text-sm text-white">{s.email}</p>
-                        <p className="text-xs text-slate-400">{new Date(s.createdAt).toLocaleString()}</p>
+                        <p className="text-sm font-medium text-slate-900">{s.email}</p>
+                        <p className="text-xs text-slate-500">{new Date(s.createdAt).toLocaleString()}</p>
                       </div>
                       <button
                         onClick={() => handleDeleteSubscriber(s._id)}
                         disabled={subscriberDeletingId === s._id}
-                        className="rounded border border-red-500/20 px-2 py-1 text-xs font-semibold text-red-400 hover:border-red-500 disabled:opacity-50"
+                        className="border border-red-200 px-2 py-1 text-xs font-semibold text-red-600 hover:border-red-600 hover:bg-red-50 disabled:opacity-50"
                       >
                         {subscriberDeletingId === s._id ? "Deleting..." : "Delete"}
                       </button>
@@ -1759,7 +1759,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   ))}
                 </ul>
               ) : (
-                <p className="mt-4 text-sm text-slate-400">No subscribers yet.</p>
+                <p className="mt-4 text-sm text-slate-500">No subscribers yet.</p>
               )}
             </div>
           </div>

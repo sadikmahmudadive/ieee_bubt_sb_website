@@ -23,6 +23,8 @@ type HeroProps = {
   spotlight?: EventSummary | null;
 };
 
+import { motion, AnimatePresence } from "framer-motion";
+
 export function Hero({ events = [], spotlight }: HeroProps) {
   const heroSlides = useMemo<HeroSlide[]>(() => {
     const bySlug = new Set<string>();
@@ -101,51 +103,89 @@ export function Hero({ events = [], spotlight }: HeroProps) {
       </div>
 
       <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-center gap-12 px-6 py-32 lg:flex-row lg:items-center lg:gap-20">
-        <div key={`text-${highlight.key}`} className="max-w-3xl space-y-10 text-white animate-fade-in-up">
-          <span className="inline-flex items-center gap-4 rounded-full border border-white/20 bg-white/10 backdrop-blur-xl px-4 py-2 text-xs font-medium uppercase tracking-[0.3em] text-white/90 shadow-lg">
-            <span className="relative h-8 w-8 overflow-hidden rounded-full border border-white/30 bg-white/15 p-1.5">
-              <Image
-                src={siteMetadata.brand?.logo.src ?? "/brand/ieee-bubt-sb-logo.svg"}
-                alt={siteMetadata.brand?.logo.alt ?? "IEEE BUBT Student Branch logo"}
-                fill
-                sizes="32px"
-                className="object-contain"
-                priority
-              />
-            </span>
-            IEEE BUBT Student Branch
-          </span>
-          <h1 className="heading-font text-5xl font-bold leading-tight sm:text-6xl lg:text-7xl xl:text-8xl">
-            {baseHeadline ? <span className="text-white/95">{baseHeadline} </span> : null}
-            <span className="text-white">
-              {emphasized}
-            </span>
-          </h1>
-          <p className="max-w-2xl text-lg text-white/80 sm:text-xl leading-relaxed">
-            {highlight?.subtitle ||
-              "An inclusive community where emerging engineers collaborate with mentors and industry to deliver meaningful technology."}
-          </p>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <Link
-              href={primaryCtaHref}
-              className="group inline-flex items-center gap-3 rounded-none bg-white px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary transition-all duration-300 hover:shadow-2xl hover:shadow-white/25 hover:-translate-y-1"
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={highlight.key} 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="max-w-3xl space-y-10 text-white"
+          >
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-4 rounded-full border border-white/20 bg-white/10 backdrop-blur-xl px-4 py-2 text-xs font-medium uppercase tracking-[0.3em] text-white/90 shadow-lg"
             >
-              <ArrowRightIcon className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-              {primaryCtaLabel}
-            </Link>
-            <a
-              href="#contact"
-              className="group inline-flex items-center gap-3 rounded-none border-2 border-white bg-transparent px-8 py-4 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-xl"
+              <span className="relative h-8 w-8 overflow-hidden rounded-full border border-white/30 bg-white/15 p-1.5">
+                <Image
+                  src={siteMetadata.brand?.logo.src ?? "/brand/ieee-bubt-sb-logo.svg"}
+                  alt={siteMetadata.brand?.logo.alt ?? "IEEE BUBT Student Branch logo"}
+                  fill
+                  sizes="32px"
+                  className="object-contain"
+                  priority
+                />
+              </span>
+              IEEE BUBT Student Branch
+            </motion.span>
+            
+            <motion.h1 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="heading-font text-5xl font-bold leading-tight sm:text-6xl lg:text-7xl xl:text-8xl"
             >
-              Get Involved
-              <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-            </a>
-          </div>
-        </div>
+              {baseHeadline ? <span className="text-white/95">{baseHeadline} </span> : null}
+              <span className="text-white">
+                {emphasized}
+              </span>
+            </motion.h1>
+            
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="max-w-2xl text-lg text-white/80 sm:text-xl leading-relaxed"
+            >
+              {highlight?.subtitle ||
+                "An inclusive community where emerging engineers collaborate with mentors and industry to deliver meaningful technology."}
+            </motion.p>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="flex flex-col gap-4 sm:flex-row sm:items-center"
+            >
+              <Link
+                href={primaryCtaHref}
+                className="group inline-flex items-center gap-3 rounded-none bg-white px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary transition-all duration-300 hover:shadow-2xl hover:shadow-white/25 hover:-translate-y-1"
+              >
+                <ArrowRightIcon className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                {primaryCtaLabel}
+              </Link>
+              <a
+                href="#contact"
+                className="group inline-flex items-center gap-3 rounded-none border-2 border-white bg-transparent px-8 py-4 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-xl"
+              >
+                Get Involved
+                <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+              </a>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
 
         {highlight?.eventDate && (
-          <div key={`card-${highlight.key}`} className="hidden lg:block animate-fade-in-up" style={{ animationDelay: "300ms" }}>
-            <div className="rounded-3xl border border-white/20 bg-white/10 backdrop-blur-xl p-6 shadow-2xl">
+          <motion.div 
+            key={`card-${highlight.key}`} 
+            initial={{ opacity: 0, scale: 0.8, rotate: -2 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ delay: 0.6, type: "spring", stiffness: 100 }}
+            className="hidden lg:block"
+          >
+            <div className="rounded-3xl border border-white/20 bg-white/10 backdrop-blur-xl p-6 shadow-2xl transition-transform hover:scale-105 duration-500">
               <div className="text-center space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.4em] text-white/70">Next Event</p>
                 <p className="text-2xl font-bold text-white">
@@ -162,7 +202,7 @@ export function Hero({ events = [], spotlight }: HeroProps) {
                 )}
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
 

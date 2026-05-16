@@ -6,6 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import { SectionHeading } from "@/components/SectionHeading";
 import { CallToAction } from "@/components/CallToAction";
 import { TeamMemberCard } from "@/components/TeamMemberCard";
+import { Reveal, RevealList } from "@/components/Reveal";
 import { getTeamMembers } from "@/lib/actions";
 import type { TeamMemberSummary } from "@/lib/actions";
 import { siteMetadata } from "@/utils/siteMetadata";
@@ -60,75 +61,99 @@ export default async function LeadershipPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-white" aria-hidden />
           <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-blue-100/50 via-transparent to-transparent" aria-hidden />
           <div className="relative mx-auto max-w-5xl px-6 text-center sm:px-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary">Leadership</p>
-            <h1 className="mt-6 text-4xl font-bold text-slate-900 sm:text-[2.75rem]">The people powering IEEE BUBT SB</h1>
-            <p className="mt-6 text-base text-slate-600 sm:text-lg">
-              A collaborative network of faculty mentors and student officers guides every initiative. Explore the main branch leadership
-              and meet the teams advancing each IEEE chapter at BUBT.
-            </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link
-                href="/#team"
-                className="inline-flex items-center justify-center rounded-none border border-primary bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark hover:border-primary-dark"
-              >
-                View Homepage Highlights
-              </Link>
-              <Link
-                href="/#contact"
-                className="inline-flex items-center justify-center rounded-none border-2 border-slate-300 bg-transparent px-6 py-3 text-sm font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
-              >
-                Connect with the Branch
-              </Link>
-            </div>
+            <Reveal y={-20}>
+              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary">Leadership</p>
+              <h1 className="mt-6 text-4xl font-bold text-slate-900 sm:text-[2.75rem]">The people powering IEEE BUBT SB</h1>
+              <p className="mt-6 text-base text-slate-600 sm:text-lg">
+                A collaborative network of faculty mentors and student officers guides every initiative. Explore the main branch leadership
+                and meet the teams advancing each IEEE chapter at BUBT.
+              </p>
+            </Reveal>
+            <Reveal y={20} delay={0.2}>
+              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <Link
+                  href="/#team"
+                  className="inline-flex items-center justify-center rounded-none border border-primary bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark hover:border-primary-dark"
+                >
+                  View Homepage Highlights
+                </Link>
+                <Link
+                  href="/#contact"
+                  className="inline-flex items-center justify-center rounded-none border-2 border-slate-300 bg-transparent px-6 py-3 text-sm font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
+                >
+                  Connect with the Branch
+                </Link>
+              </div>
+            </Reveal>
           </div>
         </section>
 
         <section className="mx-auto flex max-w-6xl flex-col gap-16 px-6 sm:px-8">
-          <SectionHeading
-            eyebrow="Main Branch"
-            title="Faculty and student leaders at IEEE BUBT SB"
-            subtitle="Advisors, counselors, and the executive committee ensure continuity between academia, industry, and student-led innovation."
-            tone="light"
-          />
+          <Reveal>
+            <SectionHeading
+              eyebrow="Main Branch"
+              title="Faculty and student leaders at IEEE BUBT SB"
+              subtitle="Advisors, counselors, and the executive committee ensure continuity between academia, industry, and student-led innovation."
+              tone="light"
+            />
+          </Reveal>
           <div className="space-y-14">
             <div>
-              <h2 className="heading-font text-lg font-semibold text-slate-900 border-b border-slate-200 pb-3">Faculty Advisors & Counselor</h2>
-              <p className="mt-4 text-sm text-slate-600">Chief advisor, executive advisors, advisor, and branch counselor.</p>
+              <Reveal>
+                <h2 className="heading-font text-lg font-semibold text-slate-900 border-b border-slate-200 pb-3">Faculty Advisors & Counselor</h2>
+                <p className="mt-4 text-sm text-slate-600">Chief advisor, executive advisors, advisor, and branch counselor.</p>
+              </Reveal>
               <div className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
                 {mainAdvisors.length > 0 ? (
-                  mainAdvisors.map((member) => <TeamMemberCard key={member._id} member={member} />)
+                  <RevealList interval={0.1}>
+                    {mainAdvisors.map((member) => <TeamMemberCard key={member._id} member={member} />)}
+                  </RevealList>
                 ) : (
-                  <p className="col-span-full rounded-none border border-slate-200 bg-slate-50 p-8 text-center text-sm text-slate-500 shadow-sm">
-                    Add faculty advisors in the admin dashboard to showcase them here.
-                  </p>
+                  <Reveal>
+                    <p className="col-span-full rounded-none border border-slate-200 bg-slate-50 p-8 text-center text-sm text-slate-500 shadow-sm">
+                      Add faculty advisors in the admin dashboard to showcase them here.
+                    </p>
+                  </Reveal>
                 )}
               </div>
             </div>
 
             <div className="pt-8">
-              <h2 className="heading-font text-lg font-semibold text-slate-900 border-b border-slate-200 pb-3">Student Executive Committee</h2>
-              <p className="mt-4 text-sm text-slate-600">Chairperson, vice chairperson, general secretaries, treasurer, and webmaster.</p>
+              <Reveal>
+                <h2 className="heading-font text-lg font-semibold text-slate-900 border-b border-slate-200 pb-3">Student Executive Committee</h2>
+                <p className="mt-4 text-sm text-slate-600">Chairperson, vice chairperson, general secretaries, treasurer, and webmaster.</p>
+              </Reveal>
               <div className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
                 {mainStudents.length > 0 ? (
-                  mainStudents.map((member) => <TeamMemberCard key={member._id} member={member} />)
+                  <RevealList interval={0.1}>
+                    {mainStudents.map((member) => <TeamMemberCard key={member._id} member={member} />)}
+                  </RevealList>
                 ) : (
-                  <p className="col-span-full rounded-none border border-slate-200 bg-slate-50 p-8 text-center text-sm text-slate-500 shadow-sm">
-                    Assign homepage spotlight roles in the admin dashboard to populate this section.
-                  </p>
+                  <Reveal>
+                    <p className="col-span-full rounded-none border border-slate-200 bg-slate-50 p-8 text-center text-sm text-slate-500 shadow-sm">
+                      Assign homepage spotlight roles in the admin dashboard to populate this section.
+                    </p>
+                  </Reveal>
                 )}
               </div>
             </div>
 
             <div className="pt-8">
-              <h2 className="heading-font text-lg font-semibold text-slate-900 border-b border-slate-200 pb-3">Committee & Operations Leads</h2>
-              <p className="mt-4 text-sm text-slate-600">Directors, coordinators, and specialized teams supporting branch programs.</p>
+              <Reveal>
+                <h2 className="heading-font text-lg font-semibold text-slate-900 border-b border-slate-200 pb-3">Committee & Operations Leads</h2>
+                <p className="mt-4 text-sm text-slate-600">Directors, coordinators, and specialized teams supporting branch programs.</p>
+              </Reveal>
               <div className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
                 {mainCommittees.length > 0 ? (
-                  sortByPriority(mainCommittees).map((member) => <TeamMemberCard key={member._id} member={member} />)
+                  <RevealList interval={0.1}>
+                    {sortByPriority(mainCommittees).map((member) => <TeamMemberCard key={member._id} member={member} />)}
+                  </RevealList>
                 ) : (
-                  <p className="col-span-full rounded-none border border-slate-200 bg-slate-50 p-8 text-center text-sm text-slate-500 shadow-sm">
-                    Add committee leads to the main branch roster to display them here.
-                  </p>
+                  <Reveal>
+                    <p className="col-span-full rounded-none border border-slate-200 bg-slate-50 p-8 text-center text-sm text-slate-500 shadow-sm">
+                      Add committee leads to the main branch roster to display them here.
+                    </p>
+                  </Reveal>
                 )}
               </div>
             </div>
@@ -137,66 +162,67 @@ export default async function LeadershipPage() {
 
         {chapterEntries.length > 0 ? (
           <section className="mx-auto flex max-w-6xl flex-col gap-16 px-6 sm:px-8">
-            <SectionHeading
-              eyebrow="Student Branch Chapters"
-              title="Chapters and affinity groups extending IEEE at BUBT"
-              subtitle="Each chapter is guided by faculty advisors and student committees delivering specialized programs."
-              tone="light"
-            />
+            <Reveal>
+              <SectionHeading
+                eyebrow="Student Branch Chapters"
+                title="Chapters and affinity groups extending IEEE at BUBT"
+                subtitle="Each chapter is guided by faculty advisors and student committees delivering specialized programs."
+                tone="light"
+              />
+            </Reveal>
             <div className="space-y-16">
               {chapterEntries.map((chapter) => {
-                const theme = getChapterTheme(chapter.slug);
-
                 return (
-                  <div
-                    key={chapter.name}
-                    className="space-y-10 border border-slate-200 bg-white p-8 shadow-sm"
-                  >
-                  <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between border-b border-slate-200 pb-4">
-                    <h2 className="heading-font text-xl font-semibold text-slate-900">{chapter.name}</h2>
-                    <span className="text-xs uppercase tracking-[0.2em] text-primary">
-                      Faculty mentors and chapter committee
-                    </span>
-                  </div>
-                  <div className="space-y-12">
-                    <div>
-                      <h3
-                        className="text-sm font-semibold uppercase tracking-wider text-slate-600"
-                      >
-                        Advisors & Counselors
-                      </h3>
-                      <div className="mt-6 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-                        {chapter.advisors.length > 0 ? (
-                          chapter.advisors.map((member) => <TeamMemberCard key={member._id} member={member} />)
-                        ) : (
-                          <p
-                            className="col-span-full border border-slate-100 bg-slate-50 p-6 text-center text-sm text-slate-500 shadow-sm"
+                  <Reveal key={chapter.name} y={30}>
+                    <div
+                      className="space-y-10 border border-slate-200 bg-white p-8 shadow-sm"
+                    >
+                      <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between border-b border-slate-200 pb-4">
+                        <h2 className="heading-font text-xl font-semibold text-slate-900">{chapter.name}</h2>
+                        <span className="text-xs uppercase tracking-[0.2em] text-primary">
+                          Faculty mentors and chapter committee
+                        </span>
+                      </div>
+                      <div className="space-y-12">
+                        <div>
+                          <h3
+                            className="text-sm font-semibold uppercase tracking-wider text-slate-600"
                           >
-                            Add chapter advisors in the admin dashboard to highlight them here.
-                          </p>
-                        )}
+                            Advisors & Counselors
+                          </h3>
+                          <div className="mt-6 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+                            {chapter.advisors.length > 0 ? (
+                              chapter.advisors.map((member) => <TeamMemberCard key={member._id} member={member} />)
+                            ) : (
+                              <p
+                                className="col-span-full border border-slate-100 bg-slate-50 p-6 text-center text-sm text-slate-500 shadow-sm"
+                              >
+                                Add chapter advisors in the admin dashboard to highlight them here.
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <div>
+                          <h3
+                            className="text-sm font-semibold uppercase tracking-wider text-slate-600"
+                          >
+                            Chapter Committee
+                          </h3>
+                          <div className="mt-6 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+                            {chapter.committee.length > 0 ? (
+                              chapter.committee.map((member) => <TeamMemberCard key={member._id} member={member} />)
+                            ) : (
+                              <p
+                                className="col-span-full border border-slate-100 bg-slate-50 p-6 text-center text-sm text-slate-500 shadow-sm"
+                              >
+                                Committee members will appear once added to this chapter.
+                              </p>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <h3
-                        className="text-sm font-semibold uppercase tracking-wider text-slate-600"
-                      >
-                        Chapter Committee
-                      </h3>
-                      <div className="mt-6 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-                        {chapter.committee.length > 0 ? (
-                          chapter.committee.map((member) => <TeamMemberCard key={member._id} member={member} />)
-                        ) : (
-                          <p
-                            className="col-span-full border border-slate-100 bg-slate-50 p-6 text-center text-sm text-slate-500 shadow-sm"
-                          >
-                            Committee members will appear once added to this chapter.
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  </div>
+                  </Reveal>
                 );
               })}
             </div>

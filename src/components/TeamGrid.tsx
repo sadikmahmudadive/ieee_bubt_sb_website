@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SectionHeading } from "@/components/SectionHeading";
+import { Reveal, RevealList } from "@/components/Reveal";
 import type { TeamMemberSummary } from "@/lib/actions";
 import {
   advisorRoleOrder,
@@ -48,58 +49,74 @@ export function TeamGrid({ team }: TeamGridProps) {
     <section id="team" className="relative py-24 border-t border-slate-200">
       <div className="absolute inset-0 -z-10 bg-slate-50" aria-hidden />
       <div className="mx-auto max-w-7xl px-6">
-        <SectionHeading
-          eyebrow="Main Branch Leadership"
-          title="Guided by Faculty Mentors and Student Officers"
-          subtitle="Meet the advisors and executive student team steering IEEE BUBT SB. Visit the leadership and chapter hubs to explore the complete organization."
-          tone="light"
-        />
+        <Reveal>
+          <SectionHeading
+            eyebrow="Main Branch Leadership"
+            title="Guided by Faculty Mentors and Student Officers"
+            subtitle="Meet the advisors and executive student team steering IEEE BUBT SB. Visit the leadership and chapter hubs to explore the complete organization."
+            tone="light"
+          />
+        </Reveal>
         <div className="mt-16 space-y-14">
           <div>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
-              <h3 className="heading-font text-lg font-semibold text-slate-900">Faculty Advisors</h3>
-              <p className="text-xs uppercase tracking-wider text-slate-500">Chief advisor, executive advisors, advisor, and counselor</p>
-            </div>
+            <Reveal>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
+                <h3 className="heading-font text-lg font-semibold text-slate-900">Faculty Advisors</h3>
+                <p className="text-xs uppercase tracking-wider text-slate-500">Chief advisor, executive advisors, advisor, and counselor</p>
+              </div>
+            </Reveal>
             <div className="mt-8 grid justify-items-center gap-8 sm:grid-cols-2 xl:grid-cols-3">
               {advisorSpotlight.length > 0 ? (
-                advisorSpotlight.map((member) => <TeamMemberCard key={member._id} member={member} variant="faculty" />)
+                <RevealList interval={0.15}>
+                  {advisorSpotlight.map((member) => <TeamMemberCard key={member._id} member={member} variant="faculty" />)}
+                </RevealList>
               ) : (
-                <p className="col-span-full rounded-none border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm">
-                  Add faculty advisors via the admin panel to highlight them here.
-                </p>
+                <Reveal>
+                  <p className="col-span-full rounded-none border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm">
+                    Add faculty advisors via the admin panel to highlight them here.
+                  </p>
+                </Reveal>
               )}
             </div>
           </div>
           <div>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
-              <h3 className="heading-font text-lg font-semibold text-slate-900">Student Executive Committee</h3>
-              <p className="text-xs uppercase tracking-wider text-slate-500">Chairperson, vice chairperson, GS, JGS, treasurer, and web master</p>
-            </div>
+            <Reveal>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
+                <h3 className="heading-font text-lg font-semibold text-slate-900">Student Executive Committee</h3>
+                <p className="text-xs uppercase tracking-wider text-slate-500">Chairperson, vice chairperson, GS, JGS, treasurer, and web master</p>
+              </div>
+            </Reveal>
             <div className="mt-8 grid justify-items-center gap-8 sm:grid-cols-2 xl:grid-cols-3">
               {studentSpotlight.length > 0 ? (
-                studentSpotlight.map((member) => <TeamMemberCard key={member._id} member={member} />)
+                <RevealList interval={0.15} delay={0.2}>
+                  {studentSpotlight.map((member) => <TeamMemberCard key={member._id} member={member} />)}
+                </RevealList>
               ) : (
-                <p className="col-span-full rounded-none border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm">
-                  Add student leaders with the homepage spotlight role to feature them here.
-                </p>
+                <Reveal>
+                  <p className="col-span-full rounded-none border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm">
+                    Add student leaders with the homepage spotlight role to feature them here.
+                  </p>
+                </Reveal>
               )}
             </div>
           </div>
         </div>
-        <div className="mt-14 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Link
-            href="/leadership"
-            className="inline-flex items-center justify-center min-w-[240px] rounded-none border border-primary bg-primary px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark"
-          >
-            Explore Full Leadership →
-          </Link>
-          <Link
-            href="/chapters"
-            className="inline-flex items-center justify-center min-w-[240px] rounded-none border border-slate-300 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary"
-          >
-            Browse Chapters →
-          </Link>
-        </div>
+        <Reveal y={10} delay={0.4}>
+          <div className="mt-14 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <Link
+              href="/leadership"
+              className="inline-flex items-center justify-center min-w-[240px] rounded-none border border-primary bg-primary px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark"
+            >
+              Explore Full Leadership →
+            </Link>
+            <Link
+              href="/chapters"
+              className="inline-flex items-center justify-center min-w-[240px] rounded-none border border-slate-300 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary"
+            >
+              Browse Chapters →
+            </Link>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

@@ -5,6 +5,7 @@ import { CallToAction } from "@/components/CallToAction";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { SectionHeading } from "@/components/SectionHeading";
+import { Reveal, RevealList } from "@/components/Reveal";
 import { siteMetadata } from "@/utils/siteMetadata";
 
 const researchTracks = [
@@ -99,154 +100,178 @@ export default function ResearchAndJournalsPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-white" aria-hidden />
           <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-blue-100/50 via-transparent to-transparent" aria-hidden />
           <div className="relative mx-auto max-w-5xl px-6 text-center sm:px-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary">Research & Journals</p>
-            <h1 className="mt-6 text-4xl font-bold text-slate-900 sm:text-[2.75rem]">Publish ideas that move industry and society forward</h1>
-            <p className="mt-6 text-base text-slate-600 sm:text-lg">
-              From ideation clinics to final submission, IEEE BUBT Student Branch mentors guide you through the entire lifecycle of
-              scholarly publishing. Join collaborative labs, access tooling, and share your results with global audiences.
-            </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link
-                href="/#contact"
-                className="inline-flex items-center justify-center rounded-none border border-primary bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark hover:border-primary-dark"
-              >
-                Pitch a Proposal
-              </Link>
-              <Link
-                href="/#events"
-                className="inline-flex items-center justify-center rounded-none border border-slate-300 bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
-              >
-                Browse Project Showcases
-              </Link>
-            </div>
+            <Reveal y={-20}>
+              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary">Research & Journals</p>
+              <h1 className="mt-6 text-4xl font-bold text-slate-900 sm:text-[2.75rem]">Publish ideas that move industry and society forward</h1>
+              <p className="mt-6 text-base text-slate-600 sm:text-lg">
+                From ideation clinics to final submission, IEEE BUBT Student Branch mentors guide you through the entire lifecycle of
+                scholarly publishing. Join collaborative labs, access tooling, and share your results with global audiences.
+              </p>
+            </Reveal>
+            <Reveal y={20} delay={0.2}>
+              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <Link
+                  href="/#contact"
+                  className="inline-flex items-center justify-center rounded-none border border-primary bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark hover:border-primary-dark"
+                >
+                  Pitch a Proposal
+                </Link>
+                <Link
+                  href="/#events"
+                  className="inline-flex items-center justify-center rounded-none border border-slate-300 bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
+                >
+                  Browse Project Showcases
+                </Link>
+              </div>
+            </Reveal>
           </div>
         </section>
 
         <section className="mx-auto flex max-w-6xl flex-col gap-16 px-6 sm:px-8">
-          <SectionHeading
-            eyebrow="Focus Tracks"
-            title="Research domains supported by IEEE BUBT SB"
-            subtitle="Co-create experiments, code, and hardware deployments that address national challenges and global IEEE priorities."
-            tone="light"
-          />
+          <Reveal>
+            <SectionHeading
+              eyebrow="Focus Tracks"
+              title="Research domains supported by IEEE BUBT SB"
+              subtitle="Co-create experiments, code, and hardware deployments that address national challenges and global IEEE priorities."
+              tone="light"
+            />
+          </Reveal>
           <div className="grid gap-8 md:grid-cols-3">
-            {researchTracks.map((track) => (
-              <article key={track.title} className="group relative flex h-full flex-col border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-md">
-                <div className="absolute inset-x-10 -top-1 h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 transition group-hover:opacity-100" aria-hidden />
-                <h3 className="heading-font text-lg font-semibold text-slate-900">{track.title}</h3>
-                <p className="mt-4 text-sm text-slate-600">{track.summary}</p>
-                <ul className="mt-6 space-y-2 text-sm text-slate-700">
-                  {track.topics.map((item) => (
-                    <li key={item} className="flex items-start gap-2">
-                      <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            ))}
+            <RevealList interval={0.15}>
+              {researchTracks.map((track) => (
+                <article key={track.title} className="group relative flex h-full flex-col border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-md">
+                  <div className="absolute inset-x-10 -top-1 h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 transition group-hover:opacity-100" aria-hidden />
+                  <h3 className="heading-font text-lg font-semibold text-slate-900">{track.title}</h3>
+                  <p className="mt-4 text-sm text-slate-600">{track.summary}</p>
+                  <ul className="mt-6 space-y-2 text-sm text-slate-700">
+                    {track.topics.map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </RevealList>
           </div>
         </section>
 
         <section className="mx-auto flex max-w-6xl flex-col gap-16 px-6 sm:px-8">
-          <SectionHeading
-            eyebrow="Publishing Support"
-            title="Structured programs to transform drafts into publications"
-            subtitle="Every cohort moves through curated workshops and editorial checkpoints designed with IEEE authors and industry mentors."
-            tone="light"
-          />
+          <Reveal>
+            <SectionHeading
+              eyebrow="Publishing Support"
+              title="Structured programs to transform drafts into publications"
+              subtitle="Every cohort moves through curated workshops and editorial checkpoints designed with IEEE authors and industry mentors."
+              tone="light"
+            />
+          </Reveal>
           <div className="grid gap-8 md:grid-cols-3">
-            {journalSupports.map((program) => (
-              <article key={program.title} className="flex h-full flex-col border border-slate-200 bg-white p-6 shadow-sm">
-                <h3 className="heading-font text-lg font-semibold text-slate-900">{program.title}</h3>
-                <p className="mt-4 text-sm text-slate-600">{program.description}</p>
-                <ul className="mt-6 space-y-2 text-sm text-slate-700">
-                  {program.deliverables.map((deliverable) => (
-                    <li key={deliverable} className="flex items-start gap-2">
-                      <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
-                      <span>{deliverable}</span>
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            ))}
+            <RevealList interval={0.15}>
+              {journalSupports.map((program) => (
+                <article key={program.title} className="flex h-full flex-col border border-slate-200 bg-white p-6 shadow-sm">
+                  <h3 className="heading-font text-lg font-semibold text-slate-900">{program.title}</h3>
+                  <p className="mt-4 text-sm text-slate-600">{program.description}</p>
+                  <ul className="mt-6 space-y-2 text-sm text-slate-700">
+                    {program.deliverables.map((deliverable) => (
+                      <li key={deliverable} className="flex items-start gap-2">
+                        <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
+                        <span>{deliverable}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </RevealList>
           </div>
         </section>
 
         <section className="mx-auto flex max-w-6xl flex-col gap-16 px-6 sm:px-8">
-          <SectionHeading
-            eyebrow="Annual Cycle"
-            title="Milestones for the research and publication journey"
-            subtitle="Plan your submissions with our academic calendar, ensuring lab access, mentor reviews, and funding align with deadlines."
-            tone="light"
-          />
+          <Reveal>
+            <SectionHeading
+              eyebrow="Annual Cycle"
+              title="Milestones for the research and publication journey"
+              subtitle="Plan your submissions with our academic calendar, ensuring lab access, mentor reviews, and funding align with deadlines."
+              tone="light"
+            />
+          </Reveal>
           <div className="grid gap-6 md:grid-cols-2">
-            {submissionTimeline.map((entry) => (
-              <article key={entry.phase} className="border border-slate-200 bg-white p-6 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{entry.window}</p>
-                <h3 className="mt-4 text-lg font-semibold text-slate-900">{entry.phase}</h3>
-                <p className="mt-3 text-sm text-slate-600">{entry.focus}</p>
-              </article>
-            ))}
+            <RevealList interval={0.1}>
+              {submissionTimeline.map((entry) => (
+                <article key={entry.phase} className="border border-slate-200 bg-white p-6 shadow-sm">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{entry.window}</p>
+                  <h3 className="mt-4 text-lg font-semibold text-slate-900">{entry.phase}</h3>
+                  <p className="mt-3 text-sm text-slate-600">{entry.focus}</p>
+                </article>
+              ))}
+            </RevealList>
           </div>
-          <div className="border border-blue-200 bg-blue-50 p-8 text-sm text-blue-800 shadow-sm">
-            <p>
-              Need timeline flexibility? Let us know during ideation clinics so we can align lab availability and reviewer cohorts with your
-              project scope.
-            </p>
-          </div>
+          <Reveal y={10} delay={0.4}>
+            <div className="border border-blue-200 bg-blue-50 p-8 text-sm text-blue-800 shadow-sm">
+              <p>
+                Need timeline flexibility? Let us know during ideation clinics so we can align lab availability and reviewer cohorts with your
+                project scope.
+              </p>
+            </div>
+          </Reveal>
         </section>
 
         <section className="mx-auto flex max-w-6xl flex-col gap-12 px-6 sm:px-8">
-          <SectionHeading
-            eyebrow="Resources"
-            title="Partner platforms and funding avenues"
-            subtitle="Tap into IEEE catalogs, research grants, and cloud tooling curated for student researchers."
-            tone="light"
-          />
+          <Reveal>
+            <SectionHeading
+              eyebrow="Resources"
+              title="Partner platforms and funding avenues"
+              subtitle="Tap into IEEE catalogs, research grants, and cloud tooling curated for student researchers."
+              tone="light"
+            />
+          </Reveal>
           <div className="grid gap-6 md:grid-cols-3">
-            {partnerResources.map((resource) => (
-              <article key={resource.name} className="flex h-full flex-col justify-between border border-slate-200 bg-white p-6 shadow-sm">
-                <div>
-                  <h3 className="heading-font text-lg font-semibold text-slate-900">{resource.name}</h3>
-                  <p className="mt-4 text-sm text-slate-600">{resource.description}</p>
-                </div>
-                <Link
-                  href={resource.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary transition hover:text-primary-dark"
-                >
-                  Explore
-                  <span aria-hidden>→</span>
-                </Link>
-              </article>
-            ))}
+            <RevealList interval={0.15}>
+              {partnerResources.map((resource) => (
+                <article key={resource.name} className="flex h-full flex-col justify-between border border-slate-200 bg-white p-6 shadow-sm">
+                  <div>
+                    <h3 className="heading-font text-lg font-semibold text-slate-900">{resource.name}</h3>
+                    <p className="mt-4 text-sm text-slate-600">{resource.description}</p>
+                  </div>
+                  <Link
+                    href={resource.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary transition hover:text-primary-dark"
+                  >
+                    Explore
+                    <span aria-hidden>→</span>
+                  </Link>
+                </article>
+              ))}
+            </RevealList>
           </div>
         </section>
 
         <section className="mx-auto max-w-4xl px-6 sm:px-8">
-          <div className="border border-slate-200 bg-white p-10 text-center shadow-lg">
-            <h2 className="heading-font text-3xl font-semibold text-slate-900 sm:text-[2.35rem]">Ready to launch your manuscript?</h2>
-            <p className="mt-5 text-base text-slate-600">
-              Submit a concept brief or request a mentor pairing and the IEEE BUBT SB research desk will follow up with timelines, lab
-              bookings, and documentation templates.
-            </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link
-                href={`mailto:${siteMetadata.social.email}`}
-                className="inline-flex items-center justify-center rounded-none bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark"
-              >
-                Email Research Desk
-              </Link>
-              <Link
-                href="/#contact"
-                className="inline-flex items-center justify-center rounded-none border border-slate-300 bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
-              >
-                Schedule a Clinic
-              </Link>
+          <Reveal scale={0.95} duration={0.8}>
+            <div className="border border-slate-200 bg-white p-10 text-center shadow-lg">
+              <h2 className="heading-font text-3xl font-semibold text-slate-900 sm:text-[2.35rem]">Ready to launch your manuscript?</h2>
+              <p className="mt-5 text-base text-slate-600">
+                Submit a concept brief or request a mentor pairing and the IEEE BUBT SB research desk will follow up with timelines, lab
+                bookings, and documentation templates.
+              </p>
+              <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <Link
+                  href={`mailto:${siteMetadata.social.email}`}
+                  className="inline-flex items-center justify-center rounded-none bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark"
+                >
+                  Email Research Desk
+                </Link>
+                <Link
+                  href="/#contact"
+                  className="inline-flex items-center justify-center rounded-none border border-slate-300 bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
+                >
+                  Schedule a Clinic
+                </Link>
+              </div>
             </div>
-          </div>
+          </Reveal>
         </section>
 
         <CallToAction />

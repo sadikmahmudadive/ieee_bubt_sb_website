@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 // import Link from "next/link"; // Not used currently
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import useSWR from "swr";
 
 import { chapterFallbackName, groupChapterMembers } from "@/utils/teamGrouping";
@@ -1039,10 +1040,12 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 {eventForm.coverImage && (
-                  <img
+                  <Image
                     src={eventForm.coverImage}
                     alt="Cover preview"
-                    className="mt-2 w-32 h-20 object-cover border border-slate-200"
+                    width={128}
+                    height={80}
+                    className="mt-2 object-cover border border-slate-200"
                   />
                 )}
                 {eventUploadLoading && <p className="text-sm text-slate-500">Uploading...</p>}
@@ -1096,9 +1099,11 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   {events.map((event) => (
                     <li key={event._id} className="flex items-center justify-between bg-white p-4 transition hover:bg-slate-50">
                       <div className="flex items-center gap-4">
-                        <img
+                        <Image
                           src={event.coverImage}
                           alt={event.title}
+                          width={64}
+                          height={64}
                           className="h-16 w-16 rounded object-cover"
                         />
                         <div>
@@ -1268,10 +1273,12 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 {teamForm.photoUrl && (
-                  <img
+                  <Image
                     src={teamForm.photoUrl}
-                    alt="Profile preview"
-                    className="mt-2 w-20 h-20 object-cover rounded-full border border-slate-200"
+                    alt="Member preview"
+                    width={80}
+                    height={80}
+                    className="mt-2 rounded-full object-cover border border-slate-200"
                   />
                 )}
                 {teamUploadLoading && <p className="text-sm text-slate-500">Uploading...</p>}
@@ -1315,10 +1322,12 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   {team.map((member) => (
                     <li key={member._id} className="flex items-center justify-between bg-white p-4 transition hover:bg-slate-50">
                       <div className="flex items-center gap-4">
-                        <img
+                        <Image
                           src={member.photoUrl}
                           alt={member.name}
-                          className="h-16 w-16 rounded-full object-cover"
+                          width={64}
+                          height={64}
+                          className="rounded-full object-cover"
                         />
                         <div>
                           <h4 className="font-semibold text-slate-900">{member.name}</h4>
@@ -1395,10 +1404,12 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   {selectedChapterEntry.members.map((member) => (
                     <li key={member._id} className="flex items-center justify-between bg-white p-4 transition hover:bg-slate-50">
                       <div className="flex items-center gap-4">
-                        <img
+                        <Image
                           src={member.photoUrl}
                           alt={member.name}
-                          className="h-16 w-16 rounded-full object-cover"
+                          width={64}
+                          height={64}
+                          className="rounded-full object-cover"
                         />
                         <div>
                           <h4 className="font-semibold text-slate-900">{member.name}</h4>
@@ -1430,10 +1441,12 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   {fallbackChapterEntry.members.map((member) => (
                     <li key={member._id} className="flex items-center justify-between bg-white p-4 transition hover:bg-slate-50">
                       <div className="flex items-center gap-4">
-                        <img
+                        <Image
                           src={member.photoUrl}
                           alt={member.name}
-                          className="h-16 w-16 rounded-full object-cover"
+                          width={64}
+                          height={64}
+                          className="rounded-full object-cover"
                         />
                         <div>
                           <h4 className="font-semibold text-slate-900">{member.name}</h4>
@@ -1502,7 +1515,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 {galleryUploadLoading && <p className="text-sm text-slate-500">Uploading...</p>}
                 {galleryUploadError && <p className="text-sm text-red-600 font-medium">{galleryUploadError}</p>}
                 {galleryForm.imageUrl && (
-                  <img src={galleryForm.imageUrl} alt="Preview" className="mt-2 h-24 w-40 rounded-none object-cover border border-slate-200" />
+                  <Image src={galleryForm.imageUrl} alt="Preview" width={160} height={96} className="mt-2 rounded-none object-cover border border-slate-200" />
                 )}
               </label>
 
@@ -1545,7 +1558,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {gallery.map((item) => (
                     <li key={item._id} className="border border-slate-200 bg-white p-3 shadow-sm transition hover:shadow-md">
-                      <img src={item.imageUrl} alt={item.title} className="h-40 w-full object-cover" />
+                      <Image src={item.imageUrl} alt={item.title} width={400} height={160} className="w-full object-cover" />
                       <div className="mt-3 flex items-center justify-between">
                         <div>
                           <p className="font-semibold text-slate-900">{item.title}</p>
@@ -1639,7 +1652,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 {newsUploadLoading && <p className="text-sm text-slate-500">Uploading...</p>}
                 {newsUploadError && <p className="text-sm text-red-600 font-medium">{newsUploadError}</p>}
                 {newsForm.imageUrl && (
-                  <img src={newsForm.imageUrl} alt="News preview" className="mt-2 h-24 w-40 object-cover border border-slate-200" />
+                  <Image src={newsForm.imageUrl} alt="News preview" width={160} height={96} className="mt-2 object-cover border border-slate-200" />
                 )}
               </label>
 

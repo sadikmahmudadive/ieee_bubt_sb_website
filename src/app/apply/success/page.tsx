@@ -21,7 +21,7 @@ export default function ApplySuccessPage({ searchParams }: { searchParams?: { id
           <div className="relative mx-auto max-w-3xl px-6 text-center sm:px-8">
             <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600">Application Received</p>
             <h1 className="mt-5 text-3xl font-bold text-slate-900 sm:text-4xl">Thank you for applying</h1>
-            <p className="mt-4 text-slate-600">We'll review your application and get back to you shortly at the email you provided.</p>
+            <p className="mt-4 text-slate-600">We&apos;ll review your application and get back to you shortly at the email you provided.</p>
             {id ? (
               <p className="mt-2 text-xs text-slate-500">Reference ID: <span className="font-mono text-slate-700 font-medium">{id}</span></p>
             ) : null}

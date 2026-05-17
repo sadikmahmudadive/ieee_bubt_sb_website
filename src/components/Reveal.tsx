@@ -26,8 +26,9 @@ export const Reveal = ({
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <div ref={ref} style={{ position: "relative", width, overflow: "visible" }}>
+    <div ref={ref} style={{ position: "relative", width, height: "100%", overflow: "visible" }}>
       <motion.div
+        style={{ height: "100%" }}
         variants={{
           hidden: { opacity: 0, y, x, scale },
           visible: { opacity: 1, y: 0, x: 0, scale: 1 },

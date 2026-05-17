@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal, RevealList } from "@/components/Reveal";
+import { ResearchTimeline } from "@/components/ResearchTimeline";
 import { siteMetadata } from "@/utils/siteMetadata";
 
 const researchTracks = [
@@ -195,16 +196,8 @@ export default function ResearchAndJournalsPage() {
               tone="light"
             />
           </Reveal>
-          <div className="grid gap-6 md:grid-cols-2">
-            <RevealList interval={0.1}>
-              {submissionTimeline.map((entry) => (
-                <article key={entry.phase} className="border border-slate-200 bg-white p-6 shadow-sm">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{entry.window}</p>
-                  <h3 className="mt-4 text-lg font-semibold text-slate-900">{entry.phase}</h3>
-                  <p className="mt-3 text-sm text-slate-600">{entry.focus}</p>
-                </article>
-              ))}
-            </RevealList>
+          <div className="mt-12 w-full">
+            <ResearchTimeline timeline={submissionTimeline} />
           </div>
           <Reveal y={10} delay={0.4}>
             <div className="border border-blue-200 bg-blue-50 p-8 text-sm text-blue-800 shadow-sm">

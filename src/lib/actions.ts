@@ -181,7 +181,7 @@ export async function getFeaturedEvent(): Promise<EventSummary | null> {
 
 export async function getTeamMembers(): Promise<TeamMemberSummary[]> {
   noStore();
-  const snapshot = await adminDb.collection("teamMembers").orderBy("priority", "desc").get();
+  const snapshot = await adminDb.collection("teamMembers").orderBy("priority", "asc").get();
   return snapshot.docs.map((doc): TeamMemberSummary => {
     const data = doc.data();
     return {

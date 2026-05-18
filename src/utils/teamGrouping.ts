@@ -95,7 +95,7 @@ export function resolveRoleKey<T extends RoleLike>(member: T): RoleKey {
   return "none";
 }
 
-const priorityValue = (value?: number | null) => (typeof value === "number" ? value : 0);
+const priorityValue = (value?: number | null) => (typeof value === "number" ? value : 9999);
 
 export function sortByRoleOrder<T extends RoleLike & PriorityLike>(order: RoleKey[]) {
   return (a: T, b: T) => {
@@ -107,12 +107,12 @@ export function sortByRoleOrder<T extends RoleLike & PriorityLike>(order: RoleKe
     if (orderDiff !== 0) {
       return orderDiff;
     }
-    return priorityValue(b.priority) - priorityValue(a.priority);
+    return priorityValue(a.priority) - priorityValue(b.priority);
   };
 }
 
 export function sortByPriority<T extends PriorityLike>(members: T[]): T[] {
-  return [...members].sort((a, b) => priorityValue(b.priority) - priorityValue(a.priority));
+  return [...members].sort((a, b) => priorityValue(a.priority) - priorityValue(b.priority));
 }
 
 export const chapterFallbackName = "Student Branch Chapter";

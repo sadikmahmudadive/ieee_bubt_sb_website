@@ -20,7 +20,7 @@ export function EventList({ events }: EventListProps) {
             tone="light"
           />
         </Reveal>
-        <div className="mt-16 grid gap-6 md:grid-cols-2">
+        <div className={`mt-16 grid gap-6 grid-cols-1 ${events.length === 1 ? "md:grid-cols-1 max-w-2xl mx-auto" : "md:grid-cols-2 lg:grid-cols-3"}`}>
           {events.length === 0 ? (
             <Reveal>
               <p className="col-span-full rounded-3xl border border-slate-200/60 bg-white p-10 text-center text-sm text-slate-600 shadow-[0_18px_40px_-24px_rgba(15,23,42,0.15)]">
@@ -32,46 +32,46 @@ export function EventList({ events }: EventListProps) {
               {events.map((event) => (
                 <article
                   key={event.slug}
-                  className="group relative flex flex-col h-full overflow-hidden rounded-3xl border border-slate-200/70 bg-white shadow-[0_22px_45px_-28px_rgba(15,23,42,0.2)] transition duration-300 hover:-translate-y-1"
+                  className="group relative flex flex-col h-full overflow-hidden rounded-3xl border border-slate-200/70 bg-white shadow-[0_22px_45px_-28px_rgba(15,23,42,0.2)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_25px_50px_-12px_rgba(15,23,42,0.25)]"
                 >
                   <Link href={`/events/${event.slug}`} className="absolute inset-0 z-10" aria-label={`Read more about ${event.title}`} />
-                  <div className="h-56 w-full overflow-hidden">
+                  <div className="h-48 sm:h-56 w-full overflow-hidden shrink-0">
                     <div
                       className="h-full w-full bg-cover bg-center transition duration-700 group-hover:scale-105"
                       style={{ backgroundImage: `url(${event.coverImage})` }}
                       aria-label={event.title}
                     />
                   </div>
-                  <div className="relative z-20 flex flex-1 flex-col gap-5 p-8">
-                    <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.28em] text-slate-500">
+                  <div className="relative z-20 flex flex-1 flex-col gap-4 sm:gap-5 p-5 sm:p-8">
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.28em] text-slate-500">
                       <span>{new Date(event.eventDate).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}</span>
-                      <span className="truncate text-right text-primary">{event.location}</span>
+                      <span className="text-primary truncate max-w-[50%] text-right">{event.location}</span>
                     </div>
-                    <h3 className="heading-font text-[1.35rem] font-semibold text-slate-900">{event.title}</h3>
-                    <p className="text-sm text-slate-600 line-clamp-3">{event.description}</p>
-                    <div className="mt-auto flex flex-wrap gap-2">
+                    <h3 className="heading-font text-xl sm:text-[1.35rem] font-semibold text-slate-900 leading-snug">{event.title}</h3>
+                    <p className="text-sm text-slate-600 line-clamp-3 leading-relaxed">{event.description}</p>
+                    <div className="mt-auto flex flex-wrap gap-2 pt-2">
                       {event.tags?.map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full border border-slate-200 bg-sky-50 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.26em] text-slate-600"
+                          className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-600"
                         >
                           {tag}
                         </span>
                       ))}
                     </div>
-                    <div className="flex flex-wrap items-center gap-4 pt-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 pt-4 border-t border-slate-100 mt-2">
                       <Link
                         href={`/events/${event.slug}`}
-                        className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-primary transition hover:text-slate-900"
+                        className="inline-flex w-fit items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-primary transition hover:text-slate-900"
                       >
                         View Details
                         <span aria-hidden>→</span>
                       </Link>
                       <a
                         href="#contact"
-                        className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500 transition hover:text-slate-900"
+                        className="inline-flex w-fit items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400 transition hover:text-slate-900 sm:ml-auto"
                       >
-                        RSVP Today
+                        RSVP
                         <span aria-hidden>→</span>
                       </a>
                     </div>

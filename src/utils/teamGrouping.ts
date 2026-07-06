@@ -16,7 +16,7 @@ type ChapterLike = {
   chapter?: string | null;
 };
 
-export const advisorRoleOrder: RoleKey[] = ["chief-advisor", "executive-advisor", "advisor", "counselor"];
+export const advisorRoleOrder: RoleKey[] = ["counselor", "advisor", "chief-advisor", "executive-advisor"];
 
 export const studentRoleOrder: RoleKey[] = [
   "chairperson",
@@ -27,7 +27,7 @@ export const studentRoleOrder: RoleKey[] = [
   "webmaster"
 ];
 
-export const chapterAdvisorRoleOrder: RoleKey[] = ["chapter-advisor", "chapter-co-advisor", "advisor", "counselor"];
+export const chapterAdvisorRoleOrder: RoleKey[] = ["counselor", "advisor", "chapter-advisor", "chapter-co-advisor"];
 
 export function resolveRoleKey<T extends RoleLike>(member: T): RoleKey {
   if (member.roleKey && member.roleKey !== "none") {

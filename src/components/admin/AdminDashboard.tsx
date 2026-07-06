@@ -57,6 +57,7 @@ type TeamRecord = {
     linkedin?: string;
     email?: string;
   };
+  tenure?: string;
 };
 
 type TeamFormState = {
@@ -72,6 +73,7 @@ type TeamFormState = {
   instagram: string;
   linkedin: string;
   email: string;
+  tenure: string;
 };
 
 type GalleryRecord = {
@@ -113,7 +115,7 @@ type NewsFormState = {
   published: boolean;
 };
 
-type AdminTab = "events" | "team" | "chapters" | "gallery" | "subscribers" | "news";
+type AdminTab = "events" | "team" | "chapters" | "gallery" | "subscribers" | "news" | "settings";
 
 const chapterNameOptions = [
   "IEEE Computer Society Student Branch Chapter",
@@ -271,6 +273,12 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
     mutate: mutateNews
   } = useSWR<NewsRecord[]>("/api/news", fetcher, { revalidateOnFocus: false });
 
+  const {
+    data: settings,
+    isLoading: isSettingsLoading,
+    mutate: mutateSettings
+  } = useSWR<{ currentYear: string }>("/api/settings", fetcher, { revalidateOnFocus: false });
+
   function createInitialEventForm(): EventFormState {
     return {
       title: "",
@@ -306,7 +314,8 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       facebook: "",
       instagram: "",
       linkedin: "",
-      email: ""
+      email: "",
+      tenure: ""
     };
   }
 
@@ -351,6 +360,17 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
   const [subscriberFeedback, setSubscriberFeedback] = useState<string | null>(null);
   const [subscriberError, setSubscriberError] = useState<string | null>(null);
   const [subscriberDeletingId, setSubscriberDeletingId] = useState<string | null>(null);
+
+  const [settingsForm, setSettingsForm] = useState({ currentYear: "" });
+  const [settingsFeedback, setSettingsFeedback] = useState<string | null>(null);
+  const [settingsError, setSettingsError] = useState<string | null>(null);
+  const [settingsSubmitting, setSettingsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (settings) {
+      setSettingsForm({ currentYear: settings.currentYear });
+    }
+  }, [settings]);
 
   const [eventUploadLoading, setEventUploadLoading] = useState(false);
   const [eventUploadError, setEventUploadError] = useState<string | null>(null);
@@ -608,7 +628,8 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
         instagram: teamForm.instagram || undefined,
         linkedin: teamForm.linkedin || undefined,
         email: teamForm.email || undefined
-      }
+      },
+      tenure: teamForm.tenure.trim() || undefined
     };
 
     try {
@@ -653,7 +674,8 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       facebook: member.socials?.facebook ?? "",
       instagram: member.socials?.instagram ?? "",
       linkedin: member.socials?.linkedin ?? "",
-      email: member.socials?.email ?? ""
+      email: member.socials?.email ?? "",
+      tenure: member.tenure ?? ""
     });
     setTeamFeedback(null);
     setTeamError(null);
@@ -906,6 +928,28 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
 
   const subscriberCount = subscribers?.length ?? 0;
 
+  async function handleSaveSettings(e: FormEvent) {
+    e.preventDefault();
+    setSettingsSubmitting(true);
+    setSettingsFeedback(null);
+    setSettingsError(null);
+
+    try {
+      const response = await fetch("/api/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settingsForm)
+      });
+      if (!response.ok) throw new Error("Failed to update settings");
+      setSettingsFeedback("Settings updated successfully.");
+      await mutateSettings();
+    } catch (error) {
+      setSettingsError(error instanceof Error ? error.message : "Unable to save settings.");
+    } finally {
+      setSettingsSubmitting(false);
+    }
+  }
+
   return (
     <div className="space-y-10 text-slate-900">
       <header className="flex flex-col gap-4 border border-slate-200 bg-white p-8 shadow-sm sm:flex-row sm:items-center sm:justify-between">
@@ -929,7 +973,8 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
           { key: "chapters", label: "Chapters" },
           { key: "gallery", label: "Gallery" },
           { key: "news", label: "News" },
-          { key: "subscribers", label: "Subscribers" }
+          { key: "subscribers", label: "Subscribers" },
+          { key: "settings", label: "Settings" }
         ].map((tab) => (
           <button
             key={tab.key}
@@ -1261,6 +1306,16 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   type="email"
                   value={teamForm.email}
                   onChange={(e) => setTeamForm((prev) => ({ ...prev, email: e.target.value }))}
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </label>
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
+                Tenure (optional)
+                <input
+                  type="text"
+                  placeholder="e.g. 2023-2024"
+                  value={teamForm.tenure}
+                  onChange={(e) => setTeamForm((prev) => ({ ...prev, tenure: e.target.value }))}
                   className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
@@ -1778,9 +1833,39 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
           </div>
         </section>
 
+      ) : activeTab === "settings" ? (
+        <section className="space-y-8">
+          <div className="border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="heading-font text-xl font-semibold text-slate-900">Site Settings</h2>
+            <p className="mt-2 text-sm text-slate-600">Manage global settings for the website.</p>
+
+            <form onSubmit={handleSaveSettings} className="mt-6 max-w-md space-y-5">
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
+                Current Executive Committee Year
+                <input
+                  type="text"
+                  value={settingsForm.currentYear}
+                  onChange={(e) => setSettingsForm({ ...settingsForm, currentYear: e.target.value })}
+                  placeholder="e.g. 2026"
+                  required
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </label>
+
+              <button
+                type="submit"
+                disabled={settingsSubmitting || isSettingsLoading}
+                className="border border-primary bg-primary px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark disabled:opacity-50"
+              >
+                {settingsSubmitting ? "Saving..." : "Save Settings"}
+              </button>
+            </form>
+
+            {settingsFeedback && <p className="mt-4 text-sm text-green-600 font-medium">{settingsFeedback}</p>}
+            {settingsError && <p className="mt-4 text-sm text-red-600 font-medium">{settingsError}</p>}
+          </div>
+        </section>
       ) : null}
     </div>
-
   );
-
 }

@@ -30,7 +30,8 @@ export const teamMemberSchema = z.object({
       email: z.string().email().optional()
     })
     .partial()
-    .default({})
+    .default({}),
+  tenure: z.string().optional()
 });
 
 export const galleryItemSchema = z.object({

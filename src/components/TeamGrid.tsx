@@ -13,9 +13,10 @@ import { TeamMemberCard } from "@/components/TeamMemberCard";
 
 type TeamGridProps = {
   team: TeamMemberSummary[];
+  currentYear: string;
 };
 
-export function TeamGrid({ team }: TeamGridProps) {
+export function TeamGrid({ team, currentYear }: TeamGridProps) {
   const chapterExclusiveRoleKeys = new Set([
     ...chapterAdvisorRoleOrder.filter((role) => role.startsWith("chapter-")),
     "chapter-chair",
@@ -41,9 +42,18 @@ export function TeamGrid({ team }: TeamGridProps) {
   const advisorSpotlight = mainTeam
     .filter((member) => advisorRoleOrder.includes(resolveRoleKey(member)))
     .sort(sortByRoleOrder(advisorRoleOrder));
-  const studentSpotlight = mainTeam
-    .filter((member) => studentRoleOrder.includes(resolveRoleKey(member)))
+  const currentStudents = mainTeam
+    .filter((member) => studentRoleOrder.includes(resolveRoleKey(member)) && !member.tenure)
     .sort(sortByRoleOrder(studentRoleOrder));
+    
+  const previousStudents = mainTeam
+    .filter((member) => studentRoleOrder.includes(resolveRoleKey(member)) && member.tenure)
+    .sort((a, b) => {
+      if (a.tenure !== b.tenure) {
+        return (b.tenure || "").localeCompare(a.tenure || ""); // Sort by tenure descending (newest first)
+      }
+      return sortByRoleOrder(studentRoleOrder)(a, b);
+    });
 
   return (
     <section id="team" className="relative py-24 border-t border-slate-200">
@@ -82,14 +92,14 @@ export function TeamGrid({ team }: TeamGridProps) {
           <div>
             <Reveal>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
-                <h3 className="heading-font text-lg font-semibold text-slate-900">Student Executive Committee</h3>
+                <h3 className="heading-font text-lg font-semibold text-slate-900">Student Executive Committee - {currentYear}</h3>
                 <p className="text-xs uppercase tracking-wider text-slate-500">Chairperson, vice chairperson, GS, JGS, treasurer, and web master</p>
               </div>
             </Reveal>
             <div className="mt-8 grid justify-items-center gap-8 sm:grid-cols-2 xl:grid-cols-3">
-              {studentSpotlight.length > 0 ? (
+              {currentStudents.length > 0 ? (
                 <RevealList interval={0.15} delay={0.2}>
-                  {studentSpotlight.map((member) => <TeamMemberCard key={member._id} member={member} />)}
+                  {currentStudents.map((member) => <TeamMemberCard key={member._id} member={member} />)}
                 </RevealList>
               ) : (
                 <Reveal>
@@ -100,6 +110,21 @@ export function TeamGrid({ team }: TeamGridProps) {
               )}
             </div>
           </div>
+          {previousStudents.length > 0 && (
+            <div>
+              <Reveal>
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
+                  <h3 className="heading-font text-lg font-semibold text-slate-900">Previous Executive Committee</h3>
+                  <p className="text-xs uppercase tracking-wider text-slate-500">Honoring our past student leaders</p>
+                </div>
+              </Reveal>
+              <div className="mt-8 grid justify-items-center gap-8 sm:grid-cols-2 xl:grid-cols-3 opacity-90">
+                <RevealList interval={0.15} delay={0.2}>
+                  {previousStudents.map((member) => <TeamMemberCard key={member._id} member={member} showTenure={true} />)}
+                </RevealList>
+              </div>
+            </div>
+          )}
         </div>
         <Reveal y={10} delay={0.4}>
           <div className="mt-14 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">

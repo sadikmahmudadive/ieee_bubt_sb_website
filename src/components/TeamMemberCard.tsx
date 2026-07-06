@@ -6,9 +6,10 @@ import type { TeamMemberSummary } from "@/lib/actions";
 type TeamMemberCardProps = {
   member: TeamMemberSummary;
   variant?: "faculty" | "standard";
+  showTenure?: boolean;
 };
 
-export function TeamMemberCard({ member, variant = "standard" }: TeamMemberCardProps) {
+export function TeamMemberCard({ member, variant = "standard", showTenure = false }: TeamMemberCardProps) {
   const isFaculty = variant === "faculty";
 
   const socialLinks = [
@@ -72,6 +73,14 @@ export function TeamMemberCard({ member, variant = "standard" }: TeamMemberCardP
               {member.role}
             </span>
           </div>
+
+          {showTenure && member.tenure ? (
+            <div className="mt-2">
+              <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-200">
+                {member.tenure}
+              </span>
+            </div>
+          ) : null}
 
           {member.bio ? (
             <p className="mt-4 text-sm leading-relaxed text-slate-600 line-clamp-3">

@@ -39,6 +39,7 @@ export type TeamMemberSummary = {
     linkedin?: string;
     email?: string;
   };
+  tenure?: string;
 };
 
 export type GalleryItemSummary = {
@@ -64,6 +65,10 @@ export type ChapterSummary = {
   name: string;
   slug: string;
   memberCount: number;
+};
+
+export type SiteSettings = {
+  currentYear: string;
 };
 
 const normalizeDate = (value: any): string => {
@@ -194,7 +199,8 @@ export async function getTeamMembers(): Promise<TeamMemberSummary[]> {
       affiliation: data.affiliation ?? "main",
       chapter: data.chapter ?? undefined,
       roleKey: data.roleKey ?? undefined,
-      socials: data.socials ?? {}
+      socials: data.socials ?? {},
+      tenure: data.tenure ?? undefined
     };
   });
 }
@@ -240,4 +246,20 @@ export async function getNewsItems(limit = 3): Promise<NewsSummary[]> {
       imageUrl: data.imageUrl ?? undefined
     };
   });
+}
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+  noStore();
+  try {
+    const doc = await adminDb.collection("settings").doc("site_settings").get();
+    if (doc.exists) {
+      const data = doc.data();
+      if (data?.currentYear) {
+        return { currentYear: data.currentYear };
+      }
+    }
+  } catch (error) {
+    console.error("Failed to load site settings:", error);
+  }
+  return { currentYear: new Date().getFullYear().toString() };
 }

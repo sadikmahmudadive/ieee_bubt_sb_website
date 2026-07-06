@@ -50,8 +50,8 @@ export default async function HomePage() {
         <AboutSection />
         <EventList events={events} />
         <TeamGrid team={team} currentYear={currentYear} />
-  <GallerySection items={gallery} />
-  <NewsSection items={newsItems} />
+        <GallerySection items={gallery} />
+        <NewsSection items={newsItems} />
         <CallToAction />
         <ContactSection />
       </main>

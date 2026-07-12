@@ -54,13 +54,13 @@ export default async function HomePage() {
             Our Chapters
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 justify-items-center">
-            <img src="/brand/cs.png" alt="IEEE Computer Society BUBT SBC" className="h-12 w-auto" />
-            <img src="/brand/sc.png" alt="IEEE System Councile BUBT SBC" className="h-12 w-auto" />
-            <img src="/brand/ras.png" alt="IEEE Robotics and Automation Society BUBT SBC" className="h-12 w-auto" />
-            <img src="/brand/pes.png" alt="IEEE Power and Energy Society BUBT SBC" className="h-12 w-auto" />
-            <img src="/brand/ps.png" alt="IEEE Photonics Society BUBT SBC" className="h-12 w-auto" />
-            <img src="/brand/pels.png" alt="IEEE Power Electronics Society BUBT SBC" className="h-12 w-auto" />
-            <img src="/brand/wie.png" alt="IEEE BUBT Women in Engineering SB Affinity Group" className="h-12 w-auto" />
+            <img src="/brand/logo%20CS.png" alt="IEEE Computer Society BUBT SBC" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
+            <img src="/brand/logo%20SC.png" alt="IEEE System Councile BUBT SBC" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
+            <img src="/brand/logo%20RAS.png" alt="IEEE Robotics and Automation Society BUBT SBC" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
+            <img src="/brand/logo%20PES.png" alt="IEEE Power and Energy Society BUBT SBC" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
+            <img src="/brand/logo%20PS.png" alt="IEEE Photonics Society BUBT SBC" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
+            <img src="/brand/logo%20PELS.png" alt="IEEE Power Electronics Society BUBT SBC" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
+            <img src="/brand/logo%20WIE.png" alt="IEEE BUBT Women in Engineering SB Affinity Group" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
           </div>
         </div>
         <EventList events={events} />

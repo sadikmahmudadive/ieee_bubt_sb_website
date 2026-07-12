@@ -613,12 +613,19 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       return;
     }
 
+    let priorityVal = Number(teamForm.priority);
+    if (!editingTeamId) {
+      const priorities = team ? team.map((m) => m.priority ?? 0) : [];
+      const minPriority = priorities.length > 0 ? Math.min(...priorities) : 1000;
+      priorityVal = Math.max(0, minPriority - 10);
+    }
+
     const payload = {
       name: teamForm.name,
       role: teamForm.role,
       bio: teamForm.bio || undefined,
       photoUrl: teamForm.photoUrl,
-      priority: teamForm.priority ? Number(teamForm.priority) : 9999,
+      priority: priorityVal,
       affiliation: teamForm.affiliation,
       chapter:
         teamForm.affiliation === "chapter" ? teamForm.chapter.trim() || undefined : undefined,
@@ -700,6 +707,64 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       await mutateTeam();
     } catch (error) {
       setTeamError(error instanceof Error ? error.message : "Unable to delete team member.");
+    }
+  }
+
+  async function handleMoveTeamMember(index: number, direction: "up" | "down") {
+    if (!team) return;
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= team.length) return;
+
+    const currentMember = team[index];
+    const targetMember = team[targetIndex];
+
+    // Ensure both have valid numbers for priority
+    let currentPriority = currentMember.priority ?? 0;
+    let targetPriority = targetMember.priority ?? 0;
+
+    // If they have the same priority, adjust them so that there is a difference
+    if (currentPriority === targetPriority) {
+      if (direction === "up") {
+        currentPriority = currentPriority + 1;
+      } else {
+        currentPriority = Math.max(0, currentPriority - 1);
+      }
+    } else {
+      // Swap their priorities
+      const temp = currentPriority;
+      currentPriority = targetPriority;
+      targetPriority = temp;
+    }
+
+    try {
+      // Optimistic update
+      const updatedTeam = [...team];
+      updatedTeam[index] = { ...currentMember, priority: currentPriority };
+      updatedTeam[targetIndex] = { ...targetMember, priority: targetPriority };
+      // Sort them to reflect immediately in the UI (by priority desc)
+      updatedTeam.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+      mutateTeam(updatedTeam, false);
+
+      // Perform backend update for current member
+      const res1 = await fetch(`/api/team/${currentMember._id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ priority: currentPriority })
+      });
+      if (!res1.ok) throw new Error("Failed to update priority");
+
+      // Perform backend update for target member
+      const res2 = await fetch(`/api/team/${targetMember._id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ priority: targetPriority })
+      });
+      if (!res2.ok) throw new Error("Failed to update priority");
+
+      await mutateTeam();
+    } catch (error) {
+      setTeamError(error instanceof Error ? error.message : "Unable to swap priorities.");
+      await mutateTeam();
     }
   }
 
@@ -1226,15 +1291,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
-              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
-                Priority
-                <input
-                  type="number"
-                  value={teamForm.priority}
-                  onChange={(e) => setTeamForm((prev) => ({ ...prev, priority: e.target.value }))}
-                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                />
-              </label>
+
               <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Affiliation
                 <select
@@ -1374,7 +1431,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 <p className="mt-4 text-sm text-slate-500">Loading team members...</p>
               ) : team && team.length > 0 ? (
                 <ul className="mt-6 divide-y divide-slate-100 border border-slate-200">
-                  {team.map((member) => (
+                  {team.map((member, index) => (
                     <li key={member._id} className="flex items-center justify-between bg-white p-4 transition hover:bg-slate-50">
                       <div className="flex items-center gap-4">
                         <Image
@@ -1397,12 +1454,32 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                       </div>
                       <div className="flex items-center gap-2">
                         <button
+                          type="button"
+                          onClick={() => handleMoveTeamMember(index, "up")}
+                          disabled={index === 0}
+                          className="border border-slate-300 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:border-primary hover:text-primary hover:bg-slate-50 disabled:opacity-30 disabled:hover:border-slate-300 disabled:hover:text-slate-600 disabled:hover:bg-white"
+                          title="Move Up"
+                        >
+                          ▲
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleMoveTeamMember(index, "down")}
+                          disabled={index === team.length - 1}
+                          className="border border-slate-300 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:border-primary hover:text-primary hover:bg-slate-50 disabled:opacity-30 disabled:hover:border-slate-300 disabled:hover:text-slate-600 disabled:hover:bg-white"
+                          title="Move Down"
+                        >
+                          ▼
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => startTeamEdit(member)}
                           className="border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-600 hover:border-primary hover:text-primary hover:bg-slate-50"
                         >
                           Edit
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleDeleteTeamMember(member._id)}
                           className="border border-red-200 px-2 py-1 text-xs font-semibold text-red-600 hover:border-red-600 hover:bg-red-50"
                         >

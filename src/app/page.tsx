@@ -48,6 +48,21 @@ export default async function HomePage() {
         <Hero events={events} spotlight={heroSpotlight} />
         <HeroHighlights spotlight={heroSpotlight} />
         <AboutSection />
+        {/* Chapter logos */}
+        <div className="mx-auto max-w-6xl px-6 py-12">
+          <h2 className="heading-font text-center text-2xl font-semibold text-slate-900 mb-6">
+            Our Chapters
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 justify-items-center">
+            <img src="/brand/cs.png" alt="IEEE Computer Society BUBT SBC" className="h-12 w-auto" />
+            <img src="/brand/sc.png" alt="IEEE System Councile BUBT SBC" className="h-12 w-auto" />
+            <img src="/brand/ras.png" alt="IEEE Robotics and Automation Society BUBT SBC" className="h-12 w-auto" />
+            <img src="/brand/pes.png" alt="IEEE Power and Energy Society BUBT SBC" className="h-12 w-auto" />
+            <img src="/brand/ps.png" alt="IEEE Photonics Society BUBT SBC" className="h-12 w-auto" />
+            <img src="/brand/pels.png" alt="IEEE Power Electronics Society BUBT SBC" className="h-12 w-auto" />
+            <img src="/brand/wie.png" alt="IEEE BUBT Women in Engineering SB Affinity Group" className="h-12 w-auto" />
+          </div>
+        </div>
         <EventList events={events} />
         <TeamGrid team={team} currentYear={currentYear} />
         <GallerySection items={gallery} />

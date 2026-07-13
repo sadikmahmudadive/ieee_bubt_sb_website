@@ -21,8 +21,8 @@ const highlights = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="relative py-24">
-      <div className="absolute inset-0 -z-10 bg-white/95" aria-hidden />
+    <section id="about" className="relative py-20 sm:py-24">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-surface/70 via-white to-surface/70" aria-hidden />
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
           <SectionHeading
@@ -38,15 +38,15 @@ export function AboutSection() {
             {highlights.map((item) => (
               <article
                 key={item.title}
-                className="group relative flex flex-col gap-5 h-full rounded-3xl border border-slate-200/60 bg-white p-8 shadow-[0_18px_40px_-24px_rgba(15,23,42,0.18)] transition duration-300 hover:-translate-y-1"
+                className="group relative flex h-full flex-col gap-5 rounded-[5px] border border-border bg-white p-6 shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:border-cyan-soft hover:shadow-[0_0_2px_2px_rgba(204,204,204,1)] sm:p-8"
               >
                 <div className="relative">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-slate-100 text-sm font-semibold text-slate-700">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-cyan-soft bg-cyan/10 text-sm font-semibold text-primary">
                     {item.title.slice(0, 1)}
                   </span>
                 </div>
                 <div className="relative space-y-4">
-                  <h3 className="heading-font text-xl font-semibold text-slate-900">{item.title}</h3>
+                  <h3 className="heading-font text-xl font-light text-slate-900">{item.title}</h3>
                   <p className="text-sm leading-relaxed text-slate-600">{item.description}</p>
                 </div>
               </article>

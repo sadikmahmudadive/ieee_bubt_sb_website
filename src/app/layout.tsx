@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
 import "@/styles/globals.css";
 import { siteMetadata } from "@/utils/siteMetadata";
-
-const displayFont = Outfit({ subsets: ["latin"], variable: "--font-heading" });
-const bodyFont = Inter({ subsets: ["latin"], variable: "--font-body" });
 
 export const metadata: Metadata = {
   title: {
@@ -44,8 +40,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${displayFont.variable} ${bodyFont.variable}`} suppressHydrationWarning>
-      <body className="bg-white text-slate-900 antialiased">{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-slate-50 text-slate-900 antialiased">{children}</body>
     </html>
   );
 }

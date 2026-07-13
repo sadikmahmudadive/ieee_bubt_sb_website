@@ -7,16 +7,23 @@ const config: Config = {
       colors: {
         primary: {
           DEFAULT: "#00629B",
-          dark: "#004B76",
-          light: "#1F82B8"
+          dark: "#147AAD",
+          light: "#00AEEF",
+          navy: "#180D43"
         },
-        accent: "#FDBA21",
-        surface: "rgba(0,0,0,0.04)",
-        "surface-strong": "rgba(15, 23, 42, 0.08)"
+        cyan: {
+          DEFAULT: "#00AEEF",
+          soft: "#00B5E2"
+        },
+        accent: "#FFC72A",
+        warning: "#ED7522",
+        surface: "#EBEBEB",
+        "surface-strong": "#E6E7E7",
+        border: "#E6E7E7"
       },
       fontFamily: {
-        heading: ["var(--font-heading)", "sans-serif"],
-        body: ["var(--font-body)", "sans-serif"]
+        heading: ['"Open Sans"', "Arial", "Helvetica", "system-ui", "sans-serif"],
+        body: ['"Open Sans"', "Arial", "Helvetica", "system-ui", "sans-serif"]
       },
       borderRadius: {
         xl: "1.5rem"

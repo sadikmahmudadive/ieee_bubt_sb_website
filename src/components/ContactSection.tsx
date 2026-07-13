@@ -5,8 +5,8 @@ import { siteMetadata } from "@/utils/siteMetadata";
 
 export function ContactSection() {
   return (
-    <section className="relative py-24">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-sky-50 to-white" aria-hidden />
+    <section className="relative py-20 sm:py-24">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-surface to-white" aria-hidden />
       <div className="mx-auto max-w-5xl px-6">
         <Reveal>
           <SectionHeading
@@ -19,9 +19,9 @@ export function ContactSection() {
         </Reveal>
         <div className="mt-16 grid gap-8 md:grid-cols-[1.2fr_1fr]">
           <Reveal x={-30} duration={0.8}>
-            <div className="h-full rounded-[2.3rem] border border-slate-200/70 bg-white p-10 shadow-[0_24px_60px_-28px_rgba(15,23,42,0.18)]">
+            <div className="h-full rounded-[5px] border border-border bg-white p-8 shadow-[0_2px_4px_rgba(0,0,0,0.08)] sm:p-10">
               <div className="space-y-6">
-                <h3 className="heading-font text-2xl font-semibold text-slate-900">Let’s craft the next breakthrough together.</h3>
+                <h3 className="heading-font text-2xl font-light text-slate-900">Let’s craft the next breakthrough together.</h3>
                 <p className="text-sm text-slate-600">
                   Share your partnership ideas, invite us to speak at your event, or learn how to empower your peers through IEEE
                   programs.
@@ -42,7 +42,7 @@ export function ContactSection() {
                     <p className="text-base text-slate-600">{siteMetadata.contact.address}</p>
                   </div>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-sky-50 p-5 text-sm text-slate-600">
+                <div className="rounded-[5px] border border-cyan-soft bg-cyan/5 p-5 text-sm text-slate-600">
                   <p>Office Hours: Sun–Thu · 10am – 5pm (BST)</p>
                   <p className="mt-1">IEEE Room, 5th Floor, BUBT Permanent Campus</p>
                 </div>
@@ -51,8 +51,8 @@ export function ContactSection() {
           </Reveal>
           
           <Reveal x={30} duration={0.8} delay={0.2}>
-            <div className="h-full rounded-[2.3rem] border border-slate-200/70 bg-white p-8 shadow-[0_24px_60px_-28px_rgba(15,23,42,0.18)]">
-              <h3 className="heading-font text-lg font-semibold text-slate-900">Stay Updated</h3>
+            <div className="h-full rounded-[5px] border border-border bg-white p-8 shadow-[0_2px_4px_rgba(0,0,0,0.08)]">
+              <h3 className="heading-font text-lg font-light text-slate-900">Stay Updated</h3>
               <p className="mt-3 text-sm text-slate-600">
                 Subscribe for quarterly updates on events, fellowships, and tech clinics led by our volunteers.
               </p>

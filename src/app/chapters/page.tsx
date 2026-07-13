@@ -32,29 +32,29 @@ export default async function ChaptersIndexPage() {
   const unnamedChapterCount = chapterEntries.filter((chapter) => chapter.name === chapterFallbackName).length;
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
-      <main className="space-y-24 pb-24">
-        <section className="relative isolate overflow-hidden border-b border-slate-200 py-24 sm:py-32">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-white" aria-hidden />
-          <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-blue-100/50 via-transparent to-transparent" aria-hidden />
+      <main className="space-y-20 pb-24">
+        <section className="relative isolate overflow-hidden border-b border-white/10 py-20 sm:py-28">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-navy via-primary-dark to-primary" aria-hidden />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,174,239,0.22),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,199,42,0.12),transparent_32%)]" aria-hidden />
           <div className="relative mx-auto max-w-5xl px-6 text-center sm:px-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary">Chapters & Affinity Groups</p>
-            <h1 className="mt-6 text-4xl font-bold text-slate-900 sm:text-[2.75rem]">Extending IEEE across disciplines at BUBT</h1>
-            <p className="mt-6 text-base text-slate-600 sm:text-lg">
+            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-cyan-soft">Chapters & Affinity Groups</p>
+            <h1 className="mt-6 text-4xl font-light text-white sm:text-[2.75rem]">Extending IEEE across disciplines at BUBT</h1>
+            <p className="mt-6 text-base text-white/80 sm:text-lg">
               Collaborative committees and faculty mentors empower every IEEE BUBT SB chapter and affinity group. Browse each team to meet
               the advisors and student leaders driving their initiatives.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
                 href="/leadership"
-                className="inline-flex items-center justify-center rounded-none border border-primary bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark hover:border-primary-dark"
+                className="inline-flex items-center justify-center rounded-full border border-white/10 bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark"
               >
                 View Main Branch Leadership
               </Link>
               <Link
                 href="/#contact"
-                className="inline-flex items-center justify-center rounded-none border-2 border-slate-300 bg-transparent px-6 py-3 text-sm font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
+                className="inline-flex items-center justify-center rounded-full border-2 border-white/40 bg-transparent px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:border-white hover:bg-white hover:text-primary"
               >
                 Partner with a Chapter
               </Link>
@@ -77,7 +77,7 @@ export default async function ChaptersIndexPage() {
                 return (
                   <article
                     key={chapter.slug}
-                    className="group flex flex-col gap-6 border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                    className="group flex flex-col gap-6 rounded-[5px] border border-border bg-white p-8 shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 hover:border-cyan-soft hover:shadow-[0_0_2px_2px_rgba(204,204,204,1)]"
                   >
                   <div className="space-y-2 border-b border-slate-200 pb-4">
                     <h2 className="heading-font text-lg font-semibold text-slate-900">{chapter.name}</h2>
@@ -90,7 +90,7 @@ export default async function ChaptersIndexPage() {
                     {chapter.advisors.slice(0, 2).map((member) => (
                       <div
                         key={`${chapter.slug}-${member._id}`}
-                        className="flex flex-col border border-slate-200 bg-slate-50 px-3 py-2"
+                        className="flex flex-col border border-border bg-surface px-3 py-2"
                       >
                         <span className="heading-font text-sm font-semibold text-slate-900">{member.name}</span>
                         <span className="text-[11px] uppercase tracking-wider text-slate-500">
@@ -101,7 +101,7 @@ export default async function ChaptersIndexPage() {
                     {chapter.committee.slice(0, 2).map((member) => (
                       <div
                         key={`${chapter.slug}-${member._id}`}
-                        className="flex flex-col border border-slate-200 bg-slate-50 px-3 py-2"
+                        className="flex flex-col border border-border bg-surface px-3 py-2"
                       >
                         <span className="heading-font text-sm font-semibold text-slate-900">{member.name}</span>
                         <span className="text-[11px] uppercase tracking-wider text-slate-500">
@@ -118,7 +118,7 @@ export default async function ChaptersIndexPage() {
                   </div>
                   <Link
                     href={`/chapters/${chapter.slug}`}
-                    className="mt-auto inline-flex items-center justify-center border border-primary bg-primary px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark hover:border-primary-dark"
+                    className="mt-auto inline-flex items-center justify-center rounded-full border border-primary bg-primary px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark"
                   >
                     View Chapter Leadership →
                   </Link>
@@ -127,12 +127,12 @@ export default async function ChaptersIndexPage() {
               })}
             </div>
           ) : (
-            <p className="border border-slate-200 bg-slate-50 p-8 text-center text-sm text-slate-500 shadow-sm">
+            <p className="border border-border bg-white p-8 text-center text-sm text-slate-500 shadow-[0_2px_4px_rgba(0,0,0,0.08)]">
               Add chapter or affinity group members in the admin dashboard to populate this directory.
             </p>
           )}
           {unnamedChapterCount > 0 ? (
-            <p className="text-xs text-amber-600">
+            <p className="text-xs text-warning">
               {unnamedChapterCount} chapter entr{unnamedChapterCount === 1 ? "y" : "ies"} still use the default name. Edit those records in the admin dashboard to set
               the official chapter title for accurate listings.
             </p>

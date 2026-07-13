@@ -101,8 +101,8 @@ export function Hero({ events = [], spotlight }: HeroProps) {
             style={{ backgroundImage: `url(${slide.coverImage})` }}
           />
         ))}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-dark/90 via-primary-dark/70 to-primary/40 backdrop-blur-[1px]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/95 via-transparent to-primary/20" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-navy/95 via-primary-dark/75 to-primary/50 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary-navy/95 via-transparent to-cyan/15" />
       </div>
 
       <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-center gap-12 px-6 py-32 lg:flex-row lg:items-center lg:gap-20">
@@ -119,7 +119,7 @@ export function Hero({ events = [], spotlight }: HeroProps) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-4 rounded-full border border-white/20 bg-white/10 backdrop-blur-xl px-4 py-2 text-xs font-medium uppercase tracking-[0.3em] text-white/90 shadow-lg"
+              className="inline-flex items-center gap-4 rounded-full border border-white/15 bg-white/10 backdrop-blur-xl px-4 py-2 text-xs font-medium uppercase tracking-[0.3em] text-white/90 shadow-lg"
             >
               <span className="relative h-8 w-8 overflow-hidden rounded-full border border-white/30 bg-white/15 p-1.5">
                 <Image
@@ -138,7 +138,7 @@ export function Hero({ events = [], spotlight }: HeroProps) {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="heading-font text-5xl font-bold leading-tight sm:text-6xl lg:text-7xl xl:text-8xl"
+              className="heading-font text-5xl font-light leading-tight sm:text-6xl lg:text-7xl xl:text-8xl"
             >
               {baseHeadline ? <span className="text-white/95">{baseHeadline} </span> : null}
               <span className="text-white">
@@ -150,7 +150,7 @@ export function Hero({ events = [], spotlight }: HeroProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="max-w-2xl text-lg text-white/80 sm:text-xl leading-relaxed"
+              className="max-w-2xl text-lg text-white/82 sm:text-xl leading-relaxed"
             >
               {highlight?.subtitle ||
                 "An inclusive community where emerging engineers collaborate with mentors and industry to deliver meaningful technology."}
@@ -164,14 +164,14 @@ export function Hero({ events = [], spotlight }: HeroProps) {
             >
               <Link
                 href={primaryCtaHref}
-                className="group inline-flex items-center gap-3 rounded-none bg-white px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary transition-all duration-300 hover:shadow-2xl hover:shadow-white/25 hover:-translate-y-1"
+                className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-primary-dark hover:shadow-lg hover:-translate-y-0.5"
               >
                 <ArrowRightIcon className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                 {primaryCtaLabel}
               </Link>
               <a
                 href="#contact"
-                className="group inline-flex items-center gap-3 rounded-none border-2 border-white bg-transparent px-8 py-4 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-xl"
+                className="group inline-flex items-center gap-3 rounded-full border-2 border-white bg-transparent px-8 py-4 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-lg"
               >
                 Get Involved
                 <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -188,10 +188,10 @@ export function Hero({ events = [], spotlight }: HeroProps) {
             transition={{ delay: 0.6, type: "spring", stiffness: 100 }}
             className="hidden lg:block"
           >
-            <div className="rounded-3xl border border-white/20 bg-white/10 backdrop-blur-xl p-6 shadow-2xl transition-transform hover:scale-105 duration-500">
+            <div className="rounded-[28px] border border-white/15 bg-white/10 backdrop-blur-xl p-6 shadow-2xl transition-transform hover:scale-105 duration-500">
               <div className="text-center space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.4em] text-white/70">Next Event</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-2xl font-semibold text-white">
                   {formatEventDateRange(highlight.eventDate, highlight.eventEndDate)}
                 </p>
                 {highlight.location && (

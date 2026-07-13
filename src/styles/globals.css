@@ -6,12 +6,17 @@
   color-scheme: light;
   scroll-behavior: smooth;
   --app-surface-light: #ffffff;
-  --app-surface-alt: #f5f7fb;
+  --app-surface-alt: #ebebeb;
 }
 
 body {
-  @apply font-body bg-white text-slate-900 antialiased;
+  @apply font-body text-slate-900 antialiased;
   min-height: 100vh;
+  font-family: "Open Sans", Arial, Helvetica, system-ui, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(0, 174, 239, 0.08), transparent 30%),
+    radial-gradient(circle at top right, rgba(0, 98, 155, 0.08), transparent 32%),
+    linear-gradient(180deg, #ffffff 0%, #f7fafc 45%, #ebebeb 100%);
 }
 
 a {
@@ -23,7 +28,7 @@ a {
 }
 
 ::selection {
-  @apply bg-primary text-white;
+  @apply bg-cyan-soft text-white;
 }
 
 /* Custom animations for enhanced UI */

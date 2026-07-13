@@ -54,17 +54,17 @@ export default async function LeadershipPage() {
   const chapterEntries = groupChapterMembers(chapterMembers);
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
-      <main className="space-y-24 pb-24">
-        <section className="relative isolate overflow-hidden border-b border-slate-200 py-24 sm:py-32">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-white" aria-hidden />
-          <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-blue-100/50 via-transparent to-transparent" aria-hidden />
+      <main className="space-y-20 pb-24">
+        <section className="relative isolate overflow-hidden border-b border-white/10 py-20 sm:py-28">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-navy via-primary-dark to-primary" aria-hidden />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,174,239,0.18),transparent_35%)]" aria-hidden />
           <div className="relative mx-auto max-w-5xl px-6 text-center sm:px-8">
             <Reveal y={-20}>
-              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary">Leadership</p>
-              <h1 className="mt-6 text-4xl font-bold text-slate-900 sm:text-[2.75rem]">The people powering IEEE BUBT SB</h1>
-              <p className="mt-6 text-base text-slate-600 sm:text-lg">
+              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-cyan-soft">Leadership</p>
+              <h1 className="mt-6 text-4xl font-light text-white sm:text-[2.75rem]">The people powering IEEE BUBT SB</h1>
+              <p className="mt-6 text-base text-white/80 sm:text-lg">
                 A collaborative network of faculty mentors and student officers guides every initiative. Explore the main branch leadership
                 and meet the teams advancing each IEEE chapter at BUBT.
               </p>
@@ -73,13 +73,13 @@ export default async function LeadershipPage() {
               <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
                   href="/#team"
-                  className="inline-flex items-center justify-center rounded-none border border-primary bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark hover:border-primary-dark"
+                  className="inline-flex items-center justify-center rounded-full border border-white/10 bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark"
                 >
                   View Homepage Highlights
                 </Link>
                 <Link
                   href="/#contact"
-                  className="inline-flex items-center justify-center rounded-none border-2 border-slate-300 bg-transparent px-6 py-3 text-sm font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
+                  className="inline-flex items-center justify-center rounded-full border-2 border-white/40 bg-transparent px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:border-white hover:bg-white hover:text-primary"
                 >
                   Connect with the Branch
                 </Link>
@@ -175,7 +175,7 @@ export default async function LeadershipPage() {
                 return (
                   <Reveal key={chapter.name} y={30}>
                     <div
-                      className="space-y-10 border border-slate-200 bg-white p-8 shadow-sm"
+                      className="space-y-10 border border-border bg-white p-8 shadow-[0_2px_4px_rgba(0,0,0,0.08)]"
                     >
                       <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between border-b border-slate-200 pb-4">
                         <h2 className="heading-font text-xl font-semibold text-slate-900">{chapter.name}</h2>

@@ -94,17 +94,17 @@ export const metadata: Metadata = {
 
 export default function ResearchAndJournalsPage() {
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
-      <main className="space-y-24 pb-24">
-        <section className="relative isolate overflow-hidden border-b border-slate-200 py-24 sm:py-32">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-white" aria-hidden />
-          <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-blue-100/50 via-transparent to-transparent" aria-hidden />
+      <main className="space-y-20 pb-24">
+        <section className="relative isolate overflow-hidden border-b border-white/10 py-20 sm:py-28">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-navy via-primary-dark to-primary" aria-hidden />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,174,239,0.18),transparent_35%)]" aria-hidden />
           <div className="relative mx-auto max-w-5xl px-6 text-center sm:px-8">
             <Reveal y={-20}>
-              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary">Research & Journals</p>
-              <h1 className="mt-6 text-4xl font-bold text-slate-900 sm:text-[2.75rem]">Publish ideas that move industry and society forward</h1>
-              <p className="mt-6 text-base text-slate-600 sm:text-lg">
+              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-cyan-soft">Research & Journals</p>
+              <h1 className="mt-6 text-4xl font-light text-white sm:text-[2.75rem]">Publish ideas that move industry and society forward</h1>
+              <p className="mt-6 text-base text-white/80 sm:text-lg">
                 From ideation clinics to final submission, IEEE BUBT Student Branch mentors guide you through the entire lifecycle of
                 scholarly publishing. Join collaborative labs, access tooling, and share your results with global audiences.
               </p>
@@ -113,13 +113,13 @@ export default function ResearchAndJournalsPage() {
               <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
                   href="/#contact"
-                  className="inline-flex items-center justify-center rounded-none border border-primary bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark hover:border-primary-dark"
+                  className="inline-flex items-center justify-center rounded-full border border-white/10 bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark"
                 >
                   Pitch a Proposal
                 </Link>
                 <Link
                   href="/#events"
-                  className="inline-flex items-center justify-center rounded-none border border-slate-300 bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
+                  className="inline-flex items-center justify-center rounded-full border-2 border-white/40 bg-transparent px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:border-white hover:bg-white hover:text-primary"
                 >
                   Browse Project Showcases
                 </Link>
@@ -140,9 +140,9 @@ export default function ResearchAndJournalsPage() {
           <div className="grid gap-8 md:grid-cols-3">
             <RevealList interval={0.15}>
               {researchTracks.map((track) => (
-                <article key={track.title} className="group relative flex h-full flex-col border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-md">
+                <article key={track.title} className="group relative flex h-full flex-col border border-border bg-white p-6 shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition hover:-translate-y-1 hover:border-cyan-soft hover:shadow-[0_0_2px_2px_rgba(204,204,204,1)]">
                   <div className="absolute inset-x-10 -top-1 h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 transition group-hover:opacity-100" aria-hidden />
-                  <h3 className="heading-font text-lg font-semibold text-slate-900">{track.title}</h3>
+                  <h3 className="heading-font text-lg font-light text-slate-900">{track.title}</h3>
                   <p className="mt-4 text-sm text-slate-600">{track.summary}</p>
                   <ul className="mt-6 space-y-2 text-sm text-slate-700">
                     {track.topics.map((item) => (
@@ -170,8 +170,8 @@ export default function ResearchAndJournalsPage() {
           <div className="grid gap-8 md:grid-cols-3">
             <RevealList interval={0.15}>
               {journalSupports.map((program) => (
-                <article key={program.title} className="flex h-full flex-col border border-slate-200 bg-white p-6 shadow-sm">
-                  <h3 className="heading-font text-lg font-semibold text-slate-900">{program.title}</h3>
+                <article key={program.title} className="flex h-full flex-col border border-border bg-white p-6 shadow-[0_2px_4px_rgba(0,0,0,0.08)]">
+                  <h3 className="heading-font text-lg font-light text-slate-900">{program.title}</h3>
                   <p className="mt-4 text-sm text-slate-600">{program.description}</p>
                   <ul className="mt-6 space-y-2 text-sm text-slate-700">
                     {program.deliverables.map((deliverable) => (
@@ -200,7 +200,7 @@ export default function ResearchAndJournalsPage() {
             <ResearchTimeline timeline={submissionTimeline} />
           </div>
           <Reveal y={10} delay={0.4}>
-            <div className="border border-blue-200 bg-blue-50 p-8 text-sm text-blue-800 shadow-sm">
+            <div className="border border-cyan-soft bg-cyan/5 p-8 text-sm text-slate-700 shadow-[0_2px_4px_rgba(0,0,0,0.08)]">
               <p>
                 Need timeline flexibility? Let us know during ideation clinics so we can align lab availability and reviewer cohorts with your
                 project scope.
@@ -221,16 +221,16 @@ export default function ResearchAndJournalsPage() {
           <div className="grid gap-6 md:grid-cols-3">
             <RevealList interval={0.15}>
               {partnerResources.map((resource) => (
-                <article key={resource.name} className="flex h-full flex-col justify-between border border-slate-200 bg-white p-6 shadow-sm">
+                <article key={resource.name} className="flex h-full flex-col justify-between border border-border bg-white p-6 shadow-[0_2px_4px_rgba(0,0,0,0.08)]">
                   <div>
-                    <h3 className="heading-font text-lg font-semibold text-slate-900">{resource.name}</h3>
+                    <h3 className="heading-font text-lg font-light text-slate-900">{resource.name}</h3>
                     <p className="mt-4 text-sm text-slate-600">{resource.description}</p>
                   </div>
                   <Link
                     href={resource.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary transition hover:text-primary-dark"
+                    className="mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary transition hover:text-primary-dark hover:underline hover:underline-offset-8"
                   >
                     Explore
                     <span aria-hidden>→</span>
@@ -243,8 +243,8 @@ export default function ResearchAndJournalsPage() {
 
         <section className="mx-auto max-w-4xl px-6 sm:px-8">
           <Reveal scale={0.95} duration={0.8}>
-            <div className="border border-slate-200 bg-white p-10 text-center shadow-lg">
-              <h2 className="heading-font text-3xl font-semibold text-slate-900 sm:text-[2.35rem]">Ready to launch your manuscript?</h2>
+            <div className="border border-border bg-white p-10 text-center shadow-[0_2px_4px_rgba(0,0,0,0.08)]">
+              <h2 className="heading-font text-3xl font-light text-slate-900 sm:text-[2.35rem]">Ready to launch your manuscript?</h2>
               <p className="mt-5 text-base text-slate-600">
                 Submit a concept brief or request a mentor pairing and the IEEE BUBT SB research desk will follow up with timelines, lab
                 bookings, and documentation templates.
@@ -252,13 +252,13 @@ export default function ResearchAndJournalsPage() {
               <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
                   href={`mailto:${siteMetadata.social.email}`}
-                  className="inline-flex items-center justify-center rounded-none bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark"
+                  className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white transition hover:bg-primary-dark"
                 >
                   Email Research Desk
                 </Link>
                 <Link
                   href="/#contact"
-                  className="inline-flex items-center justify-center rounded-none border border-slate-300 bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary hover:bg-slate-50"
+                  className="inline-flex items-center justify-center rounded-full border border-border bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wider text-slate-700 transition hover:border-primary hover:text-primary"
                 >
                   Schedule a Clinic
                 </Link>

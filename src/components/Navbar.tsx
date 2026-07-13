@@ -37,7 +37,7 @@ const portalLink = {
 };
 
 const desktopLinkClasses =
-  "inline-flex items-center px-4 py-2.5 text-[13px] font-semibold text-white transition-all duration-300 hover:bg-primary-dark hover:text-white whitespace-nowrap";
+  "inline-flex items-center px-4 py-2.5 text-[13px] font-semibold text-white transition-all duration-300 hover:text-cyan-soft hover:underline hover:underline-offset-8 whitespace-nowrap";
 
 const dropdownLinkClasses =
   "block px-4 py-3 text-[13px] font-medium text-slate-700 transition-all duration-300 hover:bg-slate-100 hover:text-primary";
@@ -129,10 +129,10 @@ export function Navbar() {
   }, [isDropdownOpen]);
 
   return (
-    <header className="sticky top-0 z-50 bg-primary text-white shadow-md border-b border-primary-dark">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-primary-navy/85 text-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] backdrop-blur-md">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
         <Link href="/" className="flex items-center gap-3 group" onClick={closeAllMenus}>
-          <span className="relative h-12 w-12 overflow-hidden bg-white rounded p-1 transition-all duration-300">
+          <span className="relative h-12 w-12 overflow-hidden rounded border border-white/15 bg-white p-1 transition-all duration-300">
             <Image
               src={siteMetadata.brand?.logo.src ?? "/brand/ieee-bubt-sb-logo.svg"}
               alt={siteMetadata.brand?.logo.alt ?? "IEEE BUBT Student Branch logo"}
@@ -142,7 +142,7 @@ export function Navbar() {
               className="object-contain"
             />
           </span>
-          <span className="hidden text-sm font-bold tracking-wide text-white transition-colors duration-300 md:block">{siteMetadata.shortTitle}</span>
+          <span className="hidden text-sm font-semibold tracking-[0.18em] text-white transition-colors duration-300 md:block">{siteMetadata.shortTitle}</span>
         </Link>
 
         <div className="hidden items-center gap-2 lg:flex">
@@ -233,7 +233,7 @@ export function Navbar() {
           </ul>
           <Link
             href={portalLink.href}
-            className="ml-4 inline-flex items-center gap-2 border border-white bg-white/10 px-5 py-2 text-[13px] font-semibold text-white transition-all duration-300 hover:bg-white hover:text-primary"
+            className="ml-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white px-5 py-2 text-[13px] font-semibold text-primary transition-all duration-300 hover:bg-cyan-soft hover:text-white"
           >
             {portalLink.label}
           </Link>
@@ -251,14 +251,14 @@ export function Navbar() {
 
       {isMenuOpen ? (
         <div className="lg:hidden">
-          <div className="border-t border-primary-dark bg-primary">
+          <div className="border-t border-white/10 bg-primary-navy">
             <div className="px-4 py-4">
               {navItems.map((item) => {
                 if (item.type === "dropdown") {
                   return (
                     <div key={item.key} className="border-b border-primary-dark py-2">
-                      <button
-                        type="button"
+                    <button
+                      type="button"
                         className="flex w-full items-center justify-between py-2 text-sm font-semibold text-white"
                         aria-expanded={mobileDropdownOpen}
                         onClick={() => setMobileDropdownOpen((prev) => !prev)}
@@ -303,7 +303,7 @@ export function Navbar() {
                   <Link
                     key={item.key}
                     href={item.href ?? "#"}
-                    className="block border-b border-primary-dark py-3 text-sm font-semibold text-white transition-all hover:bg-primary-dark hover:text-white"
+                    className="block border-b border-white/10 py-3 text-sm font-semibold text-white transition-all hover:bg-white/5 hover:text-cyan-soft"
                     onClick={closeAllMenus}
                   >
                     {item.label}
@@ -313,7 +313,7 @@ export function Navbar() {
               <div className="pt-4">
                 <Link
                   href={portalLink.href}
-                  className="block w-full border border-white bg-white/10 px-4 py-3 text-center text-sm font-semibold text-white transition-all hover:bg-white hover:text-primary"
+                  className="block w-full rounded-full border border-white/20 bg-white px-4 py-3 text-center text-sm font-semibold text-primary transition-all hover:bg-cyan-soft hover:text-white"
                   onClick={closeAllMenus}
                 >
                   {portalLink.label}

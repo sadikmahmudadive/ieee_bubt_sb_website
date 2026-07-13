@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const optionalDate = z.union([z.coerce.date(), z.null()]).optional();
 
-export const eventSchema = z.object({
+const eventBaseSchema = z.object({
   title: z.string().min(3),
   slug: z.string().min(3),
   description: z.string().min(20),
@@ -14,7 +14,12 @@ export const eventSchema = z.object({
   featured: z.boolean().optional(),
   heroTitle: z.string().min(3).optional(),
   heroSubtitle: z.string().min(10).optional()
-}).superRefine((data, ctx) => {
+});
+
+const validateEventDateRange = (
+  data: z.infer<typeof eventBaseSchema>,
+  ctx: z.RefinementCtx
+) => {
   if (data.eventEndDate && data.eventEndDate < data.eventDate) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
@@ -22,7 +27,23 @@ export const eventSchema = z.object({
       message: "The end date must be on or after the start date."
     });
   }
-});
+};
+
+const validatePartialEventDateRange = (
+  data: z.infer<ReturnType<typeof eventBaseSchema.partial>>,
+  ctx: z.RefinementCtx
+) => {
+  if (data.eventDate && data.eventEndDate && data.eventEndDate < data.eventDate) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["eventEndDate"],
+      message: "The end date must be on or after the start date."
+    });
+  }
+};
+
+export const eventSchema = eventBaseSchema.superRefine(validateEventDateRange);
+export const eventUpdateSchema = eventBaseSchema.partial().superRefine(validatePartialEventDateRange);
 
 export const teamMemberSchema = z.object({
   name: z.string().min(3),

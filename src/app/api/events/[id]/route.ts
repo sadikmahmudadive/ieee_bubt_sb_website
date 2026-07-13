@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
-import { eventSchema } from "@/utils/validators";
+import { eventUpdateSchema } from "@/utils/validators";
 import { requireAdminSession } from "@/lib/auth";
 import { slugify } from "@/utils/slugify";
 
@@ -26,7 +26,7 @@ export async function PATCH(
     }
 
     const payload = await request.json();
-    const data: any = eventSchema.partial().parse(payload);
+    const data: any = eventUpdateSchema.parse(payload);
 
     if (data.slug) {
       const sanitized = slugify(data.slug);

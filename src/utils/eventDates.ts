@@ -16,7 +16,7 @@ export function toDateValue(value: DateValue): Date | null {
     return isValidDate(converted) ? converted : null;
   }
 
-  const parsed = new Date(value);
+  const parsed = new Date(value as string | number);
   return isValidDate(parsed) ? parsed : null;
 }
 

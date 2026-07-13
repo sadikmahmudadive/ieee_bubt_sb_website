@@ -71,9 +71,16 @@ class NotificationService {
         return;
       }
 
+      const formattedEventDate = formatEventDateRange(eventData.eventDate, eventData.eventEndDate);
+
       const { subject, html } = generateEventNotificationEmail({
-        ...eventData,
-        eventDate: formatEventDateRange(eventData.eventDate, eventData.eventEndDate)
+        title: eventData.title,
+        description: eventData.description,
+        slug: eventData.slug,
+        imageUrl: eventData.imageUrl,
+        eventDate: formattedEventDate,
+        location: eventData.location,
+        category: eventData.category
       });
 
       console.log(`Sending event notification to ${subscribers.length} subscribers: ${subject}`);

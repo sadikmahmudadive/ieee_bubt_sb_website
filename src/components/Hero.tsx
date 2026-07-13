@@ -7,6 +7,7 @@ import { ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/re
 import type { EventSummary } from "@/lib/actions";
 import { siteMetadata } from "@/utils/siteMetadata";
 import { defaultSlides, fallbackSpotlight } from "@/components/heroContent";
+import { formatEventDateRange } from "@/utils/eventDates";
 
 type HeroSlide = {
   key: string;
@@ -15,6 +16,7 @@ type HeroSlide = {
   coverImage: string;
   slug?: string;
   eventDate?: string;
+  eventEndDate?: string;
   location?: string;
 };
 
@@ -61,6 +63,7 @@ export function Hero({ events = [], spotlight }: HeroProps) {
         coverImage: event.coverImage || fallbackImages[index % fallbackImages.length],
         slug: event.slug,
         eventDate: event.eventDate,
+        eventEndDate: event.eventEndDate,
         location: event.location
       } satisfies HeroSlide;
     });
@@ -189,13 +192,7 @@ export function Hero({ events = [], spotlight }: HeroProps) {
               <div className="text-center space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.4em] text-white/70">Next Event</p>
                 <p className="text-2xl font-bold text-white">
-                  {new Date(highlight.eventDate).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric'
-                  })}
-                </p>
-                <p className="text-sm text-white/80 uppercase tracking-[0.2em]">
-                  {new Date(highlight.eventDate).toLocaleDateString('en-US', { weekday: 'long' })}
+                  {formatEventDateRange(highlight.eventDate, highlight.eventEndDate)}
                 </p>
                 {highlight.location && (
                   <p className="text-xs text-white/60 mt-2">{highlight.location}</p>

@@ -3,6 +3,7 @@ import "server-only";
 import { unstable_noStore as noStore } from "next/cache";
 import { adminDb } from "@/lib/firebase-admin";
 import { groupChapterMembers } from "@/utils/teamGrouping";
+import { toDateValue } from "@/utils/eventDates";
 
 export type EventSummary = {
   _id: string;
@@ -10,6 +11,7 @@ export type EventSummary = {
   slug: string;
   description: string;
   eventDate: string;
+  eventEndDate?: string;
   location: string;
   coverImage: string;
   tags: string[];
@@ -87,6 +89,11 @@ const normalizeDate = (value: any): string => {
   return new Date().toISOString();
 };
 
+const normalizeOptionalDate = (value: any): string | undefined => {
+  const date = toDateValue(value);
+  return date ? date.toISOString() : undefined;
+};
+
 export async function getEvents(): Promise<EventSummary[]> {
   noStore();
   const snapshot = await adminDb.collection("events").orderBy("eventDate", "desc").limit(6).get();
@@ -98,6 +105,7 @@ export async function getEvents(): Promise<EventSummary[]> {
       slug: data.slug,
       description: data.description,
       eventDate: normalizeDate(data.eventDate),
+      eventEndDate: normalizeOptionalDate(data.eventEndDate),
       location: data.location,
       coverImage: data.coverImage,
       tags: Array.isArray(data.tags) ? data.tags : [],
@@ -122,6 +130,7 @@ export async function getEventBySlug(slug: string): Promise<EventDetail | null> 
     slug: data.slug,
     description: data.description,
     eventDate: normalizeDate(data.eventDate),
+    eventEndDate: normalizeOptionalDate(data.eventEndDate),
     location: data.location,
     coverImage: data.coverImage,
     tags: Array.isArray(data.tags) ? data.tags : [],
@@ -146,6 +155,7 @@ export async function getRecentEvents(limit = 3, excludeSlug?: string): Promise<
       slug: data.slug,
       description: data.description,
       eventDate: normalizeDate(data.eventDate),
+      eventEndDate: normalizeOptionalDate(data.eventEndDate),
       location: data.location,
       coverImage: data.coverImage,
       tags: Array.isArray(data.tags) ? data.tags : [],
@@ -175,6 +185,7 @@ export async function getFeaturedEvent(): Promise<EventSummary | null> {
     slug: data.slug,
     description: data.description,
     eventDate: normalizeDate(data.eventDate),
+    eventEndDate: normalizeOptionalDate(data.eventEndDate),
     location: data.location,
     coverImage: data.coverImage,
     tags: Array.isArray(data.tags) ? data.tags : [],

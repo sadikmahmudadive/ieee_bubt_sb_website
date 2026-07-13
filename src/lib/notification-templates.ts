@@ -15,6 +15,7 @@ interface EventNotificationData {
   slug: string;
   imageUrl?: string;
   eventDate: string;
+  eventEndDate?: string;
   location?: string;
   category: string;
 }
@@ -120,7 +121,7 @@ export function generateEventNotificationEmail(data: EventNotificationData): { s
             </div>
 
             <div class="event-details">
-              <p><strong>📅 Date:</strong> ${data.eventDate}</p>
+              <p><strong>📅 Date:</strong> ${data.eventDate}${data.eventEndDate ? ` - ${data.eventEndDate}` : ""}</p>
               ${data.location ? `<p><strong>📍 Location:</strong> ${data.location}</p>` : ''}
             </div>
 

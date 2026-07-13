@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal, RevealList } from "@/components/Reveal";
 import type { EventSummary } from "@/lib/actions";
+import { formatEventDateRange } from "@/utils/eventDates";
 
 type EventListProps = {
   events: EventSummary[];
@@ -44,7 +45,7 @@ export function EventList({ events }: EventListProps) {
                   </div>
                   <div className="relative z-20 flex flex-1 flex-col gap-4 sm:gap-5 p-5 sm:p-8">
                     <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.28em] text-slate-500">
-                      <span>{new Date(event.eventDate).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}</span>
+                      <span>{formatEventDateRange(event.eventDate, event.eventEndDate)}</span>
                       <span className="text-primary truncate max-w-[50%] text-right">{event.location}</span>
                     </div>
                     <h3 className="heading-font text-xl sm:text-[1.35rem] font-semibold text-slate-900 leading-snug">{event.title}</h3>

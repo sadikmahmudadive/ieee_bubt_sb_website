@@ -45,6 +45,10 @@ export async function PATCH(
       data.eventDate = new Date(data.eventDate).toISOString();
     }
 
+    if (Object.prototype.hasOwnProperty.call(payload, "eventEndDate")) {
+      data.eventEndDate = data.eventEndDate ? new Date(data.eventEndDate).toISOString() : null;
+    }
+
     const docRef = adminDb.collection("events").doc(params.id);
     const doc = await docRef.get();
 

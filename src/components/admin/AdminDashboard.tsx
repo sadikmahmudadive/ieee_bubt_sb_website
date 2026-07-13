@@ -9,6 +9,7 @@ import useSWR from "swr";
 
 import { chapterFallbackName, groupChapterMembers } from "@/utils/teamGrouping";
 import type { ChapterGroup } from "@/utils/teamGrouping";
+import { formatEventDateRange, toDateInputValue } from "@/utils/eventDates";
 
 export type AdminDashboardProps = {
   adminUsername: string;
@@ -20,6 +21,7 @@ type EventRecord = {
   slug: string;
   description: string;
   eventDate: string;
+  eventEndDate?: string;
   location: string;
   coverImage: string;
   tags?: string[];
@@ -33,6 +35,7 @@ type EventFormState = {
   slug: string;
   description: string;
   eventDate: string;
+  eventEndDate: string;
   location: string;
   coverImage: string;
   tags: string;
@@ -285,6 +288,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       slug: "",
       description: "",
       eventDate: "",
+      eventEndDate: "",
       location: "",
       coverImage: "",
       tags: "",
@@ -490,6 +494,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       slug: eventForm.slug,
       description: eventForm.description,
       eventDate: eventForm.eventDate,
+      eventEndDate: eventForm.eventEndDate || null,
       location: eventForm.location,
       coverImage: eventForm.coverImage,
       tags: eventForm.tags
@@ -542,7 +547,8 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       title: record.title,
       slug: record.slug,
       description: record.description,
-      eventDate: toInputDate(record.eventDate),
+      eventDate: toDateInputValue(record.eventDate),
+      eventEndDate: toDateInputValue(record.eventEndDate),
       location: record.location,
       coverImage: record.coverImage,
       tags: record.tags?.join(", ") ?? "",
@@ -1124,6 +1130,15 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 />
               </label>
               <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
+                Event End Date (optional)
+                <input
+                  type="date"
+                  value={eventForm.eventEndDate}
+                  onChange={(e) => setEventForm((prev) => ({ ...prev, eventEndDate: e.target.value }))}
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </label>
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
                 Location
                 <input
                   value={eventForm.location}
@@ -1218,7 +1233,9 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                         />
                         <div>
                           <h4 className="font-semibold text-slate-900">{event.title}</h4>
-                          <p className="text-sm text-slate-600">{event.location} • {new Date(event.eventDate).toLocaleDateString()}</p>
+                          <p className="text-sm text-slate-600">
+                            {event.location} • {formatEventDateRange(event.eventDate, event.eventEndDate)}
+                          </p>
                           {event.tags && event.tags.length > 0 && (
                             <p className="text-xs text-slate-500">{event.tags.join(", ")}</p>
                           )}

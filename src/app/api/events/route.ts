@@ -40,6 +40,7 @@ export async function POST(request: Request) {
     const docData = {
       ...data,
       eventDate: new Date(data.eventDate).toISOString(),
+      eventEndDate: data.eventEndDate ? new Date(data.eventEndDate).toISOString() : null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -53,6 +54,7 @@ export async function POST(request: Request) {
         slug: data.slug,
         imageUrl: data.coverImage,
         eventDate: new Date(data.eventDate),
+        eventEndDate: data.eventEndDate ? new Date(data.eventEndDate) : undefined,
         location: data.location,
         category: data.tags?.[0] || 'Event'
       });

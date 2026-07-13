@@ -1,16 +1,27 @@
 import { z } from "zod";
 
+const optionalDate = z.union([z.coerce.date(), z.null()]).optional();
+
 export const eventSchema = z.object({
   title: z.string().min(3),
   slug: z.string().min(3),
   description: z.string().min(20),
   eventDate: z.coerce.date(),
+  eventEndDate: optionalDate,
   location: z.string().min(3),
   coverImage: z.string().url(),
   tags: z.array(z.string()).default([]),
   featured: z.boolean().optional(),
   heroTitle: z.string().min(3).optional(),
   heroSubtitle: z.string().min(10).optional()
+}).superRefine((data, ctx) => {
+  if (data.eventEndDate && data.eventEndDate < data.eventDate) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["eventEndDate"],
+      message: "The end date must be on or after the start date."
+    });
+  }
 });
 
 export const teamMemberSchema = z.object({

@@ -1,5 +1,6 @@
 import type { EventSummary } from "@/lib/actions";
 import { fallbackSpotlight, heroStats } from "@/components/heroContent";
+import { formatEventDateRange } from "@/utils/eventDates";
 
 type HeroHighlightsProps = {
   spotlight?: EventSummary | null;
@@ -8,8 +9,10 @@ type HeroHighlightsProps = {
 export function HeroHighlights({ spotlight }: HeroHighlightsProps) {
   const highlight = spotlight ?? null;
   const displayTitle = highlight?.title ?? fallbackSpotlight.title;
-  const displayDate = highlight?.eventDate ? new Date(highlight.eventDate) : new Date(fallbackSpotlight.eventDate);
-  const formattedDate = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric" }).format(displayDate);
+  const formattedDate = formatEventDateRange(
+    highlight?.eventDate ?? fallbackSpotlight.eventDate,
+    highlight?.eventEndDate
+  );
   const location = highlight?.location ?? fallbackSpotlight.location;
 
   return (

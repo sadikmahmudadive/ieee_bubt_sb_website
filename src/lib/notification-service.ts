@@ -1,6 +1,7 @@
 import { adminDb } from '@/lib/firebase-admin';
 import { emailService } from '@/lib/email';
 import { generateNewsNotificationEmail, generateEventNotificationEmail } from '@/lib/notification-templates';
+import { formatEventDateRange } from "@/utils/eventDates";
 
 interface NewsData {
   title: string;
@@ -17,6 +18,7 @@ interface EventData {
   slug: string;
   imageUrl?: string;
   eventDate: Date;
+  eventEndDate?: Date;
   location?: string;
   category: string;
 }
@@ -71,14 +73,7 @@ class NotificationService {
 
       const { subject, html } = generateEventNotificationEmail({
         ...eventData,
-        eventDate: eventData.eventDate.toLocaleDateString('en-US', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        })
+        eventDate: formatEventDateRange(eventData.eventDate, eventData.eventEndDate)
       });
 
       console.log(`Sending event notification to ${subscribers.length} subscribers: ${subject}`);

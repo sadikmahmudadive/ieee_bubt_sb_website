@@ -10,6 +10,7 @@ import {
   TagIcon
 } from "@heroicons/react/24/outline";
 import { getEventBySlug, getRecentEvents } from "@/lib/actions";
+import { formatEventDateRange } from "@/utils/eventDates";
 
 function formatDate(isoDate: string, options?: Intl.DateTimeFormatOptions) {
   const date = new Date(isoDate);
@@ -100,7 +101,7 @@ export default async function EventPage({ params }: EventPageProps) {
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent" aria-hidden />
             <div className="absolute bottom-10 left-0 right-0 flex flex-col gap-4 px-8 text-white sm:px-12">
               <span className="inline-flex w-fit items-center gap-2 border border-white/40 bg-white/20 px-4 py-1 text-xs font-semibold uppercase tracking-wider backdrop-blur-md">
-                {formatDate(event.eventDate, { month: "short", day: "numeric", year: "numeric" })}
+                {formatEventDateRange(event.eventDate, event.eventEndDate)}
               </span>
               <h1 className="heading-font text-3xl font-semibold sm:text-4xl lg:text-5xl">{event.title}</h1>
               <p className="max-w-3xl text-sm text-white/90 sm:text-base">{leadParagraph}</p>
@@ -138,7 +139,9 @@ export default async function EventPage({ params }: EventPageProps) {
                   <CalendarDaysIcon className="mt-0.5 h-5 w-5 text-primary" />
                   <div>
                     <p className="text-xs uppercase tracking-wider text-slate-500">Date</p>
-                    <p className="mt-1 text-sm text-slate-900 font-medium">{formatDate(event.eventDate)}</p>
+                    <p className="mt-1 text-sm text-slate-900 font-medium">
+                      {formatEventDateRange(event.eventDate, event.eventEndDate)}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -233,7 +236,7 @@ export default async function EventPage({ params }: EventPageProps) {
                   </div>
                   <div className="flex flex-1 flex-col gap-3 p-6">
                     <span className="text-[11px] uppercase tracking-wider text-slate-500">
-                      {formatDate(item.eventDate, { month: "short", day: "numeric", year: "numeric" })}
+                      {formatEventDateRange(item.eventDate, item.eventEndDate)}
                     </span>
                     <h3 className="heading-font text-lg font-semibold text-slate-900">{item.title}</h3>
                     <p className="text-xs text-slate-600 line-clamp-3">{item.description}</p>

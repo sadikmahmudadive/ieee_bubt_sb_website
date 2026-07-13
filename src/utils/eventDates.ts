@@ -29,43 +29,19 @@ export function formatEventDateRange(start: DateValue, end?: DateValue): string 
   const endDate = toDateValue(end);
   if (!endDate || endDate.getTime() === startDate.getTime()) {
     return startDate.toLocaleDateString("en-US", {
-      month: "short",
       day: "numeric",
+      month: "short",
       year: "numeric"
     });
   }
 
-  const sameYear = startDate.getFullYear() === endDate.getFullYear();
-  const sameMonth = sameYear && startDate.getMonth() === endDate.getMonth();
-
-  if (sameYear && sameMonth) {
-    return `${startDate.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric"
-    })} - ${endDate.toLocaleDateString("en-US", {
-      day: "numeric",
-      year: "numeric"
-    })}`;
-  }
-
-  if (sameYear) {
-    return `${startDate.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric"
-    })} - ${endDate.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric"
-    })}`;
-  }
-
   return `${startDate.toLocaleDateString("en-US", {
-    month: "short",
     day: "numeric",
+    month: "short",
     year: "numeric"
   })} - ${endDate.toLocaleDateString("en-US", {
-    month: "short",
     day: "numeric",
+    month: "short",
     year: "numeric"
   })}`;
 }

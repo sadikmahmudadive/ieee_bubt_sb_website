@@ -67,9 +67,6 @@ export default async function HomePage() {
               <h2 className="heading-font mt-3 text-3xl font-semibold text-slate-900 sm:text-4xl">
                 Meet the communities behind the branch
               </h2>
-              <p className="mt-4 text-sm leading-6 text-slate-600 sm:text-base">
-                Each society and affinity group has its own identity, so we present them as equal partner cards instead of tiny floating badges.
-              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">

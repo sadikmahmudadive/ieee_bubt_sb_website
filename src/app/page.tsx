@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { AboutSection } from "@/components/AboutSection";
 import { CallToAction } from "@/components/CallToAction";
 import { ContactSection } from "@/components/ContactSection";
@@ -13,6 +14,16 @@ import { getEvents, getFeaturedEvent, getGalleryItems, getTeamMembers, getNewsIt
 import type { EventSummary, GalleryItemSummary, TeamMemberSummary } from "@/lib/actions";
 
 export const revalidate = 0;
+
+const chapterLogos = [
+  { src: "/brand/logo%20CS.png", alt: "IEEE Computer Society BUBT SBC", name: "Computer Society" },
+  { src: "/brand/logo%20SC.png", alt: "IEEE System Council BUBT SBC", name: "Systems Council" },
+  { src: "/brand/logo%20RAS.png", alt: "IEEE Robotics and Automation Society BUBT SBC", name: "Robotics & Automation" },
+  { src: "/brand/logo%20PES.png", alt: "IEEE Power and Energy Society BUBT SBC", name: "Power & Energy" },
+  { src: "/brand/logo%20PS.png", alt: "IEEE Photonics Society BUBT SBC", name: "Photonics Society" },
+  { src: "/brand/logo%20PELS.png", alt: "IEEE Power Electronics Society BUBT SBC", name: "Power Electronics" },
+  { src: "/brand/logo%20WIE.png", alt: "IEEE BUBT Women in Engineering SB Affinity Group", name: "Women in Engineering" }
+];
 
 export default async function HomePage() {
   let events: EventSummary[] = [];
@@ -48,21 +59,40 @@ export default async function HomePage() {
         <Hero events={events} spotlight={heroSpotlight} />
         <HeroHighlights spotlight={heroSpotlight} />
         <AboutSection />
-        {/* Chapter logos */}
-        <div className="mx-auto max-w-6xl px-6 py-12">
-          <h2 className="heading-font text-center text-2xl font-semibold text-slate-900 mb-6">
-            Our Chapters
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 justify-items-center">
-            <img src="/brand/logo%20CS.png" alt="IEEE Computer Society BUBT SBC" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
-            <img src="/brand/logo%20SC.png" alt="IEEE System Councile BUBT SBC" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
-            <img src="/brand/logo%20RAS.png" alt="IEEE Robotics and Automation Society BUBT SBC" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
-            <img src="/brand/logo%20PES.png" alt="IEEE Power and Energy Society BUBT SBC" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
-            <img src="/brand/logo%20PS.png" alt="IEEE Photonics Society BUBT SBC" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
-            <img src="/brand/logo%20PELS.png" alt="IEEE Power Electronics Society BUBT SBC" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
-            <img src="/brand/logo%20WIE.png" alt="IEEE BUBT Women in Engineering SB Affinity Group" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 transition-transform duration-300 hover:scale-110" />
+        <section className="relative py-16">
+          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-slate-50 to-white" aria-hidden />
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="mx-auto mb-10 max-w-2xl text-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-primary">Our Chapters</p>
+              <h2 className="heading-font mt-3 text-3xl font-semibold text-slate-900 sm:text-4xl">
+                Meet the communities behind the branch
+              </h2>
+              <p className="mt-4 text-sm leading-6 text-slate-600 sm:text-base">
+                Each society and affinity group has its own identity, so we present them as equal partner cards instead of tiny floating badges.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {chapterLogos.map((logo) => (
+                <div
+                  key={logo.name}
+                  className="group flex flex-col items-center rounded-3xl border border-slate-200 bg-white p-4 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="flex aspect-square w-full max-w-[150px] items-center justify-center rounded-2xl bg-gradient-to-br from-slate-50 to-white p-4">
+                    <Image
+                      src={logo.src}
+                      alt={logo.alt}
+                      width={140}
+                      height={140}
+                      className="h-full w-full object-contain transition duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                  <p className="mt-4 text-center text-sm font-semibold text-slate-800">{logo.name}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
         <EventList events={events} />
         <TeamGrid team={team} currentYear={currentYear} />
         <GallerySection items={gallery} />

@@ -93,7 +93,7 @@ export function TeamGrid({ team, currentYear }: TeamGridProps) {
             <Reveal>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
                 <h3 className="heading-font text-lg font-semibold text-slate-900">Student Executive Committee - {currentYear}</h3>
-                <p className="text-xs uppercase tracking-wider text-slate-500">Chairperson, vice chairperson, GS, JGS, treasurer, and web master</p>
+                <p className="text-xs uppercase tracking-wider text-slate-500">Chair, vice chair, secretary, joint secretary, treasurer, and web master</p>
               </div>
             </Reveal>
             <div className="mt-8 grid justify-items-center gap-8 sm:grid-cols-2 xl:grid-cols-3">

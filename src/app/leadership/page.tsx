@@ -121,7 +121,7 @@ export default async function LeadershipPage() {
             <div className="pt-8">
               <Reveal>
                 <h2 className="heading-font text-lg font-semibold text-slate-900 border-b border-slate-200 pb-3">Student Executive Committee</h2>
-                <p className="mt-4 text-sm text-slate-600">Chair, vice chairperson, general secretary, secretary, treasurer, and webmaster.</p>
+                <p className="mt-4 text-sm text-slate-600">Chair, vice chair, secretary, joint secretary, treasurer, and webmaster.</p>
               </Reveal>
               <div className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
                 {mainStudents.length > 0 ? (

@@ -46,11 +46,11 @@ export function TeamGrid({ team, currentYear }: TeamGridProps) {
     .filter((member) => advisorRoleOrder.includes(resolveRoleKey(member)))
     .sort(sortByRoleOrder(advisorRoleOrder));
   const currentStudents = mainTeam
-    .filter((member) => studentRoleOrder.includes(resolveRoleKey(member)) && !member.tenure)
+    .filter((member) => studentRoleOrder.includes(resolveRoleKey(member)) && (!member.tenure || member.tenure === currentYear))
     .sort(sortByRoleOrder(studentRoleOrder));
     
   const previousStudents = mainTeam
-    .filter((member) => studentRoleOrder.includes(resolveRoleKey(member)) && member.tenure)
+    .filter((member) => studentRoleOrder.includes(resolveRoleKey(member)) && member.tenure && member.tenure !== currentYear)
     .sort((a, b) => {
       if (a.tenure !== b.tenure) {
         return (b.tenure || "").localeCompare(a.tenure || ""); // Sort by tenure descending (newest first)

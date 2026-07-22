@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal, RevealList } from "@/components/Reveal";
@@ -54,6 +57,13 @@ export function TeamGrid({ team, currentYear }: TeamGridProps) {
       }
       return sortByRoleOrder(studentRoleOrder)(a, b);
     });
+
+  const uniqueYears = Array.from(new Set(previousStudents.map((m) => m.tenure || "")))
+    .filter(Boolean)
+    .sort((a, b) => b.localeCompare(a));
+  
+  const [selectedYear, setSelectedYear] = useState<string>(uniqueYears[0] || "");
+  const displayedPreviousStudents = previousStudents.filter((m) => m.tenure === selectedYear);
 
   return (
     <section id="team" className="relative py-24 border-t border-slate-200">
@@ -114,13 +124,26 @@ export function TeamGrid({ team, currentYear }: TeamGridProps) {
             <div>
               <Reveal>
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
-                  <h3 className="heading-font text-lg font-semibold text-slate-900">Previous Executive Committee</h3>
-                  <p className="text-xs uppercase tracking-wider text-slate-500">Honoring our past student leaders</p>
+                  <div>
+                    <h3 className="heading-font text-lg font-semibold text-slate-900">Previous Executive Committee</h3>
+                    <p className="mt-1 text-xs uppercase tracking-wider text-slate-500">Honoring our past student leaders</p>
+                  </div>
+                  {uniqueYears.length > 0 && (
+                    <select
+                      value={selectedYear}
+                      onChange={(e) => setSelectedYear(e.target.value)}
+                      className="border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                    >
+                      {uniqueYears.map((year) => (
+                        <option key={year} value={year}>{year}</option>
+                      ))}
+                    </select>
+                  )}
                 </div>
               </Reveal>
               <div className="mt-8 grid justify-items-center gap-8 sm:grid-cols-2 xl:grid-cols-3 opacity-90">
-                <RevealList interval={0.15} delay={0.2}>
-                  {previousStudents.map((member) => <TeamMemberCard key={member._id} member={member} showTenure={true} />)}
+                <RevealList interval={0.15} delay={0.2} key={selectedYear}>
+                  {displayedPreviousStudents.map((member) => <TeamMemberCard key={member._id} member={member} showTenure={true} />)}
                 </RevealList>
               </div>
             </div>

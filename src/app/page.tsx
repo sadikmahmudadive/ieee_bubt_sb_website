@@ -39,15 +39,13 @@ export default async function HomePage() {
       getTeamMembers(),
       getGalleryItems(),
       getFeaturedEvent(),
-      getNewsItems(),
-      getSiteSettings()
+      getNewsItems()
     ]);
     events = results[0];
     team = results[1];
     gallery = results[2];
     featuredEvent = results[3];
     newsItems = results[4];
-    currentYear = results[5].currentYear;
   }
 
   const heroSpotlight = featuredEvent ?? events[0] ?? null;

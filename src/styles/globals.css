@@ -1,3 +1,5 @@
+﻿@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,64 +8,84 @@
   color-scheme: light;
   scroll-behavior: smooth;
   --app-surface-light: #ffffff;
-  --app-surface-alt: #ebebeb;
+  --app-surface-alt: #F8FAFC;
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-bg: rgba(255, 255, 255, 0.07);
 }
 
 body {
   @apply font-body text-slate-900 antialiased;
   min-height: 100vh;
-  font-family: "Open Sans", Arial, Helvetica, system-ui, sans-serif;
-  background:
-    radial-gradient(circle at top left, rgba(0, 174, 239, 0.08), transparent 30%),
-    radial-gradient(circle at top right, rgba(0, 98, 155, 0.08), transparent 32%),
-    linear-gradient(180deg, #ffffff 0%, #f7fafc 45%, #ebebeb 100%);
+  font-family: "Inter", system-ui, sans-serif;
+  background: #ffffff;
 }
 
 a {
-  @apply text-primary transition hover:text-primary-dark;
+  @apply text-primary transition-colors duration-200 hover:text-primary-dark;
 }
 
 .heading-font {
   @apply font-heading;
+  letter-spacing: -0.02em;
 }
 
 ::selection {
-  @apply bg-cyan-soft text-white;
+  @apply bg-primary/20 text-primary-dark;
 }
 
-/* Custom animations for enhanced UI */
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-dark {
+  background: rgba(13, 27, 62, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #00629B 0%, #00AEEF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-white {
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.75) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 @keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-fade-in {
-  animation: fade-in 0.8s ease-out forwards;
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to { background-position: 200% center; }
 }
 
-.animate-fade-in-up {
-  animation: fade-in-up 0.8s ease-out forwards;
-}
+.animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+.animate-fade-in-up { animation: fade-in-up 0.7s ease-out forwards; }
+.animation-delay-100 { animation-delay: 0.1s; }
+.animation-delay-200 { animation-delay: 0.2s; }
+.animation-delay-300 { animation-delay: 0.3s; }
+.animation-delay-400 { animation-delay: 0.4s; }
+.animation-delay-500 { animation-delay: 0.5s; }
 
-.animation-delay-200 {
-  animation-delay: 0.2s;
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #F8FAFC; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
-.animation-delay-400 {
-  animation-delay: 0.4s;
-}

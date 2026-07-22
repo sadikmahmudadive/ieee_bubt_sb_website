@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
@@ -27,8 +27,7 @@ const navItems: NavItem[] = [
   { key: "members", label: "Members", href: "/leadership" },
   { key: "about", label: "About", href: "/#about" },
   { key: "publications", label: "Publications", href: "/research-journals" },
-  { key: "contact", label: "Contact", href: "/#contact" },
-  { key: "get-involved", label: "Get Involved", href: "/#contact" }
+  { key: "contact", label: "Contact", href: "/#contact" }
 ];
 
 const portalLink = {
@@ -36,20 +35,23 @@ const portalLink = {
   href: "/#contact"
 };
 
-const desktopLinkClasses =
-  "inline-flex items-center px-4 py-2.5 text-[13px] font-semibold text-white transition-all duration-300 hover:text-cyan-soft hover:underline hover:underline-offset-8 whitespace-nowrap";
-
-const dropdownLinkClasses =
-  "block px-4 py-3 text-[13px] font-medium text-slate-700 transition-all duration-300 hover:bg-slate-100 hover:text-primary";
-
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [chapters, setChapters] = useState<ChapterSummary[]>([]);
   const [chaptersLoading, setChaptersLoading] = useState(true);
   const dropdownTimeoutRef = useRef<number | null>(null);
   const dropdownContainerRef = useRef<HTMLLIElement | null>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -129,24 +131,26 @@ export function Navbar() {
   }, [isDropdownOpen]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-primary-navy/85 text-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] backdrop-blur-md">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
-        <Link href="/" className="flex items-center gap-3 group" onClick={closeAllMenus}>
-          <span className="relative h-12 w-12 overflow-hidden rounded border border-white/15 bg-white p-1 transition-all duration-300">
+    <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? "bg-primary-navy/95 shadow-xl backdrop-blur-lg border-b border-white/10 py-3" : "bg-primary-navy/90 backdrop-blur-md border-b border-white/10 py-4"}`}>
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-8">
+        <Link href="/" className="flex items-center gap-3.5 group" onClick={closeAllMenus}>
+          <span className="relative h-11 w-11 overflow-hidden rounded-xl border border-white/20 bg-white p-1 shadow-sm transition-transform duration-300 group-hover:scale-105">
             <Image
               src={siteMetadata.brand?.logo.src ?? "/brand/ieee-bubt-sb-logo.svg"}
               alt={siteMetadata.brand?.logo.alt ?? "IEEE BUBT Student Branch logo"}
               fill
-              sizes="48px"
+              sizes="44px"
               priority
               className="object-contain"
             />
           </span>
-          <span className="hidden text-sm font-semibold tracking-[0.18em] text-white transition-colors duration-300 md:block">{siteMetadata.shortTitle}</span>
+          <span className="hidden text-sm font-bold tracking-wider text-white transition-colors duration-300 group-hover:text-cyan-soft sm:block">
+            {siteMetadata.shortTitle}
+          </span>
         </Link>
 
-        <div className="hidden items-center gap-2 lg:flex">
-          <ul className="flex items-center">
+        <div className="hidden items-center gap-1 lg:flex">
+          <ul className="flex items-center gap-1">
             {navItems.map((item) => {
               if (item.type === "dropdown") {
                 const isOpen = isDropdownOpen;
@@ -174,19 +178,19 @@ export function Navbar() {
                   >
                     <button
                       type="button"
-                      className={`${desktopLinkClasses} gap-1`}
+                      className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white/90 transition-all duration-200 hover:bg-white/10 hover:text-white"
                       aria-expanded={isOpen}
                       onClick={handleDesktopDropdownToggle}
                     >
                       {item.label}
-                      <ChevronDownIcon className={`h-3 w-3 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                      <ChevronDownIcon className={`h-3 w-3 transition-transform duration-300 ${isOpen ? "rotate-180 text-cyan-soft" : ""}`} />
                     </button>
                     {isOpen ? (
-                      <div className="absolute left-0 top-full z-50 pt-2">
-                        <div className="w-64 bg-white py-2 text-slate-900 shadow-xl border border-slate-200">
+                      <div className="absolute left-0 top-full z-50 pt-3 animate-fade-in-up">
+                        <div className="w-64 overflow-hidden rounded-2xl bg-white p-2 text-slate-900 shadow-2xl ring-1 ring-black/5">
                           {chaptersLoading ? (
-                            <p className="px-4 py-2 text-[12px] font-semibold text-slate-500">
-                              Loading...
+                            <p className="px-4 py-3 text-xs font-semibold text-slate-400">
+                              Loading societies...
                             </p>
                           ) : chapters.length > 0 ? (
                             <>
@@ -194,25 +198,25 @@ export function Navbar() {
                                 <Link
                                   key={chapter.slug}
                                   href={`/chapters/${chapter.slug}`}
-                                  className={dropdownLinkClasses}
+                                  className="block rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-700 transition-all duration-200 hover:bg-slate-100 hover:text-primary"
                                   onClick={closeAllMenus}
                                 >
                                   {chapter.name}
                                 </Link>
                               ))}
-                              <div className="mt-2 border-t border-slate-100 pt-2">
+                              <div className="mt-1 border-t border-slate-100 pt-1">
                                 <Link
                                   href="/chapters"
-                                  className="block px-4 py-2 text-[12px] font-semibold text-primary transition-all duration-300 hover:bg-slate-50"
+                                  className="block rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-primary transition-all duration-200 hover:bg-primary/5"
                                   onClick={closeAllMenus}
                                 >
-                                  View All Chapters →
+                                  View All Societies →
                                 </Link>
                               </div>
                             </>
                           ) : (
-                            <p className="px-4 py-2 text-[12px] font-semibold text-slate-500">
-                              Chapters coming soon
+                            <p className="px-4 py-3 text-xs font-semibold text-slate-400">
+                              Societies coming soon
                             </p>
                           )}
                         </div>
@@ -224,7 +228,11 @@ export function Navbar() {
 
               return (
                 <li key={item.key}>
-                  <Link href={item.href ?? "#"} className={desktopLinkClasses} onClick={closeAllMenus}>
+                  <Link
+                    href={item.href ?? "#"}
+                    className="inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white/90 transition-all duration-200 hover:bg-white/10 hover:text-white"
+                    onClick={closeAllMenus}
+                  >
                     {item.label}
                   </Link>
                 </li>
@@ -233,7 +241,7 @@ export function Navbar() {
           </ul>
           <Link
             href={portalLink.href}
-            className="ml-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white px-5 py-2 text-[13px] font-semibold text-primary transition-all duration-300 hover:bg-cyan-soft hover:text-white"
+            className="ml-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary-light to-cyan-soft px-5 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg"
           >
             {portalLink.label}
           </Link>
@@ -241,7 +249,7 @@ export function Navbar() {
 
         <button
           type="button"
-          className="flex items-center justify-center p-2 text-white hover:bg-primary-dark lg:hidden"
+          className="flex items-center justify-center rounded-xl p-2 text-white hover:bg-white/10 lg:hidden"
           aria-label={isMenuOpen ? "Close navigation" : "Open navigation"}
           onClick={handleNavToggle}
         >
@@ -250,75 +258,73 @@ export function Navbar() {
       </nav>
 
       {isMenuOpen ? (
-        <div className="lg:hidden">
-          <div className="border-t border-white/10 bg-primary-navy">
-            <div className="px-4 py-4">
-              {navItems.map((item) => {
-                if (item.type === "dropdown") {
-                  return (
-                    <div key={item.key} className="border-b border-primary-dark py-2">
+        <div className="border-t border-white/10 bg-primary-navy px-6 py-6 lg:hidden animate-fade-in">
+          <div className="space-y-2">
+            {navItems.map((item) => {
+              if (item.type === "dropdown") {
+                return (
+                  <div key={item.key} className="border-b border-white/10 py-2">
                     <button
                       type="button"
-                        className="flex w-full items-center justify-between py-2 text-sm font-semibold text-white"
-                        aria-expanded={mobileDropdownOpen}
-                        onClick={() => setMobileDropdownOpen((prev) => !prev)}
-                      >
-                        {item.label}
-                        <ChevronDownIcon
-                          className={`h-4 w-4 transition-transform duration-300 ${mobileDropdownOpen ? "rotate-180" : ""}`}
-                        />
-                      </button>
-                      {mobileDropdownOpen ? (
-                        <div className="mt-2 space-y-1 pl-4 pb-2">
-                          {chaptersLoading ? (
-                            <p className="text-xs text-white/80">Loading chapters...</p>
-                          ) : chapters.length > 0 ? (
-                            chapters.map((chapter) => (
-                              <Link
-                                key={chapter.slug}
-                                href={`/chapters/${chapter.slug}`}
-                                className="block py-2 text-sm font-medium text-white/90 transition-all hover:text-white"
-                                onClick={closeAllMenus}
-                              >
-                                {chapter.name}
-                              </Link>
-                            ))
-                          ) : (
-                            <p className="text-xs text-white/80">Chapters coming soon</p>
-                          )}
-                          <Link
-                            href="/chapters"
-                            className="block py-2 text-sm font-semibold text-white/90 hover:text-white"
-                            onClick={closeAllMenus}
-                          >
-                            View All Chapters →
-                          </Link>
-                        </div>
-                      ) : null}
-                    </div>
-                  );
-                }
-
-                return (
-                  <Link
-                    key={item.key}
-                    href={item.href ?? "#"}
-                    className="block border-b border-white/10 py-3 text-sm font-semibold text-white transition-all hover:bg-white/5 hover:text-cyan-soft"
-                    onClick={closeAllMenus}
-                  >
-                    {item.label}
-                  </Link>
+                      className="flex w-full items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-white"
+                      aria-expanded={mobileDropdownOpen}
+                      onClick={() => setMobileDropdownOpen((prev) => !prev)}
+                    >
+                      {item.label}
+                      <ChevronDownIcon
+                        className={`h-4 w-4 transition-transform duration-300 ${mobileDropdownOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                    {mobileDropdownOpen ? (
+                      <div className="mt-2 space-y-1 pl-4 pb-2">
+                        {chaptersLoading ? (
+                          <p className="text-xs text-white/60">Loading societies...</p>
+                        ) : chapters.length > 0 ? (
+                          chapters.map((chapter) => (
+                            <Link
+                              key={chapter.slug}
+                              href={`/chapters/${chapter.slug}`}
+                              className="block py-2 text-xs font-medium text-white/80 transition-all hover:text-white"
+                              onClick={closeAllMenus}
+                            >
+                              {chapter.name}
+                            </Link>
+                          ))
+                        ) : (
+                          <p className="text-xs text-white/60">Societies coming soon</p>
+                        )}
+                        <Link
+                          href="/chapters"
+                          className="block py-2 text-xs font-bold uppercase tracking-wider text-cyan-soft"
+                          onClick={closeAllMenus}
+                        >
+                          View All Societies →
+                        </Link>
+                      </div>
+                    ) : null}
+                  </div>
                 );
-              })}
-              <div className="pt-4">
+              }
+
+              return (
                 <Link
-                  href={portalLink.href}
-                  className="block w-full rounded-full border border-white/20 bg-white px-4 py-3 text-center text-sm font-semibold text-primary transition-all hover:bg-cyan-soft hover:text-white"
+                  key={item.key}
+                  href={item.href ?? "#"}
+                  className="block border-b border-white/10 py-3 text-xs font-bold uppercase tracking-wider text-white/90 transition-all hover:text-cyan-soft"
                   onClick={closeAllMenus}
                 >
-                  {portalLink.label}
+                  {item.label}
                 </Link>
-              </div>
+              );
+            })}
+            <div className="pt-4">
+              <Link
+                href={portalLink.href}
+                className="block w-full rounded-full bg-gradient-to-r from-primary-light to-cyan-soft px-4 py-3 text-center text-xs font-bold uppercase tracking-wider text-white shadow-md"
+                onClick={closeAllMenus}
+              >
+                {portalLink.label}
+              </Link>
             </div>
           </div>
         </div>
@@ -326,3 +332,4 @@ export function Navbar() {
     </header>
   );
 }
+

@@ -3,16 +3,19 @@ import { Reveal, RevealList } from "@/components/Reveal";
 
 const highlights = [
   {
+    icon: "🔬",
     title: "Immersive Labs",
     description:
       "Deep-dive learning paths mixing hardware prototyping, AI experimentation, and design thinking sprints with mentors."
   },
   {
+    icon: "🚀",
     title: "Competitions & Startups",
     description:
       "IEEE Xtreme preps, ideathons, and launchpads helping teams pitch impactful solutions and secure incubation support."
   },
   {
+    icon: "🌱",
     title: "Humanitarian Tech",
     description:
       "Service learning projects delivering solar micro-grids, smart agriculture pilots, and accessibility tools across communities."
@@ -21,8 +24,9 @@ const highlights = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="relative py-20 sm:py-24">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-surface/70 via-white to-surface/70" aria-hidden />
+    <section id="about" className="relative py-24 sm:py-32 overflow-hidden">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-surface to-white" aria-hidden />
+      <div className="absolute inset-0 -z-10 bg-[size:40px_40px]" style={{ backgroundImage: "linear-gradient(to right, rgba(148,163,184,0.05) 1px, transparent 0), linear-gradient(to bottom, rgba(148,163,184,0.05) 1px, transparent 0)" }} aria-hidden />
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
           <SectionHeading

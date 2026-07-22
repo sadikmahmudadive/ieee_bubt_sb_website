@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal, RevealList } from "@/components/Reveal";
 import type { EventSummary } from "@/lib/actions";
@@ -10,8 +10,8 @@ type EventListProps = {
 
 export function EventList({ events }: EventListProps) {
   return (
-    <section id="events" className="relative py-20 sm:py-24">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-surface to-white" aria-hidden />
+    <section id="events" className="relative py-24 sm:py-32">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-surface via-white to-surface" aria-hidden />
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
           <SectionHeading
@@ -24,7 +24,7 @@ export function EventList({ events }: EventListProps) {
         <div className={`mt-16 grid gap-6 grid-cols-1 ${events.length === 1 ? "md:grid-cols-1 max-w-2xl mx-auto" : "md:grid-cols-2 lg:grid-cols-3"}`}>
           {events.length === 0 ? (
             <Reveal>
-              <p className="col-span-full rounded-[5px] border border-border bg-white p-10 text-center text-sm text-slate-600 shadow-[0_2px_4px_rgba(0,0,0,0.08)]">
+              <p className="col-span-full rounded-2xl border border-surface-strong bg-white p-10 text-center text-sm text-slate-500 shadow-card">
                 Event calendar is being updated. Check back soon!
               </p>
             </Reveal>
@@ -33,47 +33,50 @@ export function EventList({ events }: EventListProps) {
               {events.map((event) => (
                 <article
                   key={event.slug}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-[5px] border border-border bg-white shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:border-cyan-soft hover:shadow-[0_0_2px_2px_rgba(204,204,204,1)]"
+                  className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/20 hover:shadow-card-hover"
                 >
                   <Link href={`/events/${event.slug}`} className="absolute inset-0 z-10" aria-label={`Read more about ${event.title}`} />
-                  <div className="h-48 sm:h-56 w-full overflow-hidden shrink-0">
+                  <div className="relative h-52 w-full overflow-hidden shrink-0">
                     <div
-                      className="h-full w-full bg-cover bg-center transition duration-700 group-hover:scale-105"
+                      className="h-full w-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                       style={{ backgroundImage: `url(${event.coverImage})` }}
                       aria-label={event.title}
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/10 to-transparent" />
+                    {event.tags && event.tags.length > 0 && (
+                      <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-1.5">
+                        {event.tags.slice(0, 2).map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-slate-700 backdrop-blur-sm"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <div className="relative z-20 flex flex-1 flex-col gap-4 sm:gap-5 p-5 sm:p-8">
-                    <div className="flex flex-wrap items-center justify-between gap-2 text-[12px] uppercase tracking-[0.18em] text-slate-500">
-                      <span className="font-semibold text-primary">{formatEventDateRange(event.eventDate, event.eventEndDate)}</span>
-                      <span className="max-w-[50%] truncate text-right text-slate-600">{event.location}</span>
+                  <div className="relative z-20 flex flex-1 flex-col gap-4 p-6">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span className="text-xs font-semibold text-primary">{formatEventDateRange(event.eventDate, event.eventEndDate)}</span>
+                      {event.location && <span className="max-w-[50%] truncate text-right text-xs text-slate-400">{event.location}</span>}
                     </div>
-                    <h3 className="heading-font text-xl font-light leading-snug text-slate-900 sm:text-[1.35rem]">{event.title}</h3>
-                    <p className="text-sm text-slate-600 line-clamp-3 leading-relaxed">{event.description}</p>
-                    <div className="mt-auto flex flex-wrap gap-2 pt-2">
-                      {event.tags?.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-600"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 pt-4 border-t border-slate-100 mt-2">
+                    <h3 className="heading-font text-xl font-semibold leading-snug text-slate-900 transition-colors duration-300 group-hover:text-primary">
+                      {event.title}
+                    </h3>
+                    <p className="text-sm text-slate-500 line-clamp-3 leading-relaxed flex-1">{event.description}</p>
+                    <div className="flex items-center gap-4 pt-4 border-t border-slate-100 mt-auto">
                       <Link
                         href={`/events/${event.slug}`}
-                        className="inline-flex w-fit items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-primary transition hover:text-primary-dark hover:underline hover:underline-offset-8"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary transition-all duration-200 hover:gap-2.5"
                       >
-                        View Details
-                        <span aria-hidden>→</span>
+                        View Details <span>→</span>
                       </Link>
                       <a
                         href="#contact"
-                        className="inline-flex w-fit items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-500 transition hover:text-primary-dark hover:underline hover:underline-offset-8 sm:ml-auto"
+                        className="ml-auto inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-400 transition-all duration-200 hover:text-primary hover:gap-2.5"
                       >
-                        RSVP
-                        <span aria-hidden>→</span>
+                        RSVP <span>→</span>
                       </a>
                     </div>
                   </div>
@@ -86,3 +89,4 @@ export function EventList({ events }: EventListProps) {
     </section>
   );
 }
+

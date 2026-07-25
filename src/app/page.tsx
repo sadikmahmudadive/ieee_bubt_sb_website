@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { AboutSection } from "@/components/AboutSection";
 import { CallToAction } from "@/components/CallToAction";
 import { ContactSection } from "@/components/ContactSection";
@@ -12,18 +13,9 @@ import { NewsSection } from "@/components/NewsSection";
 import { TeamGrid } from "@/components/TeamGrid";
 import { getEvents, getFeaturedEvent, getGalleryItems, getTeamMembers, getNewsItems, getSiteSettings } from "@/lib/actions";
 import type { EventSummary, GalleryItemSummary, TeamMemberSummary } from "@/lib/actions";
+import { chapterCatalog } from "@/utils/chapterCatalog";
 
 export const revalidate = 0;
-
-const chapterLogos = [
-  { src: "/brand/logo%20CS.png", alt: "IEEE Computer Society BUBT SBC", name: "Computer Society" },
-  { src: "/brand/logo%20SC.png", alt: "IEEE System Council BUBT SBC", name: "Systems Council" },
-  { src: "/brand/logo%20RAS.png", alt: "IEEE Robotics and Automation Society BUBT SBC", name: "Robotics & Automation" },
-  { src: "/brand/logo%20PES.png", alt: "IEEE Power and Energy Society BUBT SBC", name: "Power & Energy" },
-  { src: "/brand/logo%20PS.png", alt: "IEEE Photonics Society BUBT SBC", name: "Photonics Society" },
-  { src: "/brand/logo%20PELS.png", alt: "IEEE Power Electronics Society BUBT SBC", name: "Power Electronics" },
-  { src: "/brand/logo%20WIE.png", alt: "IEEE BUBT Women in Engineering SB Affinity Group", name: "Women in Engineering" }
-];
 
 export default async function HomePage() {
   let events: EventSummary[] = [];
@@ -68,22 +60,24 @@ export default async function HomePage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {chapterLogos.map((logo) => (
-                <div
-                  key={logo.name}
+              {chapterCatalog.map((chapter) => (
+                <Link
+                  key={chapter.slug}
+                  href={`/chapters/${chapter.slug}`}
                   className="group flex flex-col items-center rounded-3xl border border-slate-200 bg-white p-4 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <div className="flex aspect-square w-full max-w-[150px] items-center justify-center rounded-2xl bg-gradient-to-br from-slate-50 to-white p-4">
                     <Image
-                      src={logo.src}
-                      alt={logo.alt}
+                      src={chapter.logo}
+                      alt={chapter.logoAlt}
                       width={140}
                       height={140}
                       className="h-full w-full object-contain transition duration-300 group-hover:scale-105"
                     />
                   </div>
-                  <p className="mt-4 text-center text-sm font-semibold text-slate-800">{logo.name}</p>
-                </div>
+                  <p className="mt-4 text-center text-sm font-semibold text-slate-800">{chapter.shortName}</p>
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-primary">View committee</p>
+                </Link>
               ))}
             </div>
           </div>

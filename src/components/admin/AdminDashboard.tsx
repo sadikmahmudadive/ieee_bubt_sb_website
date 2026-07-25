@@ -10,6 +10,7 @@ import useSWR from "swr";
 import { chapterFallbackName, groupChapterMembers } from "@/utils/teamGrouping";
 import type { ChapterGroup } from "@/utils/teamGrouping";
 import { formatEventDateRange, toDateInputValue } from "@/utils/eventDates";
+import { chapterCatalog } from "@/utils/chapterCatalog";
 
 export type AdminDashboardProps = {
   adminUsername: string;
@@ -141,15 +142,7 @@ type NewsFormState = {
 
 type AdminTab = "events" | "team" | "chapters" | "gallery" | "applications" | "subscribers" | "news" | "settings";
 
-const chapterNameOptions = [
-  "IEEE Computer Society Student Branch Chapter",
-  "IEEE Robotics and Automation Society Student Branch Chapter",
-  "IEEE Photonics Society Student Branch Chapter",
-  "IEEE Power and Energy Society Student Branch Chapter",
-  "IEEE Systems Council Student Branch Chapter",
-  "IEEE Power Electronics Society Student Branch Chapter",
-  "IEEE BUBT Women in Engineering Student Branch Affinity Group"
-];
+const chapterNameOptions = chapterCatalog.map((chapter) => chapter.name);
 
 const roleKeyOptions = [
   { value: "none", label: "Not spotlighted on homepage" },
@@ -1595,7 +1588,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
         <section className="space-y-8">
           <div className="border border-slate-200 bg-white p-8 shadow-sm">
             <h2 className="heading-font text-xl font-semibold text-slate-900">Chapter Management</h2>
-            <p className="mt-2 text-sm text-slate-600">View and manage team members by chapter.</p>
+            <p className="mt-2 text-sm text-slate-600">Manage each Chapter and Affinity Group using the same advisor, current executive committee, and tenure archive structure as the main branch.</p>
 
             <div className="mt-6">
               <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
@@ -1644,6 +1637,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                           {member.roleKey && member.roleKey !== "none" && (
                             <p className="text-xs text-slate-500">{roleKeyLabelMap[member.roleKey]}</p>
                           )}
+                          {member.tenure && <p className="text-xs font-medium text-primary">Committee year: {member.tenure}</p>}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">

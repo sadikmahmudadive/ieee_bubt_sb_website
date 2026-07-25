@@ -4,14 +4,14 @@ import { notFound } from "next/navigation";
 
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
-import { SectionHeading } from "@/components/SectionHeading";
 import { CallToAction } from "@/components/CallToAction";
-import { TeamMemberCard } from "@/components/TeamMemberCard";
-import { getTeamMembers } from "@/lib/actions";
+import { ChapterCommittee } from "@/components/ChapterCommittee";
+import { getSiteSettings, getTeamMembers } from "@/lib/actions";
 import type { TeamMemberSummary } from "@/lib/actions";
 import { siteMetadata } from "@/utils/siteMetadata";
 import { chapterFallbackName, groupChapterMembers } from "@/utils/teamGrouping";
 import { getChapterTheme } from "../../../utils/chapterThemes";
+import { chapterCatalog } from "@/utils/chapterCatalog";
 
 type ChapterPageProps = {
   params: {
@@ -60,6 +60,9 @@ export default async function ChapterDetailPage({ params }: ChapterPageProps) {
 
   const hasNamedChapter = chapter.name !== chapterFallbackName;
   const theme = getChapterTheme(chapter.slug);
+  const { currentYear } = await getSiteSettings();
+  const catalogEntry = chapterCatalog.find((entry) => entry.slug === chapter.slug);
+  const entityLabel = catalogEntry?.kind === "affinity-group" ? "Affinity Group" : "Chapter";
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
@@ -69,7 +72,7 @@ export default async function ChapterDetailPage({ params }: ChapterPageProps) {
           <div className="absolute inset-0 animate-pulse" aria-hidden style={{ backgroundImage: theme.heroGradient }} />
           <div className="absolute inset-x-0 top-0 h-48 blur-3xl animate-pulse" aria-hidden style={{ backgroundImage: theme.heroOverlay }} />
           <div className="relative mx-auto max-w-5xl px-6 text-center sm:px-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary animate-fade-in">Chapter Leadership</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary animate-fade-in">{entityLabel} Leadership</p>
             <h1 className="mt-6 text-4xl font-bold text-slate-900 sm:text-[2.75rem] animate-fade-in-up">{chapter.name}</h1>
             <p className="mt-6 text-base sm:text-lg animate-fade-in-up animation-delay-200" style={{ color: theme.heroMetaColor }}>
               Advisors and committee members drive programs, membership engagement, and technical initiatives for this IEEE community at BUBT.
@@ -91,49 +94,7 @@ export default async function ChapterDetailPage({ params }: ChapterPageProps) {
           </div>
         </section>
 
-        <section className="mx-auto flex max-w-6xl flex-col gap-14 px-6 sm:px-8">
-          <SectionHeading
-            eyebrow="Faculty Mentors"
-            title="Advisors and counselors guiding chapter strategy"
-            subtitle="Each chapter thrives with faculty support linking student work to IEEE’s regional and global programs."
-            tone="light"
-          />
-          {chapter.advisors.length > 0 ? (
-            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-              {chapter.advisors.map((member) => (
-                <TeamMemberCard key={member._id} member={member} />
-              ))}
-            </div>
-          ) : (
-            <p
-              className="border border-slate-200 bg-slate-50 p-8 text-sm text-slate-500 shadow-sm"
-            >
-              Add chapter advisors in the admin dashboard to highlight them here.
-            </p>
-          )}
-        </section>
-
-        <section className="mx-auto flex max-w-6xl flex-col gap-14 px-6 sm:px-8">
-          <SectionHeading
-            eyebrow="Student Committee"
-            title="Officers and coordinators leading daily chapter operations"
-            subtitle="Student volunteers plan initiatives, recruit members, and deliver technical events for the community."
-            tone="light"
-          />
-          {chapter.committee.length > 0 ? (
-            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-              {chapter.committee.map((member) => (
-                <TeamMemberCard key={member._id} member={member} />
-              ))}
-            </div>
-          ) : (
-            <p
-              className="border border-slate-200 bg-slate-50 p-8 text-sm text-slate-500 shadow-sm"
-            >
-              Committee members will appear once they are added to this chapter.
-            </p>
-          )}
-        </section>
+        <ChapterCommittee advisors={chapter.advisors} committee={chapter.committee} currentYear={currentYear} />
 
         <CallToAction />
       </main>

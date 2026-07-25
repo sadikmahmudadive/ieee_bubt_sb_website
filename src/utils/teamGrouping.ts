@@ -1,4 +1,5 @@
 import { slugify } from "@/utils/slugify";
+import { chapterCatalog } from "@/utils/chapterCatalog";
 
 type RoleKey = string;
 
@@ -28,6 +29,22 @@ export const studentRoleOrder: RoleKey[] = [
 ];
 
 export const chapterAdvisorRoleOrder: RoleKey[] = ["counselor", "advisor", "chapter-advisor", "chapter-co-advisor"];
+
+export const chapterStudentRoleOrder: RoleKey[] = [
+  "chapter-chair",
+  "chairperson",
+  "chapter-vice-chair",
+  "vice-chairperson",
+  "chapter-secretary",
+  "general-secretary",
+  "chapter-joint-secretary",
+  "joint-general-secretary",
+  "chapter-treasurer",
+  "treasurer",
+  "chapter-webmaster",
+  "webmaster",
+  "chapter-committee"
+];
 
 export function resolveRoleKey<T extends RoleLike>(member: T): RoleKey {
   if (member.roleKey && member.roleKey !== "none") {
@@ -127,7 +144,7 @@ export type ChapterGroup<T> = {
 
 export function groupChapterMembers<T extends RoleLike & PriorityLike & ChapterLike>(members: T[]): ChapterGroup<T>[] {
   const chapterMembers = members.filter((member) => (member.affiliation ?? "main") === "chapter");
-  const groups = new Map<string, T[]>();
+  const groups = new Map<string, T[]>(chapterCatalog.map((chapter) => [chapter.name, []]));
 
   chapterMembers.forEach((member) => {
     const key = member.chapter?.trim() || chapterFallbackName;
@@ -142,12 +159,14 @@ export function groupChapterMembers<T extends RoleLike & PriorityLike & ChapterL
       const advisors = groupMembers
         .filter((member) => chapterAdvisorRoleOrder.includes(resolveRoleKey(member)))
         .sort(sortByRoleOrder(chapterAdvisorRoleOrder));
-      const committee = groupMembers.filter((member) => !chapterAdvisorRoleOrder.includes(resolveRoleKey(member)));
+      const committee = groupMembers
+        .filter((member) => !chapterAdvisorRoleOrder.includes(resolveRoleKey(member)))
+        .sort(sortByRoleOrder(chapterStudentRoleOrder));
       return {
         name,
         slug: slugify(name),
         advisors,
-        committee: sortByPriority(committee),
+        committee,
         members: sortByPriority(groupMembers)
       };
     })

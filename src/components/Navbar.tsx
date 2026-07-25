@@ -131,8 +131,18 @@ export function Navbar() {
   }, [isDropdownOpen]);
 
   return (
-    <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? "bg-primary-navy/95 shadow-xl backdrop-blur-lg border-b border-white/10 py-3" : "bg-primary-navy/90 backdrop-blur-md border-b border-white/10 py-4"}`}>
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-8">
+    <header className={`sticky top-0 z-50 border-b transition-all duration-300 ${scrolled ? "border-slate-200 bg-white shadow-md" : "border-white/15 bg-[#071d2d]/95"}`}>
+      <div className={`hidden border-b text-[11px] lg:block ${scrolled ? "border-slate-200 bg-slate-50 text-slate-600" : "border-white/10 bg-black/20 text-white/70"}`}>
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between px-12 py-2">
+          <p>IEEE BUBT Student Branch · Advancing Technology for Humanity</p>
+          <div className="flex items-center gap-5">
+            <a href="https://www.ieee.org" target="_blank" rel="noreferrer" className="inherit-link">IEEE.org</a>
+            <a href="https://ieeexplore.ieee.org" target="_blank" rel="noreferrer" className="inherit-link">IEEE Xplore</a>
+            <Link href="/admin/login" className="inherit-link">Sign in</Link>
+          </div>
+        </div>
+      </div>
+      <nav className={`mx-auto flex max-w-[1440px] items-center justify-between px-6 py-4 lg:px-12 ${scrolled ? "text-slate-900" : "text-white"}`}>
         <Link href="/" className="flex items-center gap-3.5 group" onClick={closeAllMenus}>
           <span className="relative h-11 w-11 overflow-hidden rounded-xl border border-white/20 bg-white p-1 shadow-sm transition-transform duration-300 group-hover:scale-105">
             <Image
@@ -144,7 +154,7 @@ export function Navbar() {
               className="object-contain"
             />
           </span>
-          <span className="hidden text-sm font-bold tracking-wider text-white transition-colors duration-300 group-hover:text-cyan-soft sm:block">
+          <span className={`hidden text-sm font-bold tracking-wider transition-colors duration-300 sm:block ${scrolled ? "text-slate-900 group-hover:text-primary" : "text-white group-hover:text-cyan-soft"}`}>
             {siteMetadata.shortTitle}
           </span>
         </Link>
@@ -178,7 +188,7 @@ export function Navbar() {
                   >
                     <button
                       type="button"
-                      className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white/90 transition-all duration-200 hover:bg-white/10 hover:text-white"
+                      className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-all duration-200 ${scrolled ? "text-slate-700 hover:text-primary" : "text-white/90 hover:text-cyan-soft"}`}
                       aria-expanded={isOpen}
                       onClick={handleDesktopDropdownToggle}
                     >
@@ -230,7 +240,7 @@ export function Navbar() {
                 <li key={item.key}>
                   <Link
                     href={item.href ?? "#"}
-                    className="inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white/90 transition-all duration-200 hover:bg-white/10 hover:text-white"
+                    className={`inline-flex items-center px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-all duration-200 ${scrolled ? "text-slate-700 hover:text-primary" : "text-white/90 hover:text-cyan-soft"}`}
                     onClick={closeAllMenus}
                   >
                     {item.label}
@@ -241,7 +251,7 @@ export function Navbar() {
           </ul>
           <Link
             href={portalLink.href}
-            className="ml-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary-light to-cyan-soft px-5 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg"
+            className="ml-3 inline-flex items-center gap-2 bg-primary px-5 py-3 text-xs font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-primary-dark"
           >
             {portalLink.label}
           </Link>
@@ -249,7 +259,7 @@ export function Navbar() {
 
         <button
           type="button"
-          className="flex items-center justify-center rounded-xl p-2 text-white hover:bg-white/10 lg:hidden"
+          className={`flex items-center justify-center p-2 lg:hidden ${scrolled ? "text-slate-900" : "text-white"}`}
           aria-label={isMenuOpen ? "Close navigation" : "Open navigation"}
           onClick={handleNavToggle}
         >

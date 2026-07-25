@@ -14,6 +14,7 @@ export type EventSummary = {
   eventEndDate?: string;
   location: string;
   coverImage: string;
+  videoUrl?: string;
   tags: string[];
   featured: boolean;
   heroTitle?: string;
@@ -108,6 +109,7 @@ export async function getEvents(): Promise<EventSummary[]> {
       eventEndDate: normalizeOptionalDate(data.eventEndDate),
       location: data.location,
       coverImage: data.coverImage,
+      videoUrl: data.videoUrl || undefined,
       tags: Array.isArray(data.tags) ? data.tags : [],
       featured: Boolean(data.featured),
       heroTitle: data.heroTitle || undefined,
@@ -133,6 +135,7 @@ export async function getEventBySlug(slug: string): Promise<EventDetail | null> 
     eventEndDate: normalizeOptionalDate(data.eventEndDate),
     location: data.location,
     coverImage: data.coverImage,
+    videoUrl: data.videoUrl || undefined,
     tags: Array.isArray(data.tags) ? data.tags : [],
     featured: Boolean(data.featured),
     heroTitle: data.heroTitle || undefined,
@@ -158,6 +161,7 @@ export async function getRecentEvents(limit = 3, excludeSlug?: string): Promise<
       eventEndDate: normalizeOptionalDate(data.eventEndDate),
       location: data.location,
       coverImage: data.coverImage,
+      videoUrl: data.videoUrl || undefined,
       tags: Array.isArray(data.tags) ? data.tags : [],
       featured: Boolean(data.featured),
       heroTitle: data.heroTitle || undefined,
@@ -188,6 +192,7 @@ export async function getFeaturedEvent(): Promise<EventSummary | null> {
     eventEndDate: normalizeOptionalDate(data.eventEndDate),
     location: data.location,
     coverImage: data.coverImage,
+    videoUrl: data.videoUrl || undefined,
     tags: Array.isArray(data.tags) ? data.tags : [],
     featured: Boolean(data.featured),
     heroTitle: data.heroTitle || undefined,

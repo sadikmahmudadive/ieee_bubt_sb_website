@@ -14,6 +14,7 @@ type HeroSlide = {
   title: string;
   subtitle: string;
   coverImage: string;
+  videoUrl?: string;
   slug?: string;
   eventDate?: string;
   eventEndDate?: string;
@@ -61,6 +62,7 @@ export function Hero({ events = [], spotlight }: HeroProps) {
         title: event.heroTitle?.trim() || event.title,
         subtitle,
         coverImage: event.coverImage || fallbackImages[index % fallbackImages.length],
+        videoUrl: event.videoUrl,
         slug: event.slug,
         eventDate: event.eventDate,
         eventEndDate: event.eventEndDate,
@@ -93,19 +95,34 @@ export function Hero({ events = [], spotlight }: HeroProps) {
 
   return (
     <section className="relative isolate overflow-hidden">
-      <div className="absolute inset-0" aria-hidden>
+      <div className="absolute inset-0 bg-primary-navy" aria-hidden>
         {heroSlides.map((slide, index) => (
           <div
             key={slide.key}
-            className={`absolute inset-0 bg-cover bg-center transition-all duration-[1500ms] ease-out ${index === activeIndex ? "opacity-100 scale-100" : "opacity-0 scale-105"}`}
+            className={`absolute inset-0 overflow-hidden bg-cover bg-center transition-all duration-[1500ms] ease-out ${index === activeIndex ? "opacity-100 scale-100" : "pointer-events-none opacity-0 scale-105"}`}
             style={{ backgroundImage: `url(${slide.coverImage})` }}
-          />
+          >
+            {slide.videoUrl ? (
+              <video
+                className="h-full w-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload={index === 0 ? "metadata" : "none"}
+                poster={slide.coverImage}
+                aria-label={`${slide.title} background video`}
+              >
+                <source src={slide.videoUrl} />
+              </video>
+            ) : null}
+          </div>
         ))}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-navy/95 via-primary-dark/75 to-primary/50 backdrop-blur-[1px]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary-navy/95 via-transparent to-cyan/15" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#071d2d]/95 via-[#003b5c]/78 to-[#00629b]/25" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#071d2d]/90 via-transparent to-black/20" />
       </div>
 
-      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-center gap-12 px-6 py-32 lg:flex-row lg:items-center lg:gap-20">
+      <div className="relative mx-auto flex min-h-[calc(100svh-7rem)] max-w-[1440px] flex-col justify-end gap-12 px-6 pb-20 pt-32 lg:min-h-[760px] lg:flex-row lg:items-end lg:px-12 lg:pb-24">
         <AnimatePresence mode="wait">
           <motion.div 
             key={highlight.key} 

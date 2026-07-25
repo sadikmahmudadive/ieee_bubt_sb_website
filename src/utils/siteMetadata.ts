@@ -17,10 +17,10 @@ export const siteMetadata = {
     instagram: "https://www.instagram.com/ieeebubtsb",
     linkedin: "https://www.linkedin.com/company/ieee-bubt-student-branch",
     twitter: "@ieeebubtsb",
-    email: "ieee@bubt.edu.bd"
+    email: "ieeesb@bubt.edu.bd"
   },
   contact: {
-    phone: "+8801XXXXXXXXX",
+    phone: "+880 1581-894250",
     address: "Bangladesh University of Business and Technology, Dhaka, Bangladesh"
   }
 };

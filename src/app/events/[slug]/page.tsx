@@ -91,13 +91,27 @@ export default async function EventPage({ params }: EventPageProps) {
 
         <section className="overflow-hidden border border-slate-200 bg-white shadow-lg">
           <div className="relative h-80 w-full sm:h-[420px]">
-            <Image
-              src={event.coverImage}
-              alt={event.title}
-              fill
-              priority
-              className="object-cover"
-            />
+            {event.videoUrl ? (
+              <video
+                className="h-full w-full object-cover"
+                controls
+                playsInline
+                preload="metadata"
+                poster={event.coverImage}
+                aria-label={`${event.title} video`}
+              >
+                <source src={event.videoUrl} />
+                Your browser does not support embedded video.
+              </video>
+            ) : (
+              <Image
+                src={event.coverImage}
+                alt={event.title}
+                fill
+                priority
+                className="object-cover"
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent" aria-hidden />
             <div className="absolute bottom-10 left-0 right-0 flex flex-col gap-4 px-8 text-white sm:px-12">
               <span className="inline-flex w-fit items-center gap-2 border border-white/40 bg-white/20 px-4 py-1 text-xs font-semibold uppercase tracking-wider backdrop-blur-md">

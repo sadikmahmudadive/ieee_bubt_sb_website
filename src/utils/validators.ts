@@ -10,6 +10,7 @@ const eventBaseSchema = z.object({
   eventEndDate: optionalDate,
   location: z.string().min(3),
   coverImage: z.string().url(),
+  videoUrl: z.string().url().optional(),
   tags: z.array(z.string()).default([]),
   featured: z.boolean().optional(),
   heroTitle: z.string().min(3).optional(),

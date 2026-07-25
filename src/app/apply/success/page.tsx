@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   description: "Your membership application has been submitted successfully."
 };
 
-export default function ApplySuccessPage({ searchParams }: { searchParams?: { id?: string } }) {
-  const id = searchParams?.id;
+export default function ApplySuccessPage({ searchParams }: { searchParams?: { token?: string } }) {
+  const token = searchParams?.token;
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <Navbar />
@@ -22,8 +22,12 @@ export default function ApplySuccessPage({ searchParams }: { searchParams?: { id
             <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600">Application Received</p>
             <h1 className="mt-5 text-3xl font-bold text-slate-900 sm:text-4xl">Thank you for applying</h1>
             <p className="mt-4 text-slate-600">We&apos;ll review your application and get back to you shortly at the email you provided.</p>
-            {id ? (
-              <p className="mt-2 text-xs text-slate-500">Reference ID: <span className="font-mono text-slate-700 font-medium">{id}</span></p>
+            {token ? (
+              <div className="mx-auto mt-8 max-w-sm border border-primary/20 bg-primary/5 p-5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary">Your token number</p>
+                <p className="mt-2 font-mono text-4xl font-bold tracking-wider text-slate-900">{token}</p>
+                <p className="mt-2 text-xs text-slate-500">Please save this number for future communication.</p>
+              </div>
             ) : null}
             <div className="mt-8 flex justify-center gap-3">
               <Link href="/" className="rounded-none border border-primary bg-primary px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark">Go to Home</Link>

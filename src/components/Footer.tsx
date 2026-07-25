@@ -87,7 +87,19 @@ export function Footer() {
 
         <div className="mt-14 border-t border-white/10 pt-8 flex flex-col items-center justify-between gap-3 text-xs text-slate-600 sm:flex-row">
           <p>&copy; {new Date().getFullYear()} {siteMetadata.shortTitle}. All rights reserved.</p>
-          <p>A Student Branch of the Institute of Electrical and Electronics Engineers.</p>
+          <div className="text-center sm:text-right">
+            <p>A Student Branch of the Institute of Electrical and Electronics Engineers.</p>
+            <p className="mt-1">
+              Developed by: <span className="text-slate-400">Md. Sadik Mahmud Adive</span>
+              {" · "}
+              <a
+                href="mailto:sadikmahmudofficial57@gmail.com"
+                className="text-primary-light transition hover:text-white"
+              >
+                sadikmahmudofficial57@gmail.com
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

@@ -24,6 +24,7 @@ type EventRecord = {
   eventEndDate?: string;
   location: string;
   coverImage: string;
+  videoUrl?: string;
   tags?: string[];
   featured?: boolean;
   heroTitle?: string;
@@ -38,6 +39,7 @@ type EventFormState = {
   eventEndDate: string;
   location: string;
   coverImage: string;
+  videoUrl: string;
   tags: string;
   featured: boolean;
   heroTitle: string;
@@ -95,6 +97,25 @@ type SubscriptionRecord = {
   createdAt: string;
 };
 
+type ApplicationRecord = {
+  _id: string;
+  token: string;
+  fullName: string;
+  studentId: string;
+  department: string;
+  shift: "Day" | "Evening";
+  intake: string;
+  section: string;
+  yearSemester: string;
+  phone: string;
+  email: string;
+  emergencyContact: string;
+  expertiseField: string;
+  areaOfInterest: string;
+  interestedChapter: string;
+  createdAt: string;
+};
+
 type NewsRecord = {
   _id: string;
   title: string;
@@ -118,7 +139,7 @@ type NewsFormState = {
   published: boolean;
 };
 
-type AdminTab = "events" | "team" | "chapters" | "gallery" | "subscribers" | "news" | "settings";
+type AdminTab = "events" | "team" | "chapters" | "gallery" | "applications" | "subscribers" | "news" | "settings";
 
 const chapterNameOptions = [
   "IEEE Computer Society Student Branch Chapter",
@@ -271,6 +292,11 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
   } = useSWR<SubscriptionRecord[]>("/api/subscriptions", fetcher, { revalidateOnFocus: false });
 
   const {
+    data: applications,
+    isLoading: isApplicationsLoading
+  } = useSWR<ApplicationRecord[]>("/api/applications", fetcher, { revalidateOnFocus: false });
+
+  const {
     data: news,
     isLoading: isNewsLoading,
     mutate: mutateNews
@@ -291,6 +317,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       eventEndDate: "",
       location: "",
       coverImage: "",
+      videoUrl: "",
       tags: "",
       featured: false,
       heroTitle: "",
@@ -497,6 +524,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       eventEndDate: eventForm.eventEndDate || null,
       location: eventForm.location,
       coverImage: eventForm.coverImage,
+      videoUrl: eventForm.videoUrl.trim() || undefined,
       tags: eventForm.tags
         .split(",")
         .map((value) => value.trim())
@@ -551,6 +579,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       eventEndDate: toDateInputValue(record.eventEndDate),
       location: record.location,
       coverImage: record.coverImage,
+      videoUrl: record.videoUrl ?? "",
       tags: record.tags?.join(", ") ?? "",
       featured: Boolean(record.featured),
       heroTitle: record.heroTitle ?? "",
@@ -997,6 +1026,44 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
     }
   }
 
+  function handleExportApplications() {
+    if (!applications || applications.length === 0) {
+      return;
+    }
+
+    const columns: Array<{ heading: string; value: (application: ApplicationRecord) => string }> = [
+      { heading: "Token Number", value: (application) => application.token },
+      { heading: "Name", value: (application) => application.fullName },
+      { heading: "BUBT Student ID", value: (application) => application.studentId },
+      { heading: "Department", value: (application) => application.department },
+      { heading: "Day/Evening", value: (application) => application.shift },
+      { heading: "Intake", value: (application) => application.intake },
+      { heading: "Section", value: (application) => application.section },
+      { heading: "Year and Semester", value: (application) => application.yearSemester },
+      { heading: "Phone (WhatsApp)", value: (application) => application.phone },
+      { heading: "Email", value: (application) => application.email },
+      { heading: "Emergency Contact No", value: (application) => application.emergencyContact },
+      { heading: "Expertise Field", value: (application) => application.expertiseField },
+      { heading: "Area of Interest", value: (application) => application.areaOfInterest },
+      { heading: "Interested Chapter", value: (application) => application.interestedChapter },
+      { heading: "Submitted At", value: (application) => new Date(application.createdAt).toLocaleString() }
+    ];
+    const escapeCsv = (value: string) => `"${String(value ?? "").replace(/"/g, '""')}"`;
+    const csv = [
+      columns.map((column) => escapeCsv(column.heading)).join(","),
+      ...applications.map((application) => columns.map((column) => escapeCsv(column.value(application))).join(","))
+    ].join("\r\n");
+    const blob = new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `ieee-bubt-applications-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
   const subscriberCount = subscribers?.length ?? 0;
 
   async function handleSaveSettings(e: FormEvent) {
@@ -1044,6 +1111,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
           { key: "chapters", label: "Chapters" },
           { key: "gallery", label: "Gallery" },
           { key: "news", label: "News" },
+          { key: "applications", label: "Applications" },
           { key: "subscribers", label: "Subscribers" },
           { key: "settings", label: "Settings" }
         ].map((tab) => (
@@ -1116,6 +1184,16 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   onChange={(e) => setEventForm((prev) => ({ ...prev, heroSubtitle: e.target.value }))}
                   rows={3}
                   placeholder="Provide a short teaser that appears in the hero carousel"
+                  className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </label>
+              <label className="md:col-span-2 flex flex-col gap-2 text-sm font-medium text-slate-700">
+                Hero Video URL (optional)
+                <input
+                  type="url"
+                  value={eventForm.videoUrl}
+                  onChange={(e) => setEventForm((prev) => ({ ...prev, videoUrl: e.target.value }))}
+                  placeholder="Direct MP4 or WebM URL. The cover image is used as the poster and fallback."
                   className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </label>
@@ -1878,6 +1956,54 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 <p className="mt-4 text-sm text-slate-500">No news yet.</p>
               )}
             </div>
+          </div>
+        </section>
+
+      ) : activeTab === "applications" ? (
+        <section className="space-y-8">
+          <div className="border border-slate-200 bg-white p-8 shadow-sm">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="heading-font text-xl font-semibold text-slate-900">Membership Applications</h2>
+                <p className="mt-2 text-sm text-slate-600">Review submitted information and export it for Microsoft Excel.</p>
+              </div>
+              <button
+                type="button"
+                onClick={handleExportApplications}
+                disabled={!applications || applications.length === 0}
+                className="border border-primary bg-primary px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Export Excel CSV
+              </button>
+            </div>
+
+            {isApplicationsLoading ? (
+              <p className="mt-8 text-sm text-slate-500">Loading applications...</p>
+            ) : applications && applications.length > 0 ? (
+              <div className="mt-8 overflow-x-auto border border-slate-200">
+                <table className="min-w-[1200px] w-full text-left text-sm">
+                  <thead className="bg-slate-100 text-xs uppercase tracking-wider text-slate-600">
+                    <tr>
+                      <th className="px-4 py-3">Token</th><th className="px-4 py-3">Applicant</th><th className="px-4 py-3">Academic</th><th className="px-4 py-3">Contact</th><th className="px-4 py-3">Interests</th><th className="px-4 py-3">Submitted</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200">
+                    {applications.map((application) => (
+                      <tr key={application._id} className="align-top hover:bg-slate-50">
+                        <td className="px-4 py-4 font-mono font-semibold text-primary">{application.token}</td>
+                        <td className="px-4 py-4"><p className="font-semibold text-slate-900">{application.fullName}</p><p className="mt-1 text-xs text-slate-500">{application.studentId}</p></td>
+                        <td className="px-4 py-4 text-slate-700"><p>{application.department} · {application.shift}</p><p className="mt-1 text-xs text-slate-500">Intake {application.intake}, Section {application.section}</p><p className="text-xs text-slate-500">{application.yearSemester}</p></td>
+                        <td className="px-4 py-4 text-slate-700"><a href={`mailto:${application.email}`} className="block text-primary">{application.email}</a><a href={`tel:${application.phone}`} className="mt-1 block text-slate-600">{application.phone}</a><p className="mt-1 text-xs text-slate-500">Emergency: {application.emergencyContact}</p></td>
+                        <td className="px-4 py-4 text-slate-700"><p className="font-medium">{application.interestedChapter}</p><p className="mt-1 text-xs text-slate-500">Expertise: {application.expertiseField}</p><p className="text-xs text-slate-500">Interest: {application.areaOfInterest}</p></td>
+                        <td className="px-4 py-4 text-xs text-slate-500">{new Date(application.createdAt).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="mt-8 text-sm text-slate-500">No membership applications yet.</p>
+            )}
           </div>
         </section>
 

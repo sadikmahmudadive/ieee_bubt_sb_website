@@ -221,6 +221,28 @@ export async function getTeamMembers(): Promise<TeamMemberSummary[]> {
   });
 }
 
+export async function getTeamMemberById(id: string): Promise<TeamMemberSummary | null> {
+  noStore();
+  const doc = await adminDb.collection("teamMembers").doc(id).get();
+  if (!doc.exists) {
+    return null;
+  }
+  const data = doc.data() ?? {};
+  return {
+    _id: doc.id,
+    name: data.name,
+    role: data.role,
+    bio: data.bio,
+    photoUrl: data.photoUrl,
+    priority: data.priority ?? 0,
+    affiliation: data.affiliation ?? "main",
+    chapter: data.chapter ?? undefined,
+    roleKey: data.roleKey ?? undefined,
+    socials: data.socials ?? {},
+    tenure: data.tenure ?? undefined
+  };
+}
+
 export async function getChapterSummaries(): Promise<ChapterSummary[]> {
   const members = await getTeamMembers();
   const groups = groupChapterMembers(members);

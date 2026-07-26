@@ -106,7 +106,7 @@ export default async function LeadershipPage() {
               <div className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
                 {mainAdvisors.length > 0 ? (
                   <RevealList interval={0.1}>
-                    {mainAdvisors.map((member) => <TeamMemberCard key={member._id} member={member} />)}
+                    {mainAdvisors.map((member) => <TeamMemberCard key={member._id} member={member} variant="faculty" />)}
                   </RevealList>
                 ) : (
                   <Reveal>
@@ -192,7 +192,7 @@ export default async function LeadershipPage() {
                           </h3>
                           <div className="mt-6 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
                             {chapter.advisors.length > 0 ? (
-                              chapter.advisors.map((member) => <TeamMemberCard key={member._id} member={member} />)
+                              chapter.advisors.map((member) => <TeamMemberCard key={member._id} member={member} variant="faculty" />)
                             ) : (
                               <p
                                 className="col-span-full border border-slate-100 bg-slate-50 p-6 text-center text-sm text-slate-500 shadow-sm"

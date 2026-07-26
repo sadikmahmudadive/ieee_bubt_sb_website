@@ -1,7 +1,9 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FaLinkedin, FaFacebook, FaEnvelope } from "react-icons/fa";
 
 import type { TeamMemberSummary } from "@/lib/actions";
+import { advisorRoleOrder, chapterAdvisorRoleOrder, resolveRoleKey } from "@/utils/teamGrouping";
 
 type TeamMemberCardProps = {
   member: TeamMemberSummary;
@@ -10,7 +12,8 @@ type TeamMemberCardProps = {
 };
 
 export function TeamMemberCard({ member, variant = "standard", showTenure = false }: TeamMemberCardProps) {
-  const isFaculty = variant === "faculty";
+  const roleKey = resolveRoleKey(member);
+  const isFaculty = variant === "faculty" || advisorRoleOrder.includes(roleKey) || chapterAdvisorRoleOrder.includes(roleKey);
 
   const socialLinks = [
     member.socials?.linkedin
@@ -48,6 +51,15 @@ export function TeamMemberCard({ member, variant = "standard", showTenure = fals
     <article
       className="group relative flex h-full w-full flex-col overflow-hidden rounded-3xl border border-slate-200/70 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-2 hover:border-primary/30 hover:shadow-[0_20px_40px_-15px_rgba(15,23,42,0.1)]"
     >
+      {isFaculty ? (
+        <Link
+          href={`/faculty/${member._id}`}
+          aria-label={`View ${member.name}'s faculty profile`}
+          className="absolute inset-0 z-10 rounded-3xl"
+        >
+          <span className="sr-only">View faculty profile</span>
+        </Link>
+      ) : null}
       <div className="flex flex-1 flex-col p-6 sm:p-8">
         <div
           className={`${photoFrameClasses} overflow-hidden rounded-2xl bg-slate-50 relative`}
@@ -88,7 +100,13 @@ export function TeamMemberCard({ member, variant = "standard", showTenure = fals
             </p>
           ) : null}
 
-          <div className="mt-auto pt-6">
+          {isFaculty ? (
+            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-primary transition group-hover:text-primary-dark">
+              View faculty profile →
+            </p>
+          ) : null}
+
+          <div className="relative z-20 mt-auto pt-6">
             {socialLinks.length > 0 ? (
               <div className="flex flex-wrap justify-center gap-2">
                 {socialLinks.map((social) => {

@@ -246,11 +246,12 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
   } = useSWR<TeamRecord[]>("/api/team", fetcher, { revalidateOnFocus: false });
 
   const chapterEntries = useMemo<ChapterGroup<TeamRecord>[]>(() => {
-    if (!team || team.length === 0) {
-      return [];
-    }
-    return groupChapterMembers<TeamRecord>(team);
+    return groupChapterMembers<TeamRecord>(team ?? []);
   }, [team]);
+  const mainBranchMembers = useMemo(
+    () => (team ?? []).filter((member) => (member.affiliation ?? "main") === "main"),
+    [team]
+  );
 
   const [selectedChapter, setSelectedChapter] = useState<string | null>(null);
 
@@ -641,6 +642,12 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       return;
     }
 
+    if (teamForm.affiliation === "chapter" && !teamForm.chapter.trim()) {
+      setTeamError("Select the Chapter or Affinity Group before saving this committee member.");
+      setTeamSubmitting(false);
+      return;
+    }
+
     let priorityVal = Number(teamForm.priority);
     if (!editingTeamId) {
       const priorities = team ? team.map((m) => m.priority ?? 0) : [];
@@ -682,12 +689,18 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
         throw new Error(body.error ?? "Failed to save team member.");
       }
 
+      const savedAffiliation = teamForm.affiliation;
+      const savedChapter = teamForm.chapter;
       setTeamFeedback(editingTeamId ? "Team member updated." : "Team member added.");
       setTeamForm(createInitialTeamForm());
       setEditingTeamId(null);
       setTeamUploadError(null);
       setTeamUploadLoading(false);
       await mutateTeam();
+      if (savedAffiliation === "chapter") {
+        setSelectedChapter(savedChapter);
+        setActiveTab("chapters");
+      }
     } catch (error) {
       setTeamError(error instanceof Error ? error.message : "Unable to save team member.");
     } finally {
@@ -704,7 +717,9 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       photoUrl: member.photoUrl,
       priority: String(member.priority ?? 9999),
       affiliation: member.affiliation ?? "main",
-      chapter: member.chapter ?? "",
+      chapter: member.affiliation === "chapter"
+        ? member.chapter || selectedChapter || chapterCatalog[0].name
+        : "",
       roleKey: member.roleKey ?? "none",
       facebook: member.socials?.facebook ?? "",
       instagram: member.socials?.instagram ?? "",
@@ -714,6 +729,24 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
     });
     setTeamFeedback(null);
     setTeamError(null);
+    setActiveTab("team");
+  }
+
+  function startChapterMemberCreate() {
+    const chapter = selectedChapter && selectedChapter !== chapterFallbackName
+      ? selectedChapter
+      : chapterCatalog[0].name;
+    setEditingTeamId(null);
+    setTeamForm({
+      ...createInitialTeamForm(),
+      affiliation: "chapter",
+      chapter,
+      roleKey: "chapter-committee",
+      tenure: settings?.currentYear ?? ""
+    });
+    setTeamFeedback(null);
+    setTeamError(null);
+    setActiveTab("team");
   }
 
   function cancelTeamEdit() {
@@ -738,13 +771,13 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
     }
   }
 
-  async function handleMoveTeamMember(index: number, direction: "up" | "down") {
+  async function handleMoveTeamMember(scope: TeamRecord[], index: number, direction: "up" | "down") {
     if (!team) return;
     const targetIndex = direction === "up" ? index - 1 : index + 1;
-    if (targetIndex < 0 || targetIndex >= team.length) return;
+    if (targetIndex < 0 || targetIndex >= scope.length) return;
 
-    const currentMember = team[index];
-    const targetMember = team[targetIndex];
+    const currentMember = scope[index];
+    const targetMember = scope[targetIndex];
 
     // Ensure both have valid numbers for priority
     let currentPriority = currentMember.priority ?? 0;
@@ -766,9 +799,11 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
 
     try {
       // Optimistic update
-      const updatedTeam = [...team];
-      updatedTeam[index] = { ...currentMember, priority: currentPriority };
-      updatedTeam[targetIndex] = { ...targetMember, priority: targetPriority };
+      const updatedTeam = team.map((member) => {
+        if (member._id === currentMember._id) return { ...member, priority: currentPriority };
+        if (member._id === targetMember._id) return { ...member, priority: targetPriority };
+        return member;
+      });
       // Sort them to reflect immediately in the UI (by priority desc)
       updatedTeam.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
       mutateTeam(updatedTeam, false);
@@ -1100,7 +1135,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       <nav className="flex flex-wrap gap-2">
         {[
           { key: "events", label: "Events" },
-          { key: "team", label: "Team" },
+          { key: "team", label: "Main Branch / Member Editor" },
           { key: "chapters", label: "Chapters" },
           { key: "gallery", label: "Gallery" },
           { key: "news", label: "News" },
@@ -1345,7 +1380,9 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
       ) : activeTab === "team" ? (
         <section className="space-y-8">
           <div className="border border-slate-200 bg-white p-8 shadow-sm">
-            <h2 className="heading-font text-xl font-semibold text-slate-900">{isEditingTeam ? "Edit Team Member" : "Add Team Member"}</h2>
+            <h2 className="heading-font text-xl font-semibold text-slate-900">
+              {isEditingTeam ? "Edit Team Member" : teamForm.affiliation === "chapter" ? "Add Chapter / AG Committee Member" : "Add Main Branch Member"}
+            </h2>
             <p className="mt-2 text-sm text-slate-600">
               {isEditingTeam
                 ? "Update team member details. Uploading a new photo replaces the existing asset."
@@ -1384,7 +1421,14 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                 Affiliation
                 <select
                   value={teamForm.affiliation}
-                  onChange={(e) => setTeamForm((prev) => ({ ...prev, affiliation: e.target.value as "main" | "chapter" }))}
+                  onChange={(e) => {
+                    const affiliation = e.target.value as "main" | "chapter";
+                    setTeamForm((prev) => ({
+                      ...prev,
+                      affiliation,
+                      chapter: affiliation === "chapter" ? prev.chapter || chapterNameOptions[0] : ""
+                    }));
+                  }}
                   className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 >
                   <option value="main">Main Branch</option>
@@ -1397,6 +1441,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                   <select
                     value={teamForm.chapter}
                     onChange={(e) => setTeamForm((prev) => ({ ...prev, chapter: e.target.value }))}
+                    required
                     className="border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   >
                     {chapterNameOptions.map((chapter) => (
@@ -1517,9 +1562,10 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
               <p className="mt-2 text-sm text-slate-600">Click on a member to edit their details.</p>
               {isTeamLoading ? (
                 <p className="mt-4 text-sm text-slate-500">Loading team members...</p>
-              ) : team && team.length > 0 ? (
+              ) : mainBranchMembers.length > 0 ? (
                 <ul className="mt-6 divide-y divide-slate-100 border border-slate-200">
-                  {team.map((member, index) => (
+                  {mainBranchMembers.map((member, index) => {
+                    return (
                     <li key={member._id} className="flex items-center justify-between bg-white p-4 transition hover:bg-slate-50">
                       <div className="flex items-center gap-4">
                         <Image
@@ -1543,7 +1589,7 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={() => handleMoveTeamMember(index, "up")}
+                          onClick={() => handleMoveTeamMember(mainBranchMembers, index, "up")}
                           disabled={index === 0}
                           className="border border-slate-300 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:border-primary hover:text-primary hover:bg-slate-50 disabled:opacity-30 disabled:hover:border-slate-300 disabled:hover:text-slate-600 disabled:hover:bg-white"
                           title="Move Up"
@@ -1552,8 +1598,8 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleMoveTeamMember(index, "down")}
-                          disabled={index === team.length - 1}
+                          onClick={() => handleMoveTeamMember(mainBranchMembers, index, "down")}
+                          disabled={index === mainBranchMembers.length - 1}
                           className="border border-slate-300 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:border-primary hover:text-primary hover:bg-slate-50 disabled:opacity-30 disabled:hover:border-slate-300 disabled:hover:text-slate-600 disabled:hover:bg-white"
                           title="Move Down"
                         >
@@ -1575,7 +1621,8 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
                         </button>
                       </div>
                     </li>
-                  ))}
+                    );
+                  })}
                 </ul>
               ) : (
                 <p className="mt-4 text-sm text-slate-500">No team members found.</p>
@@ -1589,6 +1636,14 @@ export function AdminDashboard({ adminUsername }: AdminDashboardProps) {
           <div className="border border-slate-200 bg-white p-8 shadow-sm">
             <h2 className="heading-font text-xl font-semibold text-slate-900">Chapter Management</h2>
             <p className="mt-2 text-sm text-slate-600">Manage each Chapter and Affinity Group using the same advisor, current executive committee, and tenure archive structure as the main branch.</p>
+
+            <button
+              type="button"
+              onClick={startChapterMemberCreate}
+              className="mt-5 border border-primary bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark"
+            >
+              Add Chapter / AG Committee Member
+            </button>
 
             <div className="mt-6">
               <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">

@@ -24,6 +24,10 @@ export async function POST(request: Request) {
     const payload = await request.json();
     const data = teamMemberSchema.parse(payload);
 
+    if (data.affiliation === "chapter" && !data.chapter?.trim()) {
+      return NextResponse.json({ error: "Select a Chapter or Affinity Group for this member." }, { status: 400 });
+    }
+
     const docRef = await adminDb.collection("teamMembers").add({
       ...data,
       createdAt: new Date().toISOString(),

@@ -23,6 +23,11 @@ export async function PATCH(
       return NextResponse.json({ error: "Team member not found." }, { status: 404 });
     }
 
+    const merged = { ...doc.data(), ...data };
+    if (merged.affiliation === "chapter" && !merged.chapter?.trim()) {
+      return NextResponse.json({ error: "Select a Chapter or Affinity Group for this member." }, { status: 400 });
+    }
+
     await docRef.update({ ...data, updatedAt: new Date().toISOString() });
     return NextResponse.json({ _id: params.id, ...doc.data(), ...data });
   } catch (error) {

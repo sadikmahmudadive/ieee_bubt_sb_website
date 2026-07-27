@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { AboutSection } from "@/components/AboutSection";
 import { CallToAction } from "@/components/CallToAction";
@@ -11,6 +11,7 @@ import { HeroHighlights } from "@/components/HeroHighlights";
 import { Navbar } from "@/components/Navbar";
 import { NewsSection } from "@/components/NewsSection";
 import { TeamGrid } from "@/components/TeamGrid";
+import { ScrollVideoSection } from "@/components/ScrollVideoSection";
 import { getEvents, getFeaturedEvent, getGalleryItems, getTeamMembers, getNewsItems } from "@/lib/actions";
 import type { EventSummary, GalleryItemSummary, TeamMemberSummary } from "@/lib/actions";
 import { chapterCatalog } from "@/utils/chapterCatalog";
@@ -86,6 +87,7 @@ export default async function HomePage() {
 
         <EventList events={events} />
         <TeamGrid team={team} currentYear={currentYear} />
+        <ScrollVideoSection />
         <GallerySection items={gallery} />
         <NewsSection items={newsItems} />
         <CallToAction />

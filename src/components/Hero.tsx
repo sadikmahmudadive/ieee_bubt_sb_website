@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import type { EventSummary } from "@/lib/actions";
 import { siteMetadata } from "@/utils/siteMetadata";
 import { defaultSlides, fallbackSpotlight } from "@/components/heroContent";
 import { formatEventDateRange } from "@/utils/eventDates";
+import { motion, AnimatePresence } from "framer-motion";
 
 type HeroSlide = {
   key: string;
@@ -25,8 +26,6 @@ type HeroProps = {
   events?: EventSummary[];
   spotlight?: EventSummary | null;
 };
-
-import { motion, AnimatePresence } from "framer-motion";
 
 export function Hero({ events = [], spotlight }: HeroProps) {
   const heroSlides = useMemo<HeroSlide[]>(() => {
@@ -122,23 +121,23 @@ export function Hero({ events = [], spotlight }: HeroProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-[#071d2d]/90 via-transparent to-black/20" />
       </div>
 
-      <div className="relative mx-auto flex min-h-[calc(100svh-7rem)] max-w-[1440px] flex-col justify-end gap-12 px-6 pb-20 pt-32 lg:min-h-[760px] lg:flex-row lg:items-end lg:px-12 lg:pb-24">
+      <div className="relative mx-auto flex min-h-[100svh] max-w-[1440px] flex-col justify-end gap-8 px-5 pb-16 pt-28 sm:px-8 sm:pb-20 sm:pt-32 lg:min-h-[760px] lg:flex-row lg:items-end lg:px-12 lg:pb-24 lg:gap-12">
         <AnimatePresence mode="wait">
-          <motion.div 
-            key={highlight.key} 
+          <motion.div
+            key={highlight.key}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="max-w-3xl space-y-10 text-white"
+            className="w-full max-w-3xl space-y-6 text-white sm:space-y-8 lg:space-y-10"
           >
-            <motion.span 
+            <motion.span
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-4 rounded-full border border-white/15 bg-white/10 backdrop-blur-xl px-4 py-2 text-xs font-medium uppercase tracking-[0.3em] text-white/90 shadow-lg"
+              className="inline-flex items-center gap-2 sm:gap-4 rounded-full border border-white/15 bg-white/10 backdrop-blur-xl px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-medium uppercase tracking-[0.25em] sm:tracking-[0.3em] text-white/90 shadow-lg"
             >
-              <span className="relative h-8 w-8 overflow-hidden rounded-full border border-white/30 bg-white/15 p-1.5">
+              <span className="relative h-6 w-6 sm:h-8 sm:w-8 overflow-hidden rounded-full border border-white/30 bg-white/15 p-1 sm:p-1.5 shrink-0">
                 <Image
                   src={siteMetadata.brand?.logo.src ?? "/brand/ieee-bubt-sb-logo.svg"}
                   alt={siteMetadata.brand?.logo.alt ?? "IEEE BUBT Student Branch logo"}
@@ -150,45 +149,43 @@ export function Hero({ events = [], spotlight }: HeroProps) {
               </span>
               IEEE BUBT Student Branch
             </motion.span>
-            
-            <motion.h1 
+
+            <motion.h1
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="heading-font text-5xl font-light leading-tight sm:text-6xl lg:text-7xl xl:text-8xl"
+              className="heading-font text-4xl font-light leading-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl"
             >
               {baseHeadline ? <span className="text-white/95">{baseHeadline} </span> : null}
-              <span className="text-white">
-                {emphasized}
-              </span>
+              <span className="text-white">{emphasized}</span>
             </motion.h1>
-            
-            <motion.p 
+
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="max-w-2xl text-lg text-white/82 sm:text-xl leading-relaxed"
+              className="max-w-xl text-base text-white/80 sm:text-lg sm:max-w-2xl lg:text-xl leading-relaxed"
             >
               {highlight?.subtitle ||
                 "An inclusive community where emerging engineers collaborate with mentors and industry to deliver meaningful technology."}
             </motion.p>
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="flex flex-col gap-4 sm:flex-row sm:items-center"
+              className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
             >
               <Link
                 href={primaryCtaHref}
-                className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-primary-dark hover:shadow-lg hover:-translate-y-0.5"
+                className="group inline-flex items-center justify-center gap-3 rounded-full bg-primary px-6 py-3.5 sm:px-8 sm:py-4 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-primary-dark hover:shadow-lg hover:-translate-y-0.5"
               >
-                <ArrowRightIcon className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                <ArrowRightIcon className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:translate-x-1" />
                 {primaryCtaLabel}
               </Link>
               <a
                 href="#contact"
-                className="group inline-flex items-center gap-3 rounded-full border-2 border-white bg-transparent px-8 py-4 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-lg"
+                className="group inline-flex items-center justify-center gap-3 rounded-full border-2 border-white bg-transparent px-6 py-3.5 sm:px-8 sm:py-4 text-sm font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-lg"
               >
                 Get Involved
                 <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -198,17 +195,17 @@ export function Hero({ events = [], spotlight }: HeroProps) {
         </AnimatePresence>
 
         {highlight?.eventDate && (
-          <motion.div 
-            key={`card-${highlight.key}`} 
+          <motion.div
+            key={`card-${highlight.key}`}
             initial={{ opacity: 0, scale: 0.8, rotate: -2 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ delay: 0.6, type: "spring", stiffness: 100 }}
-            className="hidden lg:block"
+            className="hidden lg:block shrink-0"
           >
-            <div className="rounded-[28px] border border-white/15 bg-white/10 backdrop-blur-xl p-6 shadow-2xl transition-transform hover:scale-105 duration-500">
+            <div className="rounded-[28px] border border-white/15 bg-white/10 backdrop-blur-xl p-6 shadow-2xl transition-transform hover:scale-105 duration-500 min-w-[200px]">
               <div className="text-center space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.4em] text-white/70">Next Event</p>
-                <p className="text-2xl font-semibold text-white">
+                <p className="text-xl font-semibold text-white">
                   {formatEventDateRange(highlight.eventDate, highlight.eventEndDate)}
                 </p>
                 {highlight.location && (
@@ -221,36 +218,36 @@ export function Hero({ events = [], spotlight }: HeroProps) {
       </div>
 
       {heroSlides.length > 1 ? (
-        <div className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between px-6 sm:px-12">
+        <div className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between px-4 sm:px-8">
           <button
             type="button"
             onClick={() => setActiveIndex((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
-            className="pointer-events-auto hidden h-14 w-14 items-center justify-center rounded-full border-2 border-white/20 bg-slate-950/40 backdrop-blur-xl text-white transition-all duration-300 hover:border-white hover:bg-white/10 hover:shadow-xl hover:shadow-white/20 lg:flex"
+            className="pointer-events-auto flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center rounded-full border border-white/20 sm:border-2 bg-slate-950/40 backdrop-blur-xl text-white transition-all duration-300 hover:border-white hover:bg-white/10 hover:shadow-xl"
             aria-label="Previous slide"
           >
-            <ChevronLeftIcon className="h-7 w-7" />
+            <ChevronLeftIcon className="h-5 w-5 sm:h-7 sm:w-7" />
           </button>
           <button
             type="button"
             onClick={() => setActiveIndex((prev) => (prev + 1) % heroSlides.length)}
-            className="pointer-events-auto hidden h-14 w-14 items-center justify-center rounded-full border-2 border-white/20 bg-slate-950/40 backdrop-blur-xl text-white transition-all duration-300 hover:border-white hover:bg-white/10 hover:shadow-xl hover:shadow-white/20 lg:flex"
+            className="pointer-events-auto flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center rounded-full border border-white/20 sm:border-2 bg-slate-950/40 backdrop-blur-xl text-white transition-all duration-300 hover:border-white hover:bg-white/10 hover:shadow-xl"
             aria-label="Next slide"
           >
-            <ChevronRightIcon className="h-7 w-7" />
+            <ChevronRightIcon className="h-5 w-5 sm:h-7 sm:w-7" />
           </button>
         </div>
       ) : null}
 
-      <div className="absolute bottom-12 left-1/2 flex -translate-x-1/2 gap-3">
+      <div className="absolute bottom-6 sm:bottom-10 left-1/2 flex -translate-x-1/2 gap-2 sm:gap-3">
         {heroSlides.map((slide, index) => (
           <button
             key={`dot-${slide.key}`}
             type="button"
             onClick={() => setActiveIndex(index)}
-            className={`h-2 rounded-none transition-all duration-500 ${
+            className={`h-1.5 sm:h-2 rounded-full transition-all duration-500 ${
               index === activeIndex
-                ? "w-12 bg-white shadow-md"
-                : "w-6 bg-white/40 hover:bg-white/60"
+                ? "w-8 sm:w-12 bg-white shadow-md"
+                : "w-4 sm:w-6 bg-white/40 hover:bg-white/60"
             }`}
             aria-label={`Show slide ${index + 1}`}
           />
@@ -259,3 +256,4 @@ export function Hero({ events = [], spotlight }: HeroProps) {
     </section>
   );
 }
+
